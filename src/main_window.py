@@ -1,5 +1,7 @@
 from PySide6.QtWidgets import QMainWindow, QStackedWidget, QVBoxLayout, QWidget, QPushButton, QToolBar
 from PySide6.QtCore import Qt
+from pages.home import Home
+from pages.stock_table import StockTable
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -23,7 +25,21 @@ class MainWindow(QMainWindow):
         self.orders_btn = QPushButton(text="Orders")
         self.reports_btn = QPushButton(text="Reports")
 
+        # Create button click events
+        self.home_btn.clicked.connect(lambda: self.switch_page(0))
+        self.stock_btn.clicked.connect(lambda: self.switch_page(1))
+
         self.nav_bar.addWidget(self.home_btn)
         self.nav_bar.addWidget(self.stock_btn)
         self.nav_bar.addWidget(self.orders_btn)
         self.nav_bar.addWidget(self.reports_btn)
+
+        # Stacked widgets for pages
+        self.pages = QStackedWidget()
+        main_layout.addWidget(self.pages)
+        self.pages.addWidget(Home())
+        self.pages.addWidget(StockTable())
+
+    def switch_page(self, index):
+        self.pages.setCurrentIndex(index)
+
