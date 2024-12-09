@@ -8,7 +8,7 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("Stock Management System")
-        self.resize(800, 600)
+        self.resize(1020, 600)
 
         # Create main widget and layout
         main_widget = QWidget()
