@@ -18,7 +18,6 @@ class StockTable(QWidget):
         # Add widgets to layout
         self.create_button_widgets()
         self.create_table_widget()
-        self.refresh_table()
 
         
     def create_button_widgets(self):
