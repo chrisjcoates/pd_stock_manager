@@ -42,4 +42,7 @@ class MainWindow(QMainWindow):
 
     def switch_page(self, index):
         self.pages.setCurrentIndex(index)
+        current_page = self.pages.currentWidget()
+        if hasattr(current_page, "refresh_table"):
+            current_page.refresh_table()    
 
