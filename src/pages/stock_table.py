@@ -22,14 +22,14 @@ class StockTable(QWidget):
 
         
     def create_button_widgets(self):
-        
+        # Create button widgets
         button_widget = QWidget()
         button_layout = QHBoxLayout(button_widget)
-
+        # Create buttons
         add_button = QPushButton(text="Add")
         edit_button = QPushButton(text="Edit")
         delete_button = QPushButton(text="Delete")
-
+        # Add buttons to layout
         button_layout.addWidget(add_button)
         button_layout.addWidget(edit_button)
         button_layout.addWidget(delete_button)
@@ -42,6 +42,7 @@ class StockTable(QWidget):
         filter_layout = QHBoxLayout(filter_widget)
 
         filter_line_edit = QLineEdit()
+        filter_widget.setMaximumWidth(500)
         filter_btn= QPushButton(text="Filter")
         clear_filter_btn = QPushButton(text="Clear")
 
