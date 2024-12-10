@@ -41,20 +41,33 @@ class StockTable(QWidget):
         filter_widget = QWidget()
         filter_layout = QHBoxLayout(filter_widget)
 
-        filter_text_edit = QLineEdit()
+        filter_line_edit = QLineEdit()
         filter_btn= QPushButton(text="Filter")
         clear_filter_btn = QPushButton(text="Clear")
 
-        filter_layout.addWidget(filter_text_edit)
+        filter_btn.clicked.connect(lambda: filter_data())
+        clear_filter_btn.clicked.connect(lambda: clear_filter())
+
+        filter_layout.addWidget(filter_line_edit)
         filter_layout.addWidget(filter_btn)
         filter_layout.addWidget(clear_filter_btn)
 
         self.page_layout.addWidget(filter_widget)
 
         def filter_data():
-            if filter_text_edit:
-                filtered_data = [row for row in self.data if filter_text_edit.text() in row]
+            filter_text = filter_line_edit.text()
+            if filter_text:
+                filtered_data = [row for row in self.data if any(filter_text.lower() in str(cell).lower() for cell in row)]
                 self.data = filtered_data
+                self.update_row_column_count(True)
+                self.refresh_table(True)
+                filter_line_edit.clear()
+        
+        def clear_filter():
+            self.data = self._database.get_stock_data()
+            self.update_row_column_count(True)
+            self.refresh_table(True)
+            filter_line_edit.clear()
 
         
 
@@ -72,23 +85,27 @@ class StockTable(QWidget):
         self.header.sectionClicked.connect(self.on_header_click)
 
     def on_header_click(self, section_index):
-        print(self.table_widget.horizontalHeaderItem(section_index).text())
+        pass
 
 
-    def refresh_table(self):
-        self.data = self._database.get_stock_data()
+    def refresh_table(self, filter=False):
+        if not filter:
+            self.data = self._database.get_stock_data()
         # Add data to table
         for row_index, row_data in enumerate(self.data):
             for col_index, cell_data in enumerate(row_data):
                 self.table_widget.setItem(row_index, col_index, QTableWidgetItem(str(cell_data)))
 
-    def update_row_column_count(self):
+    def update_row_column_count(self, row_column_count=False):
         self._row_count = len(self.data)
+        self._column_count = 0
         for row in self.data:
             for column in row:
                 self._column_count += 1
             break
-
+        if row_column_count:
+            self.table_widget.setRowCount(self._row_count)
+            self.table_widget.setColumnCount(self._column_count)
 
 
         
