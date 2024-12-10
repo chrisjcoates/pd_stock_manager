@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QTableWidget, QTableWidgetItem, QHBoxLayout
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLineEdit, QTableWidget, QTableWidgetItem, QHBoxLayout
 from PySide6.QtCore import Qt
 from database.database import Database
 
@@ -17,6 +17,7 @@ class StockTable(QWidget):
 
         # Add widgets to layout
         self.create_button_widgets()
+        self.create_text_filter_widget()
         self.create_table_widget()
 
         
@@ -34,6 +35,27 @@ class StockTable(QWidget):
         button_layout.addWidget(delete_button)
 
         self.page_layout.addWidget(button_widget)
+
+    def create_text_filter_widget(self):
+        
+        filter_widget = QWidget()
+        filter_layout = QHBoxLayout(filter_widget)
+
+        filter_text_edit = QLineEdit()
+        filter_btn= QPushButton(text="Filter")
+        clear_filter_btn = QPushButton(text="Clear")
+
+        filter_layout.addWidget(filter_text_edit)
+        filter_layout.addWidget(filter_btn)
+        filter_layout.addWidget(clear_filter_btn)
+
+        self.page_layout.addWidget(filter_widget)
+
+        def filter_data():
+            if filter_text_edit:
+                filtered_data = [row for row in self.data if filter_text_edit.text() in row]
+                self.data = filtered_data
+
         
 
     def create_table_widget(self):
@@ -44,6 +66,13 @@ class StockTable(QWidget):
         self.table_widget.setColumnCount(self._column_count)
         # Set table column header labels
         self.table_widget.setHorizontalHeaderLabels(["ID", "Name", "Description", "Qty", "Re-Order", "Supplier", "Location", "Bay", "Value"])
+
+        # Get the table header and set a click event to it
+        self.header = self.table_widget.horizontalHeader()
+        self.header.sectionClicked.connect(self.on_header_click)
+
+    def on_header_click(self, section_index):
+        print(self.table_widget.horizontalHeaderItem(section_index).text())
 
 
     def refresh_table(self):
