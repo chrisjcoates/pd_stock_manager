@@ -2,6 +2,7 @@ from PySide6.QtWidgets import QMainWindow, QStackedWidget, QVBoxLayout, QWidget,
 from PySide6.QtCore import Qt
 from pages.home import Home
 from pages.stock_table import StockTable
+from pages.options import OptionsWindow
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -29,6 +30,7 @@ class MainWindow(QMainWindow):
         # Create button click events
         self.home_btn.clicked.connect(lambda: self.switch_page(0))
         self.stock_btn.clicked.connect(lambda: self.switch_page(1))
+        self.options_btn.clicked.connect(lambda: self.switch_page(4))
 
         self.nav_bar.addWidget(self.home_btn)
         self.nav_bar.addWidget(self.stock_btn)
@@ -41,6 +43,9 @@ class MainWindow(QMainWindow):
         main_layout.addWidget(self.pages)
         self.pages.addWidget(Home())
         self.pages.addWidget(StockTable())
+        self.pages.addWidget(Home())
+        self.pages.addWidget(Home())
+        self.pages.addWidget(OptionsWindow())
 
     def switch_page(self, index):
         self.pages.setCurrentIndex(index)
