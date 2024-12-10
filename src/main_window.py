@@ -24,6 +24,7 @@ class MainWindow(QMainWindow):
         self.stock_btn = QPushButton(text="Stock")
         self.orders_btn = QPushButton(text="Orders")
         self.reports_btn = QPushButton(text="Reports")
+        self.options_btn = QPushButton(text="Options")
 
         # Create button click events
         self.home_btn.clicked.connect(lambda: self.switch_page(0))
@@ -33,6 +34,7 @@ class MainWindow(QMainWindow):
         self.nav_bar.addWidget(self.stock_btn)
         self.nav_bar.addWidget(self.orders_btn)
         self.nav_bar.addWidget(self.reports_btn)
+        self.nav_bar.addWidget(self.options_btn)
 
         # Stacked widgets for pages
         self.pages = QStackedWidget()
