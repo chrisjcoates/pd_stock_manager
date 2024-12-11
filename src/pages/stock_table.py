@@ -79,7 +79,7 @@ class StockTable(QWidget):
         self.table_widget.setRowCount(self._row_count)
         self.table_widget.setColumnCount(self._column_count)
         # Set table column header labels
-        self.table_widget.setHorizontalHeaderLabels(["ID", "Name", "Description", "Qty", "Re-Order", "Supplier", "Location", "Bay", "Value"])
+        self.table_widget.setHorizontalHeaderLabels(["ID", "Name", "Description", "Product Code", "Qty", "Re-Order", "Supplier", "Location", "Bay", "Value"])
 
         # Get the table header and set a click event to it
         self.header = self.table_widget.horizontalHeader()
