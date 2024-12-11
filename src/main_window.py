@@ -1,8 +1,16 @@
-from PySide6.QtWidgets import QMainWindow, QStackedWidget, QVBoxLayout, QWidget, QPushButton, QToolBar
+from PySide6.QtWidgets import (
+    QMainWindow,
+    QStackedWidget,
+    QVBoxLayout,
+    QWidget,
+    QPushButton,
+    QToolBar,
+)
 from PySide6.QtCore import Qt
 from pages.home import Home
 from pages.stock_table import StockTable
 from pages.options import OptionsWindow
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -51,5 +59,4 @@ class MainWindow(QMainWindow):
         self.pages.setCurrentIndex(index)
         current_page = self.pages.currentWidget()
         if hasattr(current_page, "refresh_table"):
-            current_page.refresh_table()    
-
+            current_page.refresh_table()
