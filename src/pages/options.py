@@ -1,6 +1,14 @@
-from PySide6.QtWidgets import QWidget, QLabel, QLineEdit, QGridLayout, QVBoxLayout, QHBoxLayout
+from PySide6.QtWidgets import (
+    QWidget,
+    QLabel,
+    QLineEdit,
+    QGridLayout,
+    QVBoxLayout,
+    QHBoxLayout,
+)
 from PySide6.QtCore import Qt
 import json
+
 
 class OptionsWindow(QWidget):
     def __init__(self):
@@ -28,7 +36,6 @@ class OptionsWindow(QWidget):
         pass_label = QLabel(text="Password")
         pass_input = QLineEdit()
 
-
         grid_layout.addWidget(host_label, 0, 0)
         grid_layout.addWidget(host_input, 0, 1)
 
@@ -43,6 +50,5 @@ class OptionsWindow(QWidget):
 
         grid_layout.addWidget(pass_label, 4, 0)
         grid_layout.addWidget(pass_input, 4, 1)
-
 
         page_layout.addWidget(grid_widget)
