@@ -1,6 +1,15 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLineEdit, QTableWidget, QTableWidgetItem, QHBoxLayout
+from PySide6.QtWidgets import (
+    QWidget,
+    QVBoxLayout,
+    QPushButton,
+    QLineEdit,
+    QTableWidget,
+    QTableWidgetItem,
+    QHBoxLayout,
+)
 from PySide6.QtCore import Qt
 from database.database import Database
+
 
 class StockTable(QWidget):
     def __init__(self):
@@ -16,14 +25,27 @@ class StockTable(QWidget):
             self.data = self._database.get_stock_data()
             self.update_row_column_count()
         else:
-            self._database = None
+            set_to_local = input(
+                "Do you want to connect to the local database? (y/n): "
+            )
+            if set_to_local.lower() == "y":
+                try:
+                    self._database = Database()
+                    self._database.set_db_to_local()
+                    print("data base set to local.")
+                    self.data = self._database.get_stock_data()
+                    self.update_row_column_count()
+                except:
+                    print("cant connect to local db.")
+                    self._database = None
+            else:
+                self._database = None
 
         # Add widgets to layout
         self.create_button_widgets()
         self.create_text_filter_widget()
         self.create_table_widget()
 
-        
     def create_button_widgets(self):
         # Create button widgets
         button_widget = QWidget()
@@ -40,13 +62,13 @@ class StockTable(QWidget):
         self.page_layout.addWidget(button_widget)
 
     def create_text_filter_widget(self):
-        
+
         filter_widget = QWidget()
         filter_layout = QHBoxLayout(filter_widget)
 
         filter_line_edit = QLineEdit()
         filter_widget.setMaximumWidth(500)
-        filter_btn= QPushButton(text="Filter")
+        filter_btn = QPushButton(text="Filter")
         clear_filter_btn = QPushButton(text="Clear")
 
         filter_btn.clicked.connect(lambda: filter_data())
@@ -61,19 +83,23 @@ class StockTable(QWidget):
         def filter_data():
             filter_text = filter_line_edit.text()
             if filter_text:
-                filtered_data = [row for row in self.data if any(filter_text.lower() in str(cell).lower() for cell in row)]
+                filtered_data = [
+                    row
+                    for row in self.data
+                    if any(filter_text.lower() in str(cell).lower() for cell in row)
+                ]
                 self.data = filtered_data
                 self.update_row_column_count(True)
                 self.refresh_table(True)
                 filter_line_edit.clear()
-        
+                print("Data filtered.")
+
         def clear_filter():
             self.data = self._database.get_stock_data()
             self.update_row_column_count(True)
             self.refresh_table(True)
             filter_line_edit.clear()
-
-        
+            print("Data un-filtered.")
 
     def create_table_widget(self):
         # Create table widget
@@ -82,7 +108,20 @@ class StockTable(QWidget):
         self.table_widget.setRowCount(self._row_count)
         self.table_widget.setColumnCount(self._column_count)
         # Set table column header labels
-        self.table_widget.setHorizontalHeaderLabels(["ID", "Name", "Description", "Product Code", "Qty", "Re-Order", "Supplier", "Location", "Bay", "Value"])
+        self.table_widget.setHorizontalHeaderLabels(
+            [
+                "ID",
+                "Name",
+                "Description",
+                "Product Code",
+                "Qty",
+                "Re-Order",
+                "Supplier",
+                "Location",
+                "Bay",
+                "Value",
+            ]
+        )
 
         # Get the table header and set a click event to it
         self.header = self.table_widget.horizontalHeader()
@@ -91,15 +130,16 @@ class StockTable(QWidget):
     def on_header_click(self, section_index):
         pass
 
-
     def refresh_table(self, filter=False):
-        if not self._database == None:
+        if self._database != None:
             if not filter:
                 self.data = self._database.get_stock_data()
             # Add data to table
             for row_index, row_data in enumerate(self.data):
                 for col_index, cell_data in enumerate(row_data):
-                    self.table_widget.setItem(row_index, col_index, QTableWidgetItem(str(cell_data)))
+                    self.table_widget.setItem(
+                        row_index, col_index, QTableWidgetItem(str(cell_data))
+                    )
 
     def update_row_column_count(self, row_column_count=False):
         self._row_count = len(self.data)
@@ -111,6 +151,3 @@ class StockTable(QWidget):
         if row_column_count:
             self.table_widget.setRowCount(self._row_count)
             self.table_widget.setColumnCount(self._column_count)
-
-
-        
