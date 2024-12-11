@@ -1,25 +1,27 @@
 import psycopg2
 import json
 
+
 class Database:
     def __init__(self):
 
         _db_details = self.get_db_details()
-        
-        self.HOST = _db_details["host"] # work
-        self.PORT = _db_details["port"] # work
+
+        self.HOST = _db_details["host"]  # work
+        self.PORT = _db_details["port"]  # work
         self.DB_NAME = _db_details["db_name"]
         self.USER = _db_details["user"]
-        self.PASSWORD = _db_details["password"] # work
-        #self.HOST = "localhost"  # home
-        #self.PORT = "5433" # home
-        #self.USER = "postgres" # home
-        #self.PASSWORD = "" # home
+        self.PASSWORD = _db_details["password"]  # work
+        # self.HOST = "localhost"  # home
+        # self.PORT = "5433" # home
+        # self.USER = "postgres" # home
+        # self.PASSWORD = "" # home
 
         self.conn = None
         self.cursor = None
 
     def get_db_details(self):
+        data = False
         try:
             with open("src/settings/settings.json", "r") as file:
                 data = json.load(file)
@@ -27,7 +29,21 @@ class Database:
             print(e)
 
         if data:
-            return data['database']
+            return data["database"]
+
+    def set_db_to_local(self):
+        data = {
+            "host": "localhost",
+            "port": "5433",
+            "db_name": "pd_database",
+            "user": "postgres",
+            "password": "",
+        }
+        self.HOST = data["host"]
+        self.PORT = data["port"]
+        self.DB_NAME = data["db_name"]
+        self.USER = data["user"]
+        self.PASSWORD = data["password"]
 
     def check_db_connection(self):
         try:
@@ -37,13 +53,12 @@ class Database:
                 dbname=self.DB_NAME,
                 user=self.USER,
                 password=self.PASSWORD,
-                connect_timeout=5
+                connect_timeout=5,
             )
             return True
         except Exception as e:
             return False
-        
-        
+
     def connect_to_db(self):
         try:
             print("attempting database connection...")
@@ -53,7 +68,7 @@ class Database:
                 dbname=self.DB_NAME,
                 user=self.USER,
                 password=self.PASSWORD,
-                connect_timeout=5
+                connect_timeout=5,
             )
             print("connecting...")
 
@@ -72,7 +87,7 @@ class Database:
         print(f"Disconnected from database {self.DB_NAME}")
 
     def get_stock_data(self):
-        
+
         sql_query = """
         SELECT stock.stockID, product.productName, productDescription, product.productCode, stock.stockQty, stock.reOrderQty, supplier.supplierName, locations.locationName, bays.bayName, CONCAT('£', product.productPrice * stock.stockQty)
         FROM stock
