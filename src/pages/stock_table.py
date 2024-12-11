@@ -7,13 +7,16 @@ class StockTable(QWidget):
         super().__init__()
 
         self.page_layout = QVBoxLayout(self)
-        self._database = Database()
 
         # Set table attributes & get table data
         self._row_count = 0
         self._column_count = 0
-        self.data = self._database.get_stock_data()
-        self.update_row_column_count()
+        if Database().check_db_connection():
+            self._database = Database()
+            self.data = self._database.get_stock_data()
+            self.update_row_column_count()
+        else:
+            self._database = None
 
         # Add widgets to layout
         self.create_button_widgets()
@@ -90,12 +93,13 @@ class StockTable(QWidget):
 
 
     def refresh_table(self, filter=False):
-        if not filter:
-            self.data = self._database.get_stock_data()
-        # Add data to table
-        for row_index, row_data in enumerate(self.data):
-            for col_index, cell_data in enumerate(row_data):
-                self.table_widget.setItem(row_index, col_index, QTableWidgetItem(str(cell_data)))
+        if not self._database == None:
+            if not filter:
+                self.data = self._database.get_stock_data()
+            # Add data to table
+            for row_index, row_data in enumerate(self.data):
+                for col_index, cell_data in enumerate(row_data):
+                    self.table_widget.setItem(row_index, col_index, QTableWidgetItem(str(cell_data)))
 
     def update_row_column_count(self, row_column_count=False):
         self._row_count = len(self.data)
