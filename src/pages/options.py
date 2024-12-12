@@ -14,41 +14,48 @@ class OptionsWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        page_layout = QVBoxLayout(self)
+        # Set the layout of the options screen
+        self.page_layout = QVBoxLayout(self)
 
+        # Add database details to screen
+        self.database_details()
+
+        # Add strech to the layout
+        # after adding widgets to layout to anchor them to the top of the screen
+        self.page_layout.addStretch()
+
+    def database_details(self):
+        """Creates a widget to store and edit the database connection details"""
+
+        # Create the main widget
         grid_widget = QWidget()
-        grid_widget.setMaximumWidth(400)
+        grid_widget.setFixedSize(300, 300)
+        grid_widget.setStyleSheet("background: red;")
+        # Create the widgets layout
         grid_layout = QGridLayout()
         grid_widget.setLayout(grid_layout)
-
+        # Create labels
         host_label = QLabel(text="Host")
-        host_input = QLineEdit()
-
         port_label = QLabel(text="Port")
-        port_input = QLineEdit()
-
         db_name_label = QLabel(text="Database Name")
-        db_name_input = QLineEdit()
-
         user_label = QLabel(text="User Name")
-        user_input = QLineEdit()
-
         pass_label = QLabel(text="Password")
+        # Create text inputs
+        host_input = QLineEdit()
+        port_input = QLineEdit()
+        db_name_input = QLineEdit()
+        user_input = QLineEdit()
         pass_input = QLineEdit()
-
+        # Add controls to the layout
         grid_layout.addWidget(host_label, 0, 0)
         grid_layout.addWidget(host_input, 0, 1)
-
         grid_layout.addWidget(port_label, 1, 0)
         grid_layout.addWidget(port_input, 1, 1)
-
         grid_layout.addWidget(db_name_label, 2, 0)
         grid_layout.addWidget(db_name_input, 2, 1)
-
         grid_layout.addWidget(user_label, 3, 0)
         grid_layout.addWidget(user_input, 3, 1)
-
         grid_layout.addWidget(pass_label, 4, 0)
         grid_layout.addWidget(pass_input, 4, 1)
-
-        page_layout.addWidget(grid_widget)
+        # Add grid widget to main class widget
+        self.page_layout.addWidget(grid_widget)
