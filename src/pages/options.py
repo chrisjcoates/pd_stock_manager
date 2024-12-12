@@ -30,6 +30,19 @@ class OptionsWindow(QWidget):
         # Create the main widget
         grid_widget = QWidget()
         grid_widget.setFixedSize(300, 300)
+        grid_widget.setStyleSheet(
+            """QWidget {
+                            border: 2px groove grey;
+                }
+                QLabel {
+                            border: none;
+            
+                        }
+                QLineEdit {
+                            border: none;
+                }
+                            """
+        )
         # Create the widgets layout
         grid_layout = QGridLayout()
         grid_widget.setLayout(grid_layout)
