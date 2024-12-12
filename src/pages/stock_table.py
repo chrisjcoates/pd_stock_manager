@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 from database.database import Database
+from input_forms.add_stock import AddStock
 
 
 class StockTable(QWidget):
@@ -43,6 +44,9 @@ class StockTable(QWidget):
         button_layout.addWidget(edit_button)
         button_layout.addWidget(delete_button)
 
+        # button binds
+        add_button.clicked.connect(self.open_add_item_form)
+
         self.page_layout.addWidget(button_widget)
 
     def create_text_filter_widget(self):
@@ -74,9 +78,10 @@ class StockTable(QWidget):
                         if any(filter_text.lower() in str(cell).lower() for cell in row)
                     ]
                     self.data = filtered_data
-                    self.update_row_column_count(True)
-                    self.refresh_table(True)
-                    print("Data filtered.")
+                    if len(self.data) > 0:
+                        self.update_row_column_count(True)
+                        self.refresh_table(True)
+                        print("Data filtered.")
             except Exception as e:
                 print(e)
 
@@ -157,3 +162,7 @@ class StockTable(QWidget):
                 self.table_widget.setColumnCount(self._column_count)
         except Exception as e:
             print(e)
+
+    def open_add_item_form(self):
+        self.add_item_form = AddStock()
+        self.add_item_form.show()
