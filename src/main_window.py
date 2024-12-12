@@ -60,3 +60,5 @@ class MainWindow(QMainWindow):
         current_page = self.pages.currentWidget()
         if hasattr(current_page, "refresh_table"):
             current_page.refresh_table()
+        if hasattr(current_page, "read_database_settings"):
+            current_page.read_database_settings()
