@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (
     QPushButton,
 )
 from PySide6.QtCore import Qt
-import json
+from classes.functions import read_settings_json
 
 
 class OptionsWindow(QWidget):
@@ -31,23 +31,6 @@ class OptionsWindow(QWidget):
         # Create the main widget
         grid_widget = QWidget()
         grid_widget.setFixedSize(300, 250)
-        # Create boarder around widget
-        # grid_widget.setStyleSheet(
-        #     """QWidget {
-        #                     border: 2px groove grey;
-        #         }
-        #         QLabel {
-        #                     border: none;
-
-        #                 }
-        #         QLineEdit {
-        #                     border: none;
-        #         }
-        #         QPushButton {
-        #                     border: none;
-        #         }
-        #                     """
-        # )
         # Create the widgets layout
         grid_layout = QGridLayout()
         grid_widget.setLayout(grid_layout)
@@ -59,25 +42,36 @@ class OptionsWindow(QWidget):
         user_label = QLabel(text="User Name")
         pass_label = QLabel(text="Password")
         # Create text inputs
-        host_input = QLineEdit()
-        port_input = QLineEdit()
-        db_name_input = QLineEdit()
-        user_input = QLineEdit()
-        pass_input = QLineEdit()
+        self.host_input = QLineEdit()
+        self.port_input = QLineEdit()
+        self.db_name_input = QLineEdit()
+        self.user_input = QLineEdit()
+        self.pass_input = QLineEdit()
         # Create save button
         db_save_btn = QPushButton(text="Save")
         # Add controls to the layout
         grid_layout.addWidget(host_label, 0, 0)
-        grid_layout.addWidget(host_input, 0, 1)
+        grid_layout.addWidget(self.host_input, 0, 1)
         grid_layout.addWidget(port_label, 1, 0)
-        grid_layout.addWidget(port_input, 1, 1)
+        grid_layout.addWidget(self.port_input, 1, 1)
         grid_layout.addWidget(db_name_label, 2, 0)
-        grid_layout.addWidget(db_name_input, 2, 1)
+        grid_layout.addWidget(self.db_name_input, 2, 1)
         grid_layout.addWidget(user_label, 3, 0)
-        grid_layout.addWidget(user_input, 3, 1)
+        grid_layout.addWidget(self.user_input, 3, 1)
         grid_layout.addWidget(pass_label, 4, 0)
-        grid_layout.addWidget(pass_input, 4, 1)
+        grid_layout.addWidget(self.pass_input, 4, 1)
         grid_layout.addWidget(db_save_btn, 5, 1)
+        # set text from file
+        self.read_database_settings()
         # Add grid widget to main class widget
         self.page_layout.addWidget(title_label)
         self.page_layout.addWidget(grid_widget)
+
+    def read_database_settings(self):
+        data = read_settings_json("src/settings/settings.json")
+
+        self.host_input.setText(data["host"])
+        self.port_input.setText(data["port"])
+        self.db_name_input.setText(data["db_name"])
+        self.user_input.setText(data["user"])
+        self.pass_input.setText(data["password"])
