@@ -5,6 +5,7 @@ from PySide6.QtWidgets import (
     QGridLayout,
     QVBoxLayout,
     QHBoxLayout,
+    QPushButton,
 )
 from PySide6.QtCore import Qt
 import json
@@ -29,20 +30,24 @@ class OptionsWindow(QWidget):
 
         # Create the main widget
         grid_widget = QWidget()
-        grid_widget.setFixedSize(300, 300)
-        grid_widget.setStyleSheet(
-            """QWidget {
-                            border: 2px groove grey;
-                }
-                QLabel {
-                            border: none;
-            
-                        }
-                QLineEdit {
-                            border: none;
-                }
-                            """
-        )
+        grid_widget.setFixedSize(300, 250)
+        # Create boarder around widget
+        # grid_widget.setStyleSheet(
+        #     """QWidget {
+        #                     border: 2px groove grey;
+        #         }
+        #         QLabel {
+        #                     border: none;
+
+        #                 }
+        #         QLineEdit {
+        #                     border: none;
+        #         }
+        #         QPushButton {
+        #                     border: none;
+        #         }
+        #                     """
+        # )
         # Create the widgets layout
         grid_layout = QGridLayout()
         grid_widget.setLayout(grid_layout)
@@ -59,6 +64,8 @@ class OptionsWindow(QWidget):
         db_name_input = QLineEdit()
         user_input = QLineEdit()
         pass_input = QLineEdit()
+        # Create save button
+        db_save_btn = QPushButton(text="Save")
         # Add controls to the layout
         grid_layout.addWidget(host_label, 0, 0)
         grid_layout.addWidget(host_input, 0, 1)
@@ -70,6 +77,7 @@ class OptionsWindow(QWidget):
         grid_layout.addWidget(user_input, 3, 1)
         grid_layout.addWidget(pass_label, 4, 0)
         grid_layout.addWidget(pass_input, 4, 1)
+        grid_layout.addWidget(db_save_btn, 5, 1)
         # Add grid widget to main class widget
         self.page_layout.addWidget(title_label)
         self.page_layout.addWidget(grid_widget)
