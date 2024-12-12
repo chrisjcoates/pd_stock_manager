@@ -17,7 +17,7 @@ def try_connect_to_db():
     they want to run the application without connecting to the main database."""
 
     # check the database connection
-    database = Database().connect_to_db()
+    database = Database().check_db_connection()
     # if connection is found run application
     if database == True:
         run_app()
