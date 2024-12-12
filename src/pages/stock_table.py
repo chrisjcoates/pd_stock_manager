@@ -20,26 +20,10 @@ class StockTable(QWidget):
         # Set table attributes & get table data
         self._row_count = 0
         self._column_count = 0
-        if Database().check_db_connection():
-            self._database = Database()
-            self.data = self._database.get_stock_data()
-            self.update_row_column_count()
-        else:
-            set_to_local = input(
-                "Do you want to connect to the local database? (y/n): "
-            )
-            if set_to_local.lower() == "y":
-                try:
-                    self._database = Database()
-                    self._database.set_db_to_local()
-                    print("data base set to local.")
-                    self.data = self._database.get_stock_data()
-                    self.update_row_column_count()
-                except:
-                    print("cant connect to local db.")
-                    self._database = None
-            else:
-                self._database = None
+
+        self._database = Database()
+        self.data = self._database.get_stock_data()
+        self.update_row_column_count()
 
         # Add widgets to layout
         self.create_button_widgets()
@@ -82,24 +66,29 @@ class StockTable(QWidget):
 
         def filter_data():
             filter_text = filter_line_edit.text()
-            if filter_text:
-                filtered_data = [
-                    row
-                    for row in self.data
-                    if any(filter_text.lower() in str(cell).lower() for cell in row)
-                ]
-                self.data = filtered_data
+            try:
+                if filter_text:
+                    filtered_data = [
+                        row
+                        for row in self.data
+                        if any(filter_text.lower() in str(cell).lower() for cell in row)
+                    ]
+                    self.data = filtered_data
+                    self.update_row_column_count(True)
+                    self.refresh_table(True)
+                    print("Data filtered.")
+            except Exception as e:
+                print(e)
+
+        def clear_filter():
+            try:
+                self.data = self._database.get_stock_data()
                 self.update_row_column_count(True)
                 self.refresh_table(True)
                 filter_line_edit.clear()
-                print("Data filtered.")
-
-        def clear_filter():
-            self.data = self._database.get_stock_data()
-            self.update_row_column_count(True)
-            self.refresh_table(True)
-            filter_line_edit.clear()
-            print("Data un-filtered.")
+                print("Data un-filtered.")
+            except Exception as e:
+                print(e)
 
     def create_table_widget(self):
         # Create table widget
@@ -132,22 +121,32 @@ class StockTable(QWidget):
 
     def refresh_table(self, filter=False):
         if self._database != None:
-            if not filter:
+            if filter == False:
+                self._database.update_db_connection()
                 self.data = self._database.get_stock_data()
-            # Add data to table
+                print("Data retrieved")
+                print(self.data)
+                self.update_row_column_count()
+        # Add data to table
+        try:
             for row_index, row_data in enumerate(self.data):
                 for col_index, cell_data in enumerate(row_data):
                     self.table_widget.setItem(
                         row_index, col_index, QTableWidgetItem(str(cell_data))
                     )
+        except Exception as e:
+            print(e)
 
     def update_row_column_count(self, row_column_count=False):
-        self._row_count = len(self.data)
-        self._column_count = 0
-        for row in self.data:
-            for column in row:
-                self._column_count += 1
-            break
-        if row_column_count:
-            self.table_widget.setRowCount(self._row_count)
-            self.table_widget.setColumnCount(self._column_count)
+        try:
+            self._row_count = len(self.data)
+            self._column_count = 0
+            for row in self.data:
+                for column in row:
+                    self._column_count += 1
+                break
+            if row_column_count:
+                self.table_widget.setRowCount(self._row_count)
+                self.table_widget.setColumnCount(self._column_count)
+        except Exception as e:
+            print(e)
