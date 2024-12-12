@@ -30,11 +30,11 @@ class OptionsWindow(QWidget):
         # Create the main widget
         grid_widget = QWidget()
         grid_widget.setFixedSize(300, 300)
-        grid_widget.setStyleSheet("background: red;")
         # Create the widgets layout
         grid_layout = QGridLayout()
         grid_widget.setLayout(grid_layout)
         # Create labels
+        title_label = QLabel(text="Database Details")
         host_label = QLabel(text="Host")
         port_label = QLabel(text="Port")
         db_name_label = QLabel(text="Database Name")
@@ -58,4 +58,5 @@ class OptionsWindow(QWidget):
         grid_layout.addWidget(pass_label, 4, 0)
         grid_layout.addWidget(pass_input, 4, 1)
         # Add grid widget to main class widget
+        self.page_layout.addWidget(title_label)
         self.page_layout.addWidget(grid_widget)
