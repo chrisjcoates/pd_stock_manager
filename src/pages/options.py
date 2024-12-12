@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (
     QPushButton,
 )
 from PySide6.QtCore import Qt
-from classes.functions import read_settings_json
+from classes.functions import read_settings_json, write_settings_json
 
 
 class OptionsWindow(QWidget):
@@ -61,6 +61,8 @@ class OptionsWindow(QWidget):
         grid_layout.addWidget(pass_label, 4, 0)
         grid_layout.addWidget(self.pass_input, 4, 1)
         grid_layout.addWidget(db_save_btn, 5, 1)
+        # bind function to button press
+        db_save_btn.clicked.connect(self.update_db_settings)
         # set text from file
         self.read_database_settings()
         # Add grid widget to main class widget
@@ -70,8 +72,19 @@ class OptionsWindow(QWidget):
     def read_database_settings(self):
         data = read_settings_json("src/settings/settings.json")
 
-        self.host_input.setText(data["host"])
-        self.port_input.setText(data["port"])
-        self.db_name_input.setText(data["db_name"])
-        self.user_input.setText(data["user"])
-        self.pass_input.setText(data["password"])
+        self.host_input.setText(data["database"]["host"])
+        self.port_input.setText(data["database"]["port"])
+        self.db_name_input.setText(data["database"]["db_name"])
+        self.user_input.setText(data["database"]["user"])
+        self.pass_input.setText(data["database"]["password"])
+
+    def update_db_settings(self):
+        host = self.host_input.text()
+        port = self.port_input.text()
+        db_name = self.db_name_input.text()
+        user = self.user_input.text()
+        password = self.pass_input.text()
+
+        write_settings_json(
+            "src/settings/settings.json", host, port, db_name, user, password
+        )
