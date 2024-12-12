@@ -116,6 +116,14 @@ class StockTable(QWidget):
         self.header = self.table_widget.horizontalHeader()
         self.header.sectionClicked.connect(self.on_header_click)
 
+        self.table_widget.setColumnWidth(0, 50)
+        self.table_widget.setColumnWidth(1, 200)
+        self.table_widget.setColumnWidth(2, 200)
+        self.table_widget.setColumnWidth(3, 125)
+        self.table_widget.setColumnWidth(4, 100)
+        self.table_widget.setColumnWidth(5, 100)
+        self.table_widget.setColumnWidth(6, 125)
+
     def on_header_click(self, section_index):
         pass
 
@@ -125,7 +133,6 @@ class StockTable(QWidget):
                 self._database.update_db_connection()
                 self.data = self._database.get_stock_data()
                 print("Data retrieved")
-                print(self.data)
                 self.update_row_column_count()
         # Add data to table
         try:
