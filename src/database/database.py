@@ -39,20 +39,6 @@ class Database:
         if data:
             return data["database"]
 
-    def set_db_to_local(self):
-        data = {
-            "host": "localhost",
-            "port": "5433",
-            "db_name": "pd_database",
-            "user": "postgres",
-            "password": "",
-        }
-        self.HOST = data["host"]
-        self.PORT = data["port"]
-        self.DB_NAME = data["db_name"]
-        self.USER = data["user"]
-        self.PASSWORD = data["password"]
-
     def check_db_connection(self):
         try:
             self.conn = psycopg2.connect(
@@ -116,3 +102,19 @@ class Database:
 
         if data:
             return data
+
+    def get_locations(self):
+
+        self.connect_to_db()
+
+        sql_query = """
+        SELECT * FROM locations;
+        """
+        try:
+            self.cursor.execute(sql_query)
+
+            data = self.cursor.fetchall()
+        except Exception as e:
+            print(e)
+
+        return data
