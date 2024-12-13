@@ -7,11 +7,13 @@ from PySide6.QtWidgets import (
     QDoubleSpinBox,
     QComboBox,
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal
 from database.database import Database
 
 
 class AddProduct(QWidget):
+    closed_signal = Signal()
+
     def __init__(self):
         super().__init__()
 
@@ -21,6 +23,10 @@ class AddProduct(QWidget):
         self.setWindowModality(Qt.ApplicationModal)
 
         self.create_widgets()
+
+    def closeEvent(self, event):
+        self.closed_signal.emit()
+        event.accept()
 
     def create_widgets(self):
         self.name_input = QLineEdit()
@@ -113,3 +119,5 @@ class AddProduct(QWidget):
             qty=qty,
             reorder=reorder,
         )
+
+        self.destroy()
