@@ -31,7 +31,14 @@ class AddStock(QWidget):
         qty_input.setMaximum(9999)
 
         # Create supplier combo box
-        sup_input = QComboBox()
+        self.sup_input = QComboBox()
+        # Get suppliers from database
+        suppliers = Database().get_suppliers()
+        # Only get the first 2 columns (id, name)
+        suppliers = [row[0:2] for row in suppliers]
+        # Add values to combo box
+        for sup_id, sup_name in suppliers:
+            self.sup_input.addItem(sup_name, userData=sup_id)
 
         # Create location combo box
         self.loc_input = QComboBox()
@@ -63,7 +70,7 @@ class AddStock(QWidget):
         self.page_layout.addRow("Product Code: ", prod_code_input)
         self.page_layout.addRow("Qty: ", qty_input)
         self.page_layout.addRow("Re-Order Qty: ", re_order_input)
-        self.page_layout.addRow("Supplier: ", sup_input)
+        self.page_layout.addRow("Supplier: ", self.sup_input)
         self.page_layout.addRow("Location: ", self.loc_input)
         self.page_layout.addRow("Bay: ", bay_input)
         self.page_layout.addRow("Price: ", price_input)
