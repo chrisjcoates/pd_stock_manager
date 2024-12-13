@@ -142,3 +142,38 @@ class Database:
         self.disconnect_from_db()
 
         return data
+
+    def get_bays(self):
+        data = None
+
+        self.connect_to_db()
+
+        sql_query = """
+        SELECT * FROM bays;
+        """
+
+        try:
+            self.cursor.execute(sql_query)
+
+            data = self.cursor.fetchall()
+        except Exception as e:
+            print(e)
+
+        self.disconnect_from_db()
+
+        return data
+
+    def insert_new_product(self, name, desc, code, price, sup_id):
+
+        self.connect_to_db()
+
+        sql_product = """
+        INSERT INTO product (productName, productDescription, productCode, productPrice, supplierID)
+        VALUES (%(name)s, %(desc)s, %(code)s, %(price)s, %(sup_id)s)
+        """
+        try:
+            self.cursor.execute(sql_product, (name, desc, code, price, sup_id))
+            self.conn.commit()
+            print("Insert successful")
+        except Exception as e:
+            print(e)
