@@ -88,8 +88,9 @@ class StockTable(QWidget):
                     # update row and column count, and refresh table
                     if len(self.data) > 0:
                         self.update_row_column_count()
-                        self.refresh_table()
+                        self.refresh_table(True)
                         print("Data filtered.")
+                        print(self.data)
             except Exception as e:
                 print(e)
 
@@ -146,15 +147,16 @@ class StockTable(QWidget):
     def on_header_click(self, section_index):
         pass
 
-    def refresh_table(self):
+    def refresh_table(self, filter=None):
         """refreshes the table data by querying the database to get the most upto data data"""
         # Update to db connection to current settings
         self._database.update_db_connection()
-        # set data to the most recent data
-        self.data = self._database.get_stock_data()
-        print("Data retrieved")
-        # update the row and column count
-        self.update_row_column_count()
+        if filter == None:
+            # set data to the most recent data
+            self.data = self._database.get_stock_data()
+            print("Data retrieved")
+            # update the row and column count
+            self.update_row_column_count()
         # Add data to table
         try:
             # Loop though data and add data to table
