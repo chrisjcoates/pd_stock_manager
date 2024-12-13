@@ -46,7 +46,7 @@ class StockTable(QWidget):
         button_layout.addWidget(delete_button)
 
         # button binds
-        add_button.clicked.connect(self.open_add_item_form)
+        add_button.clicked.connect(self.open_add_product_form)
 
         self.page_layout.addWidget(button_widget)
 
