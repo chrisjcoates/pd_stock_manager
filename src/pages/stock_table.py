@@ -40,10 +40,12 @@ class StockTable(QWidget):
         add_button = QPushButton(text="Add Product")
         edit_button = QPushButton(text="Edit")
         delete_button = QPushButton(text="Delete")
+        export_btn = QPushButton(text="Export data")
         # Add buttons to layout
         button_layout.addWidget(add_button)
         button_layout.addWidget(edit_button)
         button_layout.addWidget(delete_button)
+        button_layout.addWidget(export_btn)
 
         # button binds
         add_button.clicked.connect(self.open_add_product_form)
