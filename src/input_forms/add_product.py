@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (
     QSpinBox,
     QDoubleSpinBox,
     QComboBox,
+    QMessageBox,
 )
 from PySide6.QtCore import Qt, Signal
 from database.database import Database
@@ -118,16 +119,32 @@ class AddProduct(QWidget):
         bay_id = int(self.bay_input.currentData()[0])
         price = float(self.price_input.value())
 
-        # Insert the records into the database
-        Database().insert_new_product(
-            name=name,
-            desc=desc,
-            code=code,
-            price=price,
-            sup_id=sup_id,
-            bay_id=bay_id,
-            qty=qty,
-            reorder=reorder,
-        )
+        try:
+            # Insert the records into the database
+            Database().insert_new_product(
+                name=name,
+                desc=desc,
+                code=code,
+                price=price,
+                sup_id=sup_id,
+                bay_id=bay_id,
+                qty=qty,
+                reorder=reorder,
+            )
+
+            # Create message box to tell used record was saved
+            msg = QMessageBox(self)
+            msg.setText("Product record has been created.")
+            msg.setWindowTitle("Message")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec()
+        except Exception as e:
+            print(e)
+            msg = QMessageBox(self)
+            msg.setText(f"Error creating product record, {e}")
+            msg.setWindowTitle("Message")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec()
+
         # destroy the form object(close)
-        self.destroy()
+        self.close()

@@ -186,12 +186,17 @@ class StockTable(QWidget):
             print(e)
 
     def open_add_product_form(self):
+
+        def update_table():
+            self.refresh_table()
+            self.add_product_form.destroy()
+
         """Opens the add product input form
         and adds close event signal to update the table data
         """
         # Creates the product input form
         self.add_product_form = AddProduct()
         # Create an on close signal event to refresh the table data
-        self.add_product_form.closed_signal.connect(self.refresh_table)
+        self.add_product_form.closed_signal.connect(update_table)
         # Open the input form
         self.add_product_form.show()
