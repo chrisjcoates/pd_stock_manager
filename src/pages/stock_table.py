@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 from database.database import Database
-from input_forms.add_stock import AddStock
+from input_forms.add_product import AddProduct
 
 
 class StockTable(QWidget):
@@ -36,7 +36,7 @@ class StockTable(QWidget):
         button_widget = QWidget()
         button_layout = QHBoxLayout(button_widget)
         # Create buttons
-        add_button = QPushButton(text="Add")
+        add_button = QPushButton(text="Add Product")
         edit_button = QPushButton(text="Edit")
         delete_button = QPushButton(text="Delete")
         # Add buttons to layout
@@ -164,5 +164,5 @@ class StockTable(QWidget):
             print(e)
 
     def open_add_item_form(self):
-        self.add_item_form = AddStock()
-        self.add_item_form.show()
+        self.add_product_form = AddProduct()
+        self.add_product_form.show()
