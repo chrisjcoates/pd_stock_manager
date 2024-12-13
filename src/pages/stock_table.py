@@ -21,7 +21,7 @@ class StockTable(QWidget):
         # Set table attributes & get table data
         self._row_count = 0
         self._column_count = 0
-
+        # Set the database object
         self._database = Database()
         self.data = self._database.get_stock_data()
         self.update_row_column_count()
@@ -32,6 +32,7 @@ class StockTable(QWidget):
         self.create_table_widget()
 
     def create_button_widgets(self):
+        """Create button widgets"""
         # Create button widgets
         button_widget = QWidget()
         button_layout = QHBoxLayout(button_widget)
@@ -50,52 +51,65 @@ class StockTable(QWidget):
         self.page_layout.addWidget(button_widget)
 
     def create_text_filter_widget(self):
-
+        # Create filter widget
         filter_widget = QWidget()
         filter_layout = QHBoxLayout(filter_widget)
 
+        # Create filter text box
         filter_line_edit = QLineEdit()
         filter_widget.setMaximumWidth(500)
+        # Create filter / clear button
         filter_btn = QPushButton(text="Filter")
         clear_filter_btn = QPushButton(text="Clear")
-
+        # add button click events
         filter_btn.clicked.connect(lambda: filter_data())
         clear_filter_btn.clicked.connect(lambda: clear_filter())
-
+        # Add the widgets rto the layout
         filter_layout.addWidget(filter_line_edit)
         filter_layout.addWidget(filter_btn)
         filter_layout.addWidget(clear_filter_btn)
-
+        # Add to main class layout
         self.page_layout.addWidget(filter_widget)
 
         def filter_data():
+            """Function to filter the data based on text input value"""
+            # Get filter text
             filter_text = filter_line_edit.text()
             try:
                 if filter_text:
+                    # Loop through each row in data and keep only records that match the filter
                     filtered_data = [
                         row
                         for row in self.data
                         if any(filter_text.lower() in str(cell).lower() for cell in row)
                     ]
+                    # Set the data to filtered data
                     self.data = filtered_data
+                    # update row and column count, and refresh table
                     if len(self.data) > 0:
-                        self.update_row_column_count(True)
+                        self.update_row_column_count()
                         self.refresh_table()
                         print("Data filtered.")
             except Exception as e:
                 print(e)
 
         def clear_filter():
+            """clears the current filter and returns the table data back to normal"""
             try:
+                # get data from database
                 self.data = self._database.get_stock_data()
-                self.update_row_column_count(True)
+                # Update the row and column count
+                self.update_row_column_count()
+                # Refresh the table
                 self.refresh_table()
+                # Clear the filter text
                 filter_line_edit.clear()
                 print("Data un-filtered.")
             except Exception as e:
                 print(e)
 
     def create_table_widget(self):
+        """Creates a table widget"""
         # Create table widget
         self.table_widget = QTableWidget(self)
         self.page_layout.addWidget(self.table_widget)
@@ -120,7 +134,7 @@ class StockTable(QWidget):
         # Get the table header and set a click event to it
         self.header = self.table_widget.horizontalHeader()
         self.header.sectionClicked.connect(self.on_header_click)
-
+        # Set the table column widths
         self.table_widget.setColumnWidth(0, 50)
         self.table_widget.setColumnWidth(1, 200)
         self.table_widget.setColumnWidth(2, 200)
@@ -133,13 +147,17 @@ class StockTable(QWidget):
         pass
 
     def refresh_table(self):
-
+        """refreshes the table data by querying the database to get the most upto data data"""
+        # Update to db connection to current settings
         self._database.update_db_connection()
+        # set data to the most recent data
         self.data = self._database.get_stock_data()
         print("Data retrieved")
+        # update the row and column count
         self.update_row_column_count()
         # Add data to table
         try:
+            # Loop though data and add data to table
             for row_index, row_data in enumerate(self.data):
                 for col_index, cell_data in enumerate(row_data):
                     self.table_widget.setItem(
@@ -148,29 +166,32 @@ class StockTable(QWidget):
         except Exception as e:
             print(e)
 
-    def update_row_column_count(self, row_column_count=False):
+    def update_row_column_count(self):
+        """updates the row and column count of the table widget"""
         try:
+            # set row count to length of data
             self._row_count = len(self.data)
+            # Set column count to 0
             self._column_count = 0
+            # Loop through each row in data and increase column count
             for row in self.data:
                 for column in row:
                     self._column_count += 1
                 break
-            if row_column_count:
-                self.table_widget.setRowCount(self._row_count)
-                self.table_widget.setColumnCount(self._column_count)
+
+            # set the row and column count of the table widget
+            self.table_widget.setRowCount(self._row_count)
+            self.table_widget.setColumnCount(self._column_count)
         except Exception as e:
             print(e)
 
-    def open_add_item_form(self):
-
-        def update_table():
-            self.data = self._database.get_stock_data()
-            self.update_row_column_count(True)
-            self.refresh_table()
-
+    def open_add_product_form(self):
+        """Opens the add product input form
+        and adds close event signal to update the table data
+        """
+        # Creates the product input form
         self.add_product_form = AddProduct()
-
+        # Create an on close signal event to refresh the table data
         self.add_product_form.closed_signal.connect(self.refresh_table)
-
+        # Open the input form
         self.add_product_form.show()

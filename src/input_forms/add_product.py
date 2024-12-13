@@ -29,6 +29,7 @@ class AddProduct(QWidget):
         event.accept()
 
     def create_widgets(self):
+        """Create the widgets for the input form"""
         self.name_input = QLineEdit()
         self.desc_input = QLineEdit()
         self.prod_code_input = QLineEdit()
@@ -72,9 +73,11 @@ class AddProduct(QWidget):
         self.price_input.setSingleStep(0.01)
         self.price_input.setPrefix("£")
 
+        # Create submit button
         submit_button = QPushButton("Submit")
         submit_button.clicked.connect(self.create_product)
 
+        # Add widgets the the grid layout
         self.page_layout.addRow("Product Name: ", self.name_input)
         self.page_layout.addRow("Description: ", self.desc_input)
         self.page_layout.addRow("Product Code: ", self.prod_code_input)
@@ -87,19 +90,25 @@ class AddProduct(QWidget):
         self.page_layout.addRow(submit_button)
 
     def update_bays_combo(self):
+        """update the bays combo box values based on the selection of the location combo box value"""
         self.bay_input.clear()
 
+        # get the bays from the database
         bays = Database().get_bays()
-
+        # Get location id from the location combo box
         loc_id = int(self.loc_input.currentData())
-
+        # filter the bays by the location id
         bays = [row for row in bays if row[3] == loc_id]
-
+        # add the filtered bays to the combo box
         for bay_id, bay_name, bay_desc, loc_id in bays:
             self.bay_input.addItem(bay_name, userData=(bay_id, loc_id))
 
     def create_product(self):
-
+        """
+        Create a product and insert the data into the database,
+        Creates a record in the product table, and the stock table.
+        """
+        # Get the values from the input forms controls
         name = self.name_input.text()
         desc = self.desc_input.text()
         code = self.prod_code_input.text()
@@ -109,6 +118,7 @@ class AddProduct(QWidget):
         bay_id = int(self.bay_input.currentData()[0])
         price = float(self.price_input.value())
 
+        # Insert the records into the database
         Database().insert_new_product(
             name=name,
             desc=desc,
@@ -119,5 +129,5 @@ class AddProduct(QWidget):
             qty=qty,
             reorder=reorder,
         )
-
+        # destroy the form object(close)
         self.destroy()

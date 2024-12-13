@@ -21,7 +21,7 @@ class OptionsWindow(QWidget):
         # Add database details to screen
         self.database_details()
 
-        # Add strech to the layout
+        # Add stretch to the layout
         # after adding widgets to layout to anchor them to the top of the screen
         self.page_layout.addStretch()
 
@@ -70,8 +70,10 @@ class OptionsWindow(QWidget):
         self.page_layout.addWidget(grid_widget)
 
     def read_database_settings(self):
+        # Read the json file
         data = read_settings_json("src/settings/settings.json")
 
+        # Set the database connection settings to the input fields
         self.host_input.setText(data["database"]["host"])
         self.port_input.setText(data["database"]["port"])
         self.db_name_input.setText(data["database"]["db_name"])
@@ -79,12 +81,14 @@ class OptionsWindow(QWidget):
         self.pass_input.setText(data["database"]["password"])
 
     def update_db_settings(self):
+        """Writes updated settings to the jason file"""
+        # Get the input text values
         host = self.host_input.text()
         port = self.port_input.text()
         db_name = self.db_name_input.text()
         user = self.user_input.text()
         password = self.pass_input.text()
-
+        # Write values to the json file
         write_settings_json(
             "src/settings/settings.json", host, port, db_name, user, password
         )

@@ -56,8 +56,14 @@ class MainWindow(QMainWindow):
         self.pages.addWidget(OptionsWindow())
 
     def switch_page(self, index):
+        """
+        Switches the page based on Navigation button selection.
+        Also check for methods and calls them.
+        """
+        # Set page to the index passed into method
         self.pages.setCurrentIndex(index)
         current_page = self.pages.currentWidget()
+        # checks if the page had specified methods
         if hasattr(current_page, "refresh_table"):
             current_page.refresh_table()
         if hasattr(current_page, "read_database_settings"):
