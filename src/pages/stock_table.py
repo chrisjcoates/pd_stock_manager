@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QHBoxLayout,
+    QAbstractItemView,
 )
 from PySide6.QtCore import Qt
 from database.database import Database
@@ -115,6 +116,11 @@ class StockTable(QWidget):
         """Creates a table widget"""
         # Create table widget
         self.table_widget = QTableWidget(self)
+        # remove the row header
+        self.table_widget.verticalHeader().setVisible(False)
+        # Set row highlighting to full row
+        self.table_widget.setSelectionBehavior(QTableWidget.SelectRows)
+        self.table_widget.setSelectionMode(QTableWidget.SingleSelection)
         self.page_layout.addWidget(self.table_widget)
         self.table_widget.setRowCount(self._row_count)
         self.table_widget.setColumnCount(self._column_count)
@@ -144,7 +150,7 @@ class StockTable(QWidget):
         self.table_widget.setColumnWidth(3, 125)
         self.table_widget.setColumnWidth(4, 100)
         self.table_widget.setColumnWidth(5, 100)
-        self.table_widget.setColumnWidth(6, 125)
+        self.table_widget.setColumnWidth(6, 200)
 
     def on_header_click(self, section_index):
         pass
