@@ -163,17 +163,45 @@ class Database:
 
         return data
 
-    def insert_new_product(self, name, desc, code, price, sup_id):
+    def insert_new_product(self, name, desc, code, price, sup_id, bay_id, qty, reorder):
 
         self.connect_to_db()
 
         sql_product = """
         INSERT INTO product (productName, productDescription, productCode, productPrice, supplierID)
         VALUES (%(name)s, %(desc)s, %(code)s, %(price)s, %(sup_id)s)
+        RETURNING productID;
         """
+
+        sql_stock = """
+        INSERT INTO stock (productID, bayID, stockQty, reorderQty)
+        VALUES (%(prod_id)s, %(bay_id)s, %(qty)s, %(reorder)s);
+        """
+
         try:
-            self.cursor.execute(sql_product, (name, desc, code, price, sup_id))
+            print("trying first statement")
+            self.cursor.execute(
+                sql_product,
+                {
+                    "name": name,
+                    "desc": desc,
+                    "code": code,
+                    "price": price,
+                    "sup_id": sup_id,
+                },
+            )
+            print("first statement complete")
+            prod_id = self.cursor.fetchone()
+            prod_id = int(prod_id[0])
+            print("trying first statement")
+            self.cursor.execute(
+                sql_stock,
+                {"prod_id": prod_id, "bay_id": bay_id, "qty": qty, "reorder": reorder},
+            )
+            print("first statement complete")
             self.conn.commit()
             print("Insert successful")
+
         except Exception as e:
+            self.conn.rollback()
             print(e)
