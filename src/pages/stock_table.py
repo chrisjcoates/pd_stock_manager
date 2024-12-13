@@ -80,7 +80,7 @@ class StockTable(QWidget):
                     self.data = filtered_data
                     if len(self.data) > 0:
                         self.update_row_column_count(True)
-                        self.refresh_table(True)
+                        self.refresh_table()
                         print("Data filtered.")
             except Exception as e:
                 print(e)
@@ -89,7 +89,7 @@ class StockTable(QWidget):
             try:
                 self.data = self._database.get_stock_data()
                 self.update_row_column_count(True)
-                self.refresh_table(True)
+                self.refresh_table()
                 filter_line_edit.clear()
                 print("Data un-filtered.")
             except Exception as e:
@@ -132,13 +132,12 @@ class StockTable(QWidget):
     def on_header_click(self, section_index):
         pass
 
-    def refresh_table(self, filter=False):
-        if self._database != None:
-            if filter == False:
-                self._database.update_db_connection()
-                self.data = self._database.get_stock_data()
-                print("Data retrieved")
-                self.update_row_column_count()
+    def refresh_table(self):
+
+        self._database.update_db_connection()
+        self.data = self._database.get_stock_data()
+        print("Data retrieved")
+        self.update_row_column_count()
         # Add data to table
         try:
             for row_index, row_data in enumerate(self.data):
@@ -164,5 +163,14 @@ class StockTable(QWidget):
             print(e)
 
     def open_add_item_form(self):
+
+        def update_table():
+            self.data = self._database.get_stock_data()
+            self.update_row_column_count(True)
+            self.refresh_table()
+
         self.add_product_form = AddProduct()
+
+        self.add_product_form.closed_signal.connect(self.refresh_table)
+
         self.add_product_form.show()
