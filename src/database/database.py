@@ -105,6 +105,8 @@ class Database:
 
     def get_locations(self):
 
+        data = None
+
         self.connect_to_db()
 
         sql_query = """
@@ -116,5 +118,27 @@ class Database:
             data = self.cursor.fetchall()
         except Exception as e:
             print(e)
+
+        self.disconnect_from_db()
+
+        return data
+
+    def get_suppliers(self):
+        data = None
+
+        self.connect_to_db()
+
+        sql_query = """
+        SELECT * FROM supplier;
+        """
+
+        try:
+            self.cursor.execute(sql_query)
+
+            data = self.cursor.fetchall()
+        except Exception as e:
+            print(e)
+
+        self.disconnect_from_db()
 
         return data
