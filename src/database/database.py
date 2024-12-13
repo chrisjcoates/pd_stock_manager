@@ -7,15 +7,11 @@ class Database:
 
         self._db_details = self.get_db_details()
 
-        self.HOST = self._db_details["host"]  # work
-        self.PORT = self._db_details["port"]  # work
+        self.HOST = self._db_details["host"]
+        self.PORT = self._db_details["port"]
         self.DB_NAME = self._db_details["db_name"]
         self.USER = self._db_details["user"]
-        self.PASSWORD = self._db_details["password"]  # work
-        # self.HOST = "localhost"  # home
-        # self.PORT = "5433" # home
-        # self.USER = "postgres" # home
-        # self.PASSWORD = "" # home
+        self.PASSWORD = self._db_details["password"]
 
         self.conn = None
         self.cursor = None
@@ -200,8 +196,9 @@ class Database:
             )
             print("first statement complete")
             self.conn.commit()
-            print("Insert successful")
+            print("Insert successful.")
 
         except Exception as e:
+            print("Insert Failed.")
             self.conn.rollback()
             print(e)
