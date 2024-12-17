@@ -26,6 +26,7 @@ class EditProduct(QWidget):
         self.setWindowModality(Qt.ApplicationModal)
 
         self.create_widgets()
+        self.get_selected_record()
 
     def closeEvent(self, event):
         self.closed_signal.emit()
@@ -107,10 +108,18 @@ class EditProduct(QWidget):
             self.bay_input.addItem(bay_name, userData=(bay_id, loc_id))
 
     def get_selected_record(self):
-        pass
+
+        selected_record = Database().get_stock_data(self.record_id)
+
+        self.name_input.setText(selected_record[0][1])
+        self.desc_input.setText(selected_record[0][2])
+        self.prod_code_input.setText(selected_record[0][3])
+        self.qty_input.setValue(selected_record[0][4])
+        self.re_order_input.setValue(selected_record[0][5])
+        self.sup_input.setCurrentText(selected_record[0][6])
+        self.loc_input.setCurrentText(selected_record[0][7])
+        self.bay_input.setCurrentText(selected_record[0][8])
+        self.price_input.setValue(float(selected_record[0][9][1::]))
 
     def update_product(self):
         pass
-
-        # destroy the form object(close)
-        self.close()
