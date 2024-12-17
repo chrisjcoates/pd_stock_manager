@@ -51,7 +51,7 @@ class StockTable(QWidget):
 
         # button binds
         add_button.clicked.connect(self.open_add_product_form)
-        edit_button.clicked.connect(self.current_record_selected)
+        edit_button.clicked.connect(self.open_edit_product_form)
 
         self.page_layout.addWidget(button_widget)
 
