@@ -12,13 +12,15 @@ from PySide6.QtCore import Qt, Signal
 from database.database import Database
 
 
-class AddProduct(QWidget):
+class EditProduct(QWidget):
     closed_signal = Signal()
 
-    def __init__(self):
+    def __init__(self, record_id):
         super().__init__()
 
         self.setWindowTitle("Edit Product")
+
+        self.record_id = record_id
 
         self.page_layout = QFormLayout(self)
         self.setWindowModality(Qt.ApplicationModal)
@@ -103,6 +105,9 @@ class AddProduct(QWidget):
         # add the filtered bays to the combo box
         for bay_id, bay_name, bay_desc, loc_id in bays:
             self.bay_input.addItem(bay_name, userData=(bay_id, loc_id))
+
+    def get_selected_record(self):
+        pass
 
     def update_product(self):
         pass
