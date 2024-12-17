@@ -50,6 +50,7 @@ class StockTable(QWidget):
 
         # button binds
         add_button.clicked.connect(self.open_add_product_form)
+        edit_button.clicked.connect(self.current_record_selected)
 
         self.page_layout.addWidget(button_widget)
 
@@ -210,3 +211,14 @@ class StockTable(QWidget):
         self.add_product_form.closed_signal.connect(update_table)
         # Open the input form
         self.add_product_form.show()
+
+    def current_record_selected(self):
+        selected_items = self.table_widget.selectedItems()
+        if selected_items:
+            selected_row = selected_items[0].row()
+            record_id_item = self.table_widget.item(selected_row, 0)
+        try:
+            if record_id_item:
+                return int(record_id_item.text())
+        except Exception as e:
+            print(e)
