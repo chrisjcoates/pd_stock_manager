@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 from database.database import Database
 from input_forms.add_product import AddProduct
+from input_forms.edit_product import EditProduct
 
 
 class StockTable(QWidget):
@@ -212,6 +213,24 @@ class StockTable(QWidget):
         # Open the input form
         self.add_product_form.show()
 
+    def open_edit_product_form(self):
+
+        def update_table():
+            self.refresh_table()
+            self.add_product_form.destroy()
+
+        """Opens the edit product input form
+        and adds close event signal to update the table data
+        """
+        # Get the id of the current selected record
+        current_record = self.current_record_selected()
+        # Creates the product input form
+        self.add_product_form = EditProduct(current_record)
+        # Create an on close signal event to refresh the table data
+        self.add_product_form.closed_signal.connect(update_table)
+        # Open the input form
+        self.add_product_form.show()
+
     def current_record_selected(self):
         selected_items = self.table_widget.selectedItems()
         if selected_items:
@@ -219,6 +238,6 @@ class StockTable(QWidget):
             record_id_item = self.table_widget.item(selected_row, 0)
         try:
             if record_id_item:
-                return int(record_id_item.text())
+                return record_id_item.text()
         except Exception as e:
             print(e)
