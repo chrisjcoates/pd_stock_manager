@@ -122,6 +122,9 @@ class Database:
             if data:
                 return data
 
+    def update_product(self):
+        pass
+
     def get_locations(self):
 
         data = None
