@@ -75,29 +75,52 @@ class Database:
         except Exception as e:
             print(e)
 
-    def get_stock_data(self):
+    def get_stock_data(self, id=None):
 
-        sql_query = """
-        SELECT stock.stockID, product.productName, productDescription, product.productCode, stock.stockQty, stock.reOrderQty, supplier.supplierName, locations.locationName, bays.bayName, CONCAT('£', product.productPrice * stock.stockQty)
-        FROM stock
-        INNER JOIN product ON stock.productID = product.productID
-        INNER JOIN supplier ON product.supplierID = supplier.supplierID
-        INNER JOIN bays ON stock.bayID = bays.bayID
-        INNER JOIN locations ON bays.locationID = locations.locationID
-        ORDER BY stock.stockID;
-        """
+        if id:
+            sql_query = """
+            SELECT stock.stockID, product.productName, productDescription, product.productCode, stock.stockQty, stock.reOrderQty, supplier.supplierName, locations.locationName, bays.bayName, CONCAT('£', product.productPrice * stock.stockQty)
+            FROM stock
+            INNER JOIN product ON stock.productID = product.productID
+            INNER JOIN supplier ON product.supplierID = supplier.supplierID
+            INNER JOIN bays ON stock.bayID = bays.bayID
+            INNER JOIN locations ON bays.locationID = locations.locationID
+            WHERE stock.stockID = %s
+            """
 
-        self.connect_to_db()
-        data = None
-        try:
-            self.cursor.execute(sql_query)
-            data = self.cursor.fetchall()
-        except Exception as e:
-            print(f"Error retrieving data from table, {e}")
-        self.disconnect_from_db()
+            self.connect_to_db()
+            data = None
+            try:
+                self.cursor.execute(sql_query, id)
+                data = self.cursor.fetchall()
+            except Exception as e:
+                print(f"Error retrieving data from table, {e}")
+            self.disconnect_from_db()
 
-        if data:
-            return data
+            if data:
+                return data
+        else:
+            sql_query = """
+            SELECT stock.stockID, product.productName, productDescription, product.productCode, stock.stockQty, stock.reOrderQty, supplier.supplierName, locations.locationName, bays.bayName, CONCAT('£', product.productPrice * stock.stockQty)
+            FROM stock
+            INNER JOIN product ON stock.productID = product.productID
+            INNER JOIN supplier ON product.supplierID = supplier.supplierID
+            INNER JOIN bays ON stock.bayID = bays.bayID
+            INNER JOIN locations ON bays.locationID = locations.locationID
+            ORDER BY stock.stockID;
+            """
+
+            self.connect_to_db()
+            data = None
+            try:
+                self.cursor.execute(sql_query)
+                data = self.cursor.fetchall()
+            except Exception as e:
+                print(f"Error retrieving data from table, {e}")
+            self.disconnect_from_db()
+
+            if data:
+                return data
 
     def get_locations(self):
 
