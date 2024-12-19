@@ -122,8 +122,13 @@ class Database:
             if data:
                 return data
 
-    def update_product(self):
-        pass
+    def update_product(
+        self, stock_id, prod_id, name, desc, code, price, sup_id, bay_id, qty, reorder
+    ):
+
+        sql_query = """
+        UPDATE 
+        """
 
     def get_locations(self):
 
