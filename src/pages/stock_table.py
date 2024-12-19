@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QHBoxLayout,
-    QAbstractItemView,
+    QHeaderView,
 )
 from PySide6.QtCore import Qt
 from database.database import Database
@@ -146,9 +146,9 @@ class StockTable(QWidget):
         self.header = self.table_widget.horizontalHeader()
         self.header.sectionClicked.connect(self.on_header_click)
         # Set the table column widths
+        self.header.setSectionResizeMode(1, QHeaderView.Stretch)
+        self.header.setSectionResizeMode(2, QHeaderView.Stretch)
         self.table_widget.setColumnWidth(0, 50)
-        self.table_widget.setColumnWidth(1, 200)
-        self.table_widget.setColumnWidth(2, 200)
         self.table_widget.setColumnWidth(3, 125)
         self.table_widget.setColumnWidth(4, 100)
         self.table_widget.setColumnWidth(5, 100)
