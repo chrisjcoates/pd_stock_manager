@@ -18,11 +18,11 @@ class Database:
 
     def update_db_connection(self):
         self._db_details = self.get_db_details()
-        self.HOST = self._db_details["host"]  # work
-        self.PORT = self._db_details["port"]  # work
+        self.HOST = self._db_details["host"]
+        self.PORT = self._db_details["port"]
         self.DB_NAME = self._db_details["db_name"]
         self.USER = self._db_details["user"]
-        self.PASSWORD = self._db_details["password"]  # work
+        self.PASSWORD = self._db_details["password"]
 
     def get_db_details(self):
         data = False
