@@ -101,7 +101,6 @@ class StockTable(QWidget):
                         self.update_row_column_count()
                         self.refresh_table(True)
                         print("Data filtered.")
-                        print(self.data)
             except Exception as e:
                 print(e)
 
