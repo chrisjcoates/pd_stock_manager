@@ -70,7 +70,11 @@ class StockTable(QWidget):
         filter_btn.clicked.connect(lambda: filter_data())
         clear_filter_btn.clicked.connect(lambda: clear_filter())
         # Add on enter event to text filter
-        filter_line_edit.returnPressed.connect(lambda: filter_data())
+        filter_line_edit.returnPressed.connect(
+            lambda: (
+                filter_data() if len(filter_line_edit.text()) > 0 else clear_filter()
+            )
+        )
         # Add the widgets rto the layout
         filter_layout.addWidget(filter_line_edit)
         filter_layout.addWidget(filter_btn)
