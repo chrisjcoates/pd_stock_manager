@@ -7,6 +7,8 @@ from PySide6.QtWidgets import (
     QDoubleSpinBox,
     QComboBox,
     QMessageBox,
+    QHBoxLayout,
+    QLabel,
 )
 from PySide6.QtCore import Qt, Signal
 from database.database import Database
@@ -21,12 +23,18 @@ class EditProduct(QWidget):
         self.setWindowTitle("Edit Product")
 
         self.record_id = record_id
-
-        self.page_layout = QFormLayout(self)
+        self.main_layout = QHBoxLayout(self)
+        self.page_layout = QFormLayout()
+        self.page_widget = QWidget()
+        self.page_widget.setLayout(self.page_layout)
         self.setWindowModality(Qt.ApplicationModal)
 
         self.create_widgets()
         self.get_selected_record()
+
+        self.main_layout.addWidget(self.page_widget)
+
+        self.product_picture()
 
     def closeEvent(self, event):
         self.closed_signal.emit()
@@ -92,6 +100,13 @@ class EditProduct(QWidget):
         self.page_layout.addRow("Bay: ", self.bay_input)
         self.page_layout.addRow("Price: ", self.price_input)
         self.page_layout.addRow(submit_button)
+
+    def product_picture(self):
+        picture_widget = QLabel(text="Image Placeholder")
+        picture_widget.setAlignment(Qt.AlignCenter)
+        picture_widget.setStyleSheet("background-color: white;")
+        picture_widget.setMinimumWidth(300)
+        self.main_layout.addWidget(picture_widget)
 
     def update_bays_combo(self):
         """update the bays combo box values based on the selection of the location combo box value"""
