@@ -41,7 +41,9 @@ class AddProduct(QWidget):
     def create_widgets(self):
         """Create the widgets for the input form"""
         self.name_input = QLineEdit()
+        self.name_input.setFixedWidth(175)
         self.desc_input = QLineEdit()
+        self.desc_input.setFixedWidth(175)
         self.prod_code_input = QLineEdit()
         self.qty_input = QSpinBox()
         self.qty_input.setMinimum(0)
