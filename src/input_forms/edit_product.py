@@ -136,7 +136,7 @@ class EditProduct(QWidget):
         self.sup_input.setCurrentText(selected_record[0][6])
         self.loc_input.setCurrentText(selected_record[0][7])
         self.bay_input.setCurrentText(selected_record[0][8])
-        self.price_input.setValue(float(selected_record[0][9][1::]))
+        self.price_input.setValue(float(selected_record[0][9]))
 
     def update_product(self):
         """
