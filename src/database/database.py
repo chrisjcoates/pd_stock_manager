@@ -1,5 +1,6 @@
 import psycopg2
 import json
+from datetime import datetime
 
 
 class Database:
@@ -125,10 +126,64 @@ class Database:
     def update_product(
         self, stock_id, prod_id, name, desc, code, price, sup_id, bay_id, qty, reorder
     ):
-
-        sql_query = """
-        UPDATE 
+        # Connect to db
+        self.connect_to_db()
+        # Get current time stamp
+        time_stamp = datetime.now()
+        # product table sql
+        sql_product = """
+        UPDATE product
+        SET productName = %(name)s,
+            productDescription = %(desc)s,
+            productCode = %(code)s,
+            productPrice = %(price)s,
+            supplierID = %(sup_id)s,
+            productDateUpdated = %(time_stamp)s,
+        WHERE id = %(prod_id)s
         """
+        # Execute sql statement
+        try:
+            self.cursor.execute(
+                sql_product,
+                {
+                    "name": name,
+                    "desc": desc,
+                    "code": code,
+                    "price": price,
+                    "sup_id": sup_id,
+                    "time_stamp": time_stamp,
+                    "prod_id": prod_id,
+                },
+            )
+            self.conn.commit()
+        except Exception as e:
+            print(e)
+        # Stock table sql
+        sql_stock = """
+        UPDATE stock
+        SET productID = %(prod_id)s,
+            bayID = %(bat_id)s,
+            stockQty = %(qty)s,
+            reorderQTY = %(reorder)s,
+        WHERE stockID = %(stock_id)s
+        """
+        # Execute sql statement
+        try:
+            self.cursor.execute(
+                sql_stock,
+                {
+                    "prod_id": prod_id,
+                    "bay_id": bay_id,
+                    "qty": qty,
+                    "reorder": reorder,
+                    "stock_id": stock_id,
+                },
+            )
+            self.conn.commit()
+        except Exception as e:
+            print(e)
+        # Disconnect from db
+        self.disconnect_from_db()
 
     def get_locations(self):
 
@@ -228,6 +283,8 @@ class Database:
             print("first statement complete")
             self.conn.commit()
             print("Insert successful.")
+
+            self.disconnect_from_db()
 
         except Exception as e:
             print("Insert Failed.")
