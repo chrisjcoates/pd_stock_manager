@@ -172,14 +172,14 @@ class EditProduct(QWidget):
 
             # Create message box to tell used record was saved
             msg = QMessageBox(self)
-            msg.setText("Product record has been created.")
+            msg.setText("Product record has been updated.")
             msg.setWindowTitle("Message")
             msg.setStandardButtons(QMessageBox.Ok)
             msg.exec()
         except Exception as e:
             print(e)
             msg = QMessageBox(self)
-            msg.setText(f"Error creating product record, {e}")
+            msg.setText(f"Error updating product record, {e}")
             msg.setWindowTitle("Message")
             msg.setStandardButtons(QMessageBox.Ok)
             msg.exec()
