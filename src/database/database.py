@@ -80,7 +80,7 @@ class Database:
 
         if id:
             sql_query = """
-            SELECT stock.stockID, product.productName, productDescription, product.productCode, stock.stockQty, stock.reOrderQty, supplier.supplierName, locations.locationName, bays.bayName, CONCAT('£', product.productPrice * stock.stockQty)
+            SELECT stock.stockID, product.productName, productDescription, product.productCode, stock.stockQty, stock.reOrderQty, supplier.supplierName, locations.locationName, bays.bayName, CONCAT('£', product.productPrice * stock.stockQty), product.productID
             FROM stock
             INNER JOIN product ON stock.productID = product.productID
             INNER JOIN supplier ON product.supplierID = supplier.supplierID
@@ -138,8 +138,8 @@ class Database:
             productCode = %(code)s,
             productPrice = %(price)s,
             supplierID = %(sup_id)s,
-            productDateUpdated = %(time_stamp)s,
-        WHERE id = %(prod_id)s
+            productDateUpdated = %(time_stamp)s
+        WHERE productID = %(prod_id)s
         """
         # Execute sql statement
         try:
@@ -162,9 +162,9 @@ class Database:
         sql_stock = """
         UPDATE stock
         SET productID = %(prod_id)s,
-            bayID = %(bat_id)s,
+            bayID = %(bay_id)s,
             stockQty = %(qty)s,
-            reorderQTY = %(reorder)s,
+            reorderQTY = %(reorder)s
         WHERE stockID = %(stock_id)s
         """
         # Execute sql statement
