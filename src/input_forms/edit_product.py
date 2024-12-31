@@ -139,4 +139,50 @@ class EditProduct(QWidget):
         self.price_input.setValue(float(selected_record[0][9][1::]))
 
     def update_product(self):
-        pass
+        """
+        Update a product and insert the data into the database,
+        Updates a record in the product table, and the stock table.
+        """
+        # Get the values from the input forms controls
+        name = self.name_input.text()
+        desc = self.desc_input.text()
+        code = self.prod_code_input.text()
+        qty = int(self.qty_input.value())
+        reorder = int(self.re_order_input.value())
+        sup_id = int(self.sup_input.currentData())
+        bay_id = int(self.bay_input.currentData()[0])
+        price = float(self.price_input.value())
+
+        record = Database().get_stock_data(self.record_id)
+
+        try:
+            # Insert the records into the database
+            Database().update_product(
+                stock_id=record[0][0],
+                prod_id=record[0][-1],
+                name=name,
+                desc=desc,
+                code=code,
+                price=price,
+                sup_id=sup_id,
+                bay_id=bay_id,
+                qty=qty,
+                reorder=reorder,
+            )
+
+            # Create message box to tell used record was saved
+            msg = QMessageBox(self)
+            msg.setText("Product record has been created.")
+            msg.setWindowTitle("Message")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec()
+        except Exception as e:
+            print(e)
+            msg = QMessageBox(self)
+            msg.setText(f"Error creating product record, {e}")
+            msg.setWindowTitle("Message")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec()
+
+        # destroy the form object(close)
+        self.close()
