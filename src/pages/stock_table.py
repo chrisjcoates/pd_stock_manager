@@ -91,6 +91,7 @@ class StockTable(QWidget):
             """Function to filter the data based on text input value"""
             # Get filter text
             filter_text = filter_line_edit.text()
+            self.data = self._database.get_stock_data()
             try:
                 if filter_text:
                     # Loop through each row in data and keep only records that match the filter
@@ -275,8 +276,6 @@ class StockTable(QWidget):
                 return record_id_item.text()
         except Exception as e:
             print(e)
-
-        print(record_id_item)
 
     def export_to_excel(self):
 
