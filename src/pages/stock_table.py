@@ -190,22 +190,30 @@ class StockTable(QWidget):
 
     def update_row_column_count(self):
         """updates the row and column count of the table widget"""
+        no_data = False
         try:
-            # set row count to length of data
-            self._row_count = len(self.data)
-            # Set column count to 0
-            self._column_count = 0
-            # Loop through each row in data and increase column count
-            for row in self.data:
-                for column in row:
-                    self._column_count += 1
-                break
+            if self.data:
+                # set row count to length of data
+                self._row_count = len(self.data)
+                # Set column count to 0
+                self._column_count = 0
+                # Loop through each row in data and increase column count
+                for row in self.data:
+                    for column in row:
+                        self._column_count += 1
+                    break
 
-            # set the row and column count of the table widget
-            self.table_widget.setRowCount(self._row_count)
-            self.table_widget.setColumnCount(self._column_count)
+                # set the row and column count of the table widget
+                self.table_widget.setRowCount(self._row_count)
+                self.table_widget.setColumnCount(self._column_count)
+            else:
+                no_data = True
         except Exception as e:
             print(e)
+
+        if no_data:
+            self._row_count = 0
+            self._column_count = 9
 
     def open_add_product_form(self):
 
