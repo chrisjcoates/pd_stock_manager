@@ -7,11 +7,13 @@ from PySide6.QtWidgets import (
     QTableWidgetItem,
     QHBoxLayout,
     QHeaderView,
+    QFileDialog,
 )
 from PySide6.QtCore import Qt
 from database.database import Database
 from input_forms.add_product import AddProduct
 from input_forms.edit_product import EditProduct
+from popup_boxes.delete_product import DeletePopup
 
 
 class StockTable(QWidget):
@@ -52,6 +54,8 @@ class StockTable(QWidget):
         # button binds
         add_button.clicked.connect(self.open_add_product_form)
         edit_button.clicked.connect(self.open_edit_product_form)
+        delete_button.clicked.connect(self.delete_product)
+        export_btn.clicked.connect(self.export_to_excel)
 
         self.page_layout.addWidget(button_widget)
 
@@ -236,6 +240,21 @@ class StockTable(QWidget):
         # Open the input form
         self.add_product_form.show()
 
+    def delete_product(self):
+
+        def update_table():
+            self.refresh_table()
+            self.delete_popup.destroy()
+
+        # Get the id of the current selected record
+        current_record = self.current_record_selected()
+        # Creates the product input form
+        self.delete_popup = DeletePopup(current_record)
+        # Create an on close signal event to refresh the table data
+        self.delete_popup.closed_signal.connect(update_table)
+        # Open the input form
+        self.delete_popup.show()
+
     def current_record_selected(self):
         selected_items = self.table_widget.selectedItems()
         if selected_items:
@@ -246,3 +265,7 @@ class StockTable(QWidget):
                 return record_id_item.text()
         except Exception as e:
             print(e)
+
+    def export_to_excel(self):
+
+        folder_path = QFileDialog(self, "Select folder")
