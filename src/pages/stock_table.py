@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
     QFileDialog,
 )
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QColor, QBrush
 from database.database import Database
 from input_forms.add_product import AddProduct
 from input_forms.edit_product import EditProduct
@@ -189,6 +190,8 @@ class StockTable(QWidget):
         except Exception as e:
             print(e)
 
+        self.format_qty_cells()
+
     def update_row_column_count(self):
         """updates the row and column count of the table widget"""
         no_data = False
@@ -282,3 +285,27 @@ class StockTable(QWidget):
         folder_path = QFileDialog.getExistingDirectory(self, "Select folder")
 
         export_array_to_excel(array=self.data, filepath=folder_path)
+
+    def format_qty_cells(self):
+        # Loop through each row in the table widget
+        for row in range(self.table_widget.rowCount()):
+            # set the qty / reorder fields as variables
+            qty_field = self.table_widget.item(row, 4)
+            reorder_field = self.table_widget.item(row, 5)
+            # check is the qty and reorder have values
+            if qty_field and reorder_field:
+                try:
+                    # Set the fields values to ints
+                    qty = int(qty_field.text())
+                    reorder = int(reorder_field.text())
+                    # Check if qty =< reorder
+                    if qty <= reorder:
+                        # Set cell colour to red
+                        qty_field.setBackground(QColor(227, 127, 127))
+                    else:
+                        # Set cell colour to default
+                        qty_field.setBackground(QColor(113, 191, 114))
+                except Exception as e:
+                    print(e)
+                    # Set cell colour to default
+                    qty_field.setBackground(QColor(113, 191, 114))
