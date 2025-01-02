@@ -322,8 +322,3 @@ class Database:
             print("Insert Failed.")
             self.conn.rollback()
             print(e)
-
-
-database = Database()
-data = database.get_stock_data("20")
-print(data)
