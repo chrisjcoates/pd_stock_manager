@@ -87,6 +87,9 @@ class EditProduct(QWidget):
         self.price_input.setSingleStep(0.01)
         self.price_input.setPrefix("£")
 
+        # Create edit time stamp label
+        self.timestamp_label = QLabel()
+
         # Create submit button
         submit_button = QPushButton("Submit")
         submit_button.clicked.connect(self.update_product)
@@ -101,6 +104,7 @@ class EditProduct(QWidget):
         self.page_layout.addRow("Location: ", self.loc_input)
         self.page_layout.addRow("Bay: ", self.bay_input)
         self.page_layout.addRow("Price: ", self.price_input)
+        self.page_layout.addRow("Last Edit: ", self.timestamp_label)
         self.page_layout.addRow(submit_button)
 
     def product_picture(self):
@@ -137,6 +141,7 @@ class EditProduct(QWidget):
         self.loc_input.setCurrentText(selected_record[0][7])
         self.bay_input.setCurrentText(selected_record[0][8])
         self.price_input.setValue(float(selected_record[0][9]))
+        self.timestamp_label.setText(str(selected_record[0][-1])[0:19])
 
     def update_product(self):
         """
@@ -159,7 +164,7 @@ class EditProduct(QWidget):
             # Insert the records into the database
             Database().update_product(
                 stock_id=record[0][0],
-                prod_id=record[0][-1],
+                prod_id=record[0][-2],
                 name=name,
                 desc=desc,
                 code=code,
