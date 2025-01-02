@@ -63,7 +63,8 @@ class DeletePopup(QWidget):
 
         # get productID
         record = Database().get_stock_data(self.record_id)
-        prod_id = record[0][-1]
+        print(record)
+        prod_id = record[0][-2]
         try:
             Database().delete_product(stock_id=self.record_id, prod_id=prod_id)
 
