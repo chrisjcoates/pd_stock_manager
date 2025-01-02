@@ -213,7 +213,7 @@ class StockTable(QWidget):
 
         if no_data:
             self._row_count = 0
-            self._column_count = 9
+            self._column_count = 10
 
     def open_add_product_form(self):
 
@@ -242,6 +242,7 @@ class StockTable(QWidget):
         """
         # Get the id of the current selected record
         current_record = self.current_record_selected()
+        print(current_record)
         # Creates the product input form
         self.add_product_form = EditProduct(current_record)
         # Create an on close signal event to refresh the table data
@@ -274,6 +275,8 @@ class StockTable(QWidget):
                 return record_id_item.text()
         except Exception as e:
             print(e)
+
+        print(record_id_item)
 
     def export_to_excel(self):
 
