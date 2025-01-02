@@ -86,13 +86,13 @@ class Database:
             INNER JOIN supplier ON product.supplierID = supplier.supplierID
             INNER JOIN bays ON stock.bayID = bays.bayID
             INNER JOIN locations ON bays.locationID = locations.locationID
-            WHERE stock.stockID = %s
+            WHERE stock.stockID = %(id)s
             """
 
             self.connect_to_db()
             data = None
             try:
-                self.cursor.execute(sql_query, id)
+                self.cursor.execute(sql_query, {"id": id})
                 data = self.cursor.fetchall()
             except Exception as e:
                 print(f"Error retrieving data from table, {e}")
@@ -322,3 +322,8 @@ class Database:
             print("Insert Failed.")
             self.conn.rollback()
             print(e)
+
+
+database = Database()
+data = database.get_stock_data("20")
+print(data)
