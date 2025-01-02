@@ -80,7 +80,7 @@ class Database:
 
         if id:
             sql_query = """
-            SELECT stock.stockID, product.productName, productDescription, product.productCode, stock.stockQty, stock.reOrderQty, supplier.supplierName, locations.locationName, bays.bayName, product.productPrice, product.productID
+            SELECT stock.stockID, product.productName, productDescription, product.productCode, stock.stockQty, stock.reOrderQty, supplier.supplierName, locations.locationName, bays.bayName, product.productPrice, product.productID, stock.stockDateUpdated
             FROM stock
             INNER JOIN product ON stock.productID = product.productID
             INNER JOIN supplier ON product.supplierID = supplier.supplierID
