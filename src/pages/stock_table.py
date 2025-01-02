@@ -14,6 +14,7 @@ from database.database import Database
 from input_forms.add_product import AddProduct
 from input_forms.edit_product import EditProduct
 from popup_boxes.delete_product import DeletePopup
+from classes.functions import export_array_to_excel
 
 
 class StockTable(QWidget):
@@ -268,4 +269,6 @@ class StockTable(QWidget):
 
     def export_to_excel(self):
 
-        folder_path = QFileDialog(self, "Select folder")
+        folder_path = QFileDialog.getExistingDirectory(self, "Select folder")
+
+        export_array_to_excel(array=self.data, filepath=folder_path)
