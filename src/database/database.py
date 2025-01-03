@@ -80,12 +80,13 @@ class Database:
 
         if id:
             sql_query = """
-            SELECT stock.stockID, product.productName, productDescription, product.productCode, stock.stockQty, stock.reOrderQty, supplier.supplierName, locations.locationName, bays.bayName, product.productPrice, product.productID, stock.stockDateUpdated
+            SELECT stock.stockID, product.productName, productDescription, product.productCode, stock.stockQty, stock.reOrderQty, supplier.supplierName, locations.locationName, bays.bayName, product.productPrice, product.productID, stock.stockDateUpdated, product_categories.prod_catName
             FROM stock
             INNER JOIN product ON stock.productID = product.productID
             INNER JOIN supplier ON product.supplierID = supplier.supplierID
             INNER JOIN bays ON stock.bayID = bays.bayID
             INNER JOIN locations ON bays.locationID = locations.locationID
+            INNER JOIN product_categories ON product.prod_cat_id = product_categories.prod_cat_id
             WHERE stock.stockID = %(id)s
             """
 
@@ -154,7 +155,18 @@ class Database:
         self.disconnect_from_db()
 
     def update_product(
-        self, stock_id, prod_id, name, desc, code, price, sup_id, bay_id, qty, reorder
+        self,
+        stock_id,
+        prod_id,
+        name,
+        desc,
+        code,
+        prod_cat_id,
+        price,
+        sup_id,
+        bay_id,
+        qty,
+        reorder,
     ):
         # Connect to db
         self.connect_to_db()
@@ -166,6 +178,7 @@ class Database:
         SET productName = %(name)s,
             productDescription = %(desc)s,
             productCode = %(code)s,
+            prod_cat_id = %(prod_cat_id)s,
             productPrice = %(price)s,
             supplierID = %(sup_id)s,
             productDateUpdated = %(time_stamp)s
@@ -179,6 +192,7 @@ class Database:
                     "name": name,
                     "desc": desc,
                     "code": code,
+                    "prod_cat_id": prod_cat_id,
                     "price": price,
                     "sup_id": sup_id,
                     "time_stamp": time_stamp,
@@ -257,6 +271,27 @@ class Database:
 
         return data
 
+    def get_prod_categories(self):
+
+        data = None
+
+        self.connect_to_db()
+
+        sql_query = """
+        SELECT *
+        FROM product_categories
+        ORDER BY prod_catName ASC;
+        """
+
+        try:
+            self.cursor.execute(sql_query)
+
+            data = self.cursor.fetchall()
+        except Exception as e:
+            print(f"get_prod_categories function: {e}")
+
+        return data
+
     def get_bays(self):
         data = None
 
@@ -322,3 +357,8 @@ class Database:
             print("Insert Failed.")
             self.conn.rollback()
             print(e)
+
+
+database = Database()
+data = database.get_stock_data("20")
+print(data)
