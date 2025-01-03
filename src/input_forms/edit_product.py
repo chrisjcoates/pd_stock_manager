@@ -107,7 +107,7 @@ class EditProduct(QWidget):
         self.page_layout.addRow("Product Name: ", self.name_input)
         self.page_layout.addRow("Description: ", self.desc_input)
         self.page_layout.addRow("Product Code: ", self.prod_code_input)
-        self.page_layout.addRow("Category: ", self.prod_cat)
+        self.page_layout.addRow("Type: ", self.prod_cat)
         self.page_layout.addRow("Qty: ", self.qty_input)
         self.page_layout.addRow("Re-Order Qty: ", self.re_order_input)
         self.page_layout.addRow("Supplier: ", self.sup_input)
