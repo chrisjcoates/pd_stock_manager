@@ -77,6 +77,7 @@ class MainWindow(QMainWindow):
         self.pages.setCurrentIndex(index)
         current_page = self.pages.currentWidget()
         self.last_page = self.pages.currentWidget()
+
         # checks if the page had specified methods
         if hasattr(current_page, "refresh_table"):
             current_page.refresh_table()
