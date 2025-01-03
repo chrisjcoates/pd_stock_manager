@@ -144,6 +144,7 @@ class StockTable(QWidget):
                 "ID",
                 "Name",
                 "Description",
+                "Type",
                 "Product Code",
                 "Qty",
                 "Re-Order",
@@ -158,13 +159,14 @@ class StockTable(QWidget):
         self.header = self.table_widget.horizontalHeader()
         self.header.sectionClicked.connect(self.on_header_click)
         # Set the table column widths
-        self.header.setSectionResizeMode(1, QHeaderView.Stretch)
-        self.header.setSectionResizeMode(2, QHeaderView.Stretch)
         self.table_widget.setColumnWidth(0, 50)
-        self.table_widget.setColumnWidth(3, 125)
-        self.table_widget.setColumnWidth(4, 100)
+        self.header.setSectionResizeMode(1, QHeaderView.Stretch)
+        self.table_widget.setColumnWidth(2, 250)
+        self.table_widget.setColumnWidth(3, 200)
+        self.table_widget.setColumnWidth(4, 200)
         self.table_widget.setColumnWidth(5, 100)
-        self.table_widget.setColumnWidth(6, 200)
+        self.table_widget.setColumnWidth(6, 100)
+        self.table_widget.setColumnWidth(7, 200)
 
     def on_header_click(self, section_index):
         pass
@@ -217,7 +219,7 @@ class StockTable(QWidget):
 
         if no_data:
             self._row_count = 0
-            self._column_count = 10
+            self._column_count = 11
 
     def open_add_product_form(self):
 
@@ -290,8 +292,8 @@ class StockTable(QWidget):
         # Loop through each row in the table widget
         for row in range(self.table_widget.rowCount()):
             # set the qty / reorder fields as variables
-            qty_field = self.table_widget.item(row, 4)
-            reorder_field = self.table_widget.item(row, 5)
+            qty_field = self.table_widget.item(row, 5)
+            reorder_field = self.table_widget.item(row, 6)
             # check is the qty and reorder have values
             if qty_field and reorder_field:
                 try:
