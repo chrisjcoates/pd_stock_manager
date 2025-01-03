@@ -291,6 +291,8 @@ class Database:
         except Exception as e:
             print(f"get_prod_categories function: {e}")
 
+        self.disconnect_from_db()
+
         return data
 
     def get_bays(self):
@@ -361,6 +363,7 @@ class Database:
             print("Insert Failed.")
             self.conn.rollback()
             print(e)
+            self.disconnect_from_db()
 
     def get_orders_data(self):
 
@@ -380,5 +383,7 @@ class Database:
             data = self.cursor.fetchall()
         except Exception as e:
             print(f"get_orders_data function: {e}")
+
+        self.disconnect_from_db()
 
         return data
