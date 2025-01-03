@@ -47,6 +47,15 @@ class EditProduct(QWidget):
         self.desc_input = QLineEdit()
         self.desc_input.setFixedWidth(175)
         self.prod_code_input = QLineEdit()
+
+        # Create product category combo
+        self.prod_cat = QComboBox()
+        # Get categories
+        categories = Database().get_prod_categories()
+        # Add values to combo box
+        for cat_id, cat_name in categories:
+            self.prod_cat.addItem(cat_name, userData=cat_id)
+
         self.qty_input = QSpinBox()
         self.qty_input.setMinimum(0)
         self.qty_input.setMaximum(9999)
@@ -98,6 +107,7 @@ class EditProduct(QWidget):
         self.page_layout.addRow("Product Name: ", self.name_input)
         self.page_layout.addRow("Description: ", self.desc_input)
         self.page_layout.addRow("Product Code: ", self.prod_code_input)
+        self.page_layout.addRow("Category: ", self.prod_cat)
         self.page_layout.addRow("Qty: ", self.qty_input)
         self.page_layout.addRow("Re-Order Qty: ", self.re_order_input)
         self.page_layout.addRow("Supplier: ", self.sup_input)
@@ -135,13 +145,14 @@ class EditProduct(QWidget):
         self.name_input.setText(selected_record[0][1])
         self.desc_input.setText(selected_record[0][2])
         self.prod_code_input.setText(selected_record[0][3])
+        self.prod_cat.setCurrentText(selected_record[0][12])
         self.qty_input.setValue(selected_record[0][4])
         self.re_order_input.setValue(selected_record[0][5])
         self.sup_input.setCurrentText(selected_record[0][6])
         self.loc_input.setCurrentText(selected_record[0][7])
         self.bay_input.setCurrentText(selected_record[0][8])
         self.price_input.setValue(float(selected_record[0][9]))
-        self.timestamp_label.setText(str(selected_record[0][-1])[0:19])
+        self.timestamp_label.setText(str(selected_record[0][11])[0:19])
 
     def update_product(self):
         """
@@ -152,6 +163,7 @@ class EditProduct(QWidget):
         name = self.name_input.text()
         desc = self.desc_input.text()
         code = self.prod_code_input.text()
+        prod_cat_id = int(self.prod_cat.currentData())
         qty = int(self.qty_input.value())
         reorder = int(self.re_order_input.value())
         sup_id = int(self.sup_input.currentData())
@@ -164,10 +176,11 @@ class EditProduct(QWidget):
             # Insert the records into the database
             Database().update_product(
                 stock_id=record[0][0],
-                prod_id=record[0][-2],
+                prod_id=record[0][10],
                 name=name,
                 desc=desc,
                 code=code,
+                prod_cat_id=prod_cat_id,
                 price=price,
                 sup_id=sup_id,
                 bay_id=bay_id,
