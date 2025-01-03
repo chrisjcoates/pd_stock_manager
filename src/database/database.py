@@ -103,12 +103,13 @@ class Database:
                 return data
         else:
             sql_query = """
-            SELECT stock.stockID, product.productName, productDescription, product.productCode, stock.stockQty, stock.reOrderQty, supplier.supplierName, locations.locationName, bays.bayName, CONCAT('£', product.productPrice * stock.stockQty)
+            SELECT stock.stockID, product.productName, product.productDescription, product_categories.prod_catName, product.productCode, stock.stockQty, stock.reOrderQty, supplier.supplierName, locations.locationName, bays.bayName, CONCAT('£', product.productPrice * stock.stockQty)
             FROM stock
             INNER JOIN product ON stock.productID = product.productID
             INNER JOIN supplier ON product.supplierID = supplier.supplierID
             INNER JOIN bays ON stock.bayID = bays.bayID
             INNER JOIN locations ON bays.locationID = locations.locationID
+            INNER JOIN product_categories ON product.prod_cat_id = product_categories.prod_cat_id
             ORDER BY stock.stockID;
             """
 
@@ -312,13 +313,15 @@ class Database:
 
         return data
 
-    def insert_new_product(self, name, desc, code, price, sup_id, bay_id, qty, reorder):
+    def insert_new_product(
+        self, name, desc, code, price, sup_id, bay_id, qty, reorder, prod_cat_id
+    ):
 
         self.connect_to_db()
 
         sql_product = """
-        INSERT INTO product (productName, productDescription, productCode, productPrice, supplierID)
-        VALUES (%(name)s, %(desc)s, %(code)s, %(price)s, %(sup_id)s)
+        INSERT INTO product (productName, productDescription, productCode, productPrice, supplierID, prod_cat_id)
+        VALUES (%(name)s, %(desc)s, %(code)s, %(price)s, %(sup_id)s, %(prod_cat_id)s)
         RETURNING productID;
         """
 
@@ -337,6 +340,7 @@ class Database:
                     "code": code,
                     "price": price,
                     "sup_id": sup_id,
+                    "prod_cat_id": prod_cat_id,
                 },
             )
             print("first statement complete")
