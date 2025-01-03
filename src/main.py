@@ -34,6 +34,3 @@ def try_connect_to_db():
 
 if __name__ == "__main__":
     try_connect_to_db()
-
-# Todos
-# Add timestamp column to stock table
