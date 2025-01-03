@@ -45,6 +45,13 @@ class AddProduct(QWidget):
         self.desc_input = QLineEdit()
         self.desc_input.setFixedWidth(175)
         self.prod_code_input = QLineEdit()
+        # Create combo box
+        self.prod_cat_input = QComboBox()
+        # Add values to combo box
+        prod_cats = Database().get_prod_categories()
+        for cat_id, cat_name in prod_cats:
+            self.prod_cat_input.addItem(cat_name, userData=cat_id)
+
         self.qty_input = QSpinBox()
         self.qty_input.setMinimum(0)
         self.qty_input.setMaximum(9999)
@@ -93,6 +100,7 @@ class AddProduct(QWidget):
         self.page_layout.addRow("Product Name: ", self.name_input)
         self.page_layout.addRow("Description: ", self.desc_input)
         self.page_layout.addRow("Product Code: ", self.prod_code_input)
+        self.page_layout.addRow("Type: ", self.prod_cat_input)
         self.page_layout.addRow("Qty: ", self.qty_input)
         self.page_layout.addRow("Re-Order Qty: ", self.re_order_input)
         self.page_layout.addRow("Supplier: ", self.sup_input)
@@ -131,6 +139,7 @@ class AddProduct(QWidget):
         name = self.name_input.text()
         desc = self.desc_input.text()
         code = self.prod_code_input.text()
+        prod_cat_id = int(self.prod_cat_input.currentData())
         qty = int(self.qty_input.value())
         reorder = int(self.re_order_input.value())
         sup_id = int(self.sup_input.currentData())
@@ -148,6 +157,7 @@ class AddProduct(QWidget):
                 bay_id=bay_id,
                 qty=qty,
                 reorder=reorder,
+                prod_cat_id=prod_cat_id,
             )
 
             # Create message box to tell used record was saved
