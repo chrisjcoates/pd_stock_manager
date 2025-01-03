@@ -185,7 +185,7 @@ class OrdersTable(QWidget):
         except Exception as e:
             print(e)
 
-        self.format_qty_cells()
+        # self.format_qty_cells()
 
     def update_row_column_count(self):
         """updates the row and column count of the table widget"""
