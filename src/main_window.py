@@ -10,6 +10,7 @@ from PySide6.QtCore import Qt
 from pages.home import Home
 from pages.stock_table import StockTable
 from pages.options import OptionsWindow
+from pages.orders_table import OrdersTable
 
 
 class MainWindow(QMainWindow):
@@ -23,6 +24,9 @@ class MainWindow(QMainWindow):
         main_widget = QWidget()
         main_layout = QVBoxLayout(main_widget)
         self.setCentralWidget(main_widget)
+
+        # Records last page
+        self.last_page = None
 
         # Create nav bar
         self.nav_bar = QToolBar("Navigation")
@@ -38,6 +42,7 @@ class MainWindow(QMainWindow):
         # Create button click events
         self.home_btn.clicked.connect(lambda: self.switch_page(0))
         self.stock_btn.clicked.connect(lambda: self.switch_page(1))
+        self.orders_btn.clicked.connect(lambda: self.switch_page(2))
         self.options_btn.clicked.connect(lambda: self.switch_page(4))
 
         self.nav_bar.addWidget(self.home_btn)
@@ -51,7 +56,7 @@ class MainWindow(QMainWindow):
         main_layout.addWidget(self.pages)
         self.pages.addWidget(Home())
         self.pages.addWidget(StockTable())
-        self.pages.addWidget(Home())
+        self.pages.addWidget(OrdersTable())
         self.pages.addWidget(Home())
         self.pages.addWidget(OptionsWindow())
 
@@ -60,9 +65,18 @@ class MainWindow(QMainWindow):
         Switches the page based on Navigation button selection.
         Also check for methods and calls them.
         """
+        # Checks if theres a page previously loaded and destroys it to save memory
+        if self.last_page:
+            print("Last Page is HERE!!!!!")
+            if hasattr(self.last_page, "destroy_window"):
+                self.last_page.destroy_window()
+        else:
+            print("NO LAST PAGE")
+
         # Set page to the index passed into method
         self.pages.setCurrentIndex(index)
         current_page = self.pages.currentWidget()
+        self.last_page = self.pages.currentWidget()
         # checks if the page had specified methods
         if hasattr(current_page, "refresh_table"):
             current_page.refresh_table()
