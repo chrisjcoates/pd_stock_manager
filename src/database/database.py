@@ -361,3 +361,24 @@ class Database:
             print("Insert Failed.")
             self.conn.rollback()
             print(e)
+
+    def get_orders_data(self):
+
+        data = None
+
+        orders_sql = """
+        SELECT orders.orderID, orders.sageNumber, customer.customerName, users.userName, SUBSTRING(orders.orderDateCreated::TEXT FROM 1 FOR 19), SUBSTRING(orders.orderDateUpdated::TEXT FROM 1 FOR 19)
+        FROM orders
+        INNER JOIN customer on customer.customerID = orders.customerID
+        INNER JOIN users on users.userID = orders.userID;
+                """
+
+        self.connect_to_db()
+
+        try:
+            self.cursor.execute(orders_sql)
+            data = self.cursor.fetchall()
+        except Exception as e:
+            print(f"get_orders_data function: {e}")
+
+        return data
