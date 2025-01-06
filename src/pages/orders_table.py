@@ -16,6 +16,7 @@ from input_forms.add_product import AddProduct
 from input_forms.edit_product import EditProduct
 from popup_boxes.delete_product import DeletePopup
 from classes.functions import export_array_to_excel
+from input_forms.add_order_items import Add_Items_Window
 
 
 class OrdersTable(QWidget):
@@ -44,17 +45,19 @@ class OrdersTable(QWidget):
         button_layout = QHBoxLayout(button_widget)
         # Create buttons
         add_button = QPushButton(text="Create Order")
+        add_items_btn = QPushButton(text="Add Items")
         edit_button = QPushButton(text="Edit")
         delete_button = QPushButton(text="Delete")
         export_btn = QPushButton(text="Export data")
         # Add buttons to layout
         button_layout.addWidget(add_button)
+        button_layout.addWidget(add_items_btn)
         button_layout.addWidget(edit_button)
         button_layout.addWidget(delete_button)
         button_layout.addWidget(export_btn)
 
         # button binds
-        # add_button.clicked.connect(self.open_add_product_form)
+        add_button.clicked.connect(self.open_add_product_form)
         # edit_button.clicked.connect(self.open_edit_product_form)
         # delete_button.clicked.connect(self.delete_product)
         # export_btn.clicked.connect(self.export_to_excel)
@@ -216,17 +219,17 @@ class OrdersTable(QWidget):
 
     def open_add_product_form(self):
 
-        def update_table():
-            self.refresh_table()
-            self.add_product_form.destroy()
+        # def update_table():
+        #     self.refresh_table()
+        #     self.add_product_form.destroy()
 
         """Opens the add product input form
         and adds close event signal to update the table data
         """
         # Creates the product input form
-        self.add_product_form = AddProduct()
+        self.add_product_form = Add_Items_Window()
         # Create an on close signal event to refresh the table data
-        self.add_product_form.closed_signal.connect(update_table)
+        # self.add_product_form.closed_signal.connect(update_table)
         # Open the input form
         self.add_product_form.show()
 
