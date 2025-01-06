@@ -25,6 +25,8 @@ class Add_Items_Window(QWidget):
         self.save_btn_widget()
 
         self.get_customers()
+        self.get_types()
+        self.get_items(prod_cat_id=self.type_combo.currentData())
 
     def order_details_widget(self):
 
@@ -47,8 +49,11 @@ class Add_Items_Window(QWidget):
         sage_input = QLineEdit()
         self.cust_input = QComboBox()
 
-        type_combo = QComboBox()
-        item_combo = QComboBox()
+        self.type_combo = QComboBox()
+        self.type_combo.currentIndexChanged.connect(
+            lambda: self.get_items(self.type_combo.currentData())
+        )
+        self.item_combo = QComboBox()
 
         add_btn = QPushButton("Add")
         remove_btn = QPushButton("Remove")
@@ -56,8 +61,8 @@ class Add_Items_Window(QWidget):
         # Add widgets to layout
         layout.addRow("Sage No.", sage_input)
         layout.addRow("Customer:", self.cust_input)
-        layout.addRow("Type:", type_combo)
-        layout.addRow("Item:", item_combo)
+        layout.addRow("Type:", self.type_combo)
+        layout.addRow("Item:", self.item_combo)
 
         btn_layout.addWidget(add_btn)
         btn_layout.addWidget(remove_btn)
@@ -79,6 +84,10 @@ class Add_Items_Window(QWidget):
         table.setColumnCount(3)
         table.setRowCount(0)
         table.setHorizontalHeaderLabels(headers)
+
+        table.setColumnWidth(0, 50)
+        table.setColumnWidth(1, 200)
+        table.setColumnWidth(0, 50)
 
         layout.addWidget(table)
 
@@ -108,6 +117,40 @@ class Add_Items_Window(QWidget):
 
         for id, name in data:
             self.cust_input.addItem(name, userData=id)
+
+    def get_types(self):
+
+        data = None
+
+        sql_query = """
+                    SELECT prod_cat_id, prod_catName
+                    FROM product_categories;
+                    """
+
+        data = Database().custom_query(sql_query)
+
+        for id, name in data:
+            self.type_combo.addItem(name, userData=id)
+
+    def get_items(self, prod_cat_id):
+
+        data = None
+
+        sql_query = """
+                    SELECT DISTINCT productID, productName || ', ' || productCode
+                    FROM product
+                    WHERE prod_cat_id = %(id)s;
+                    """
+
+        arg = {"id": prod_cat_id}
+
+        data = Database().custom_query(sql_query, arg)
+        print(len(data))
+
+        self.item_combo.clear()
+
+        for id, name in data:
+            self.item_combo.addItem(name)
 
 
 # app = QApplication([])
