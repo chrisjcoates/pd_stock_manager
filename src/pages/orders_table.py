@@ -304,7 +304,3 @@ class OrdersTable(QWidget):
                     print(e)
                     # Set cell colour to default
                     qty_field.setBackground(QColor(113, 191, 114))
-
-    def destroy_window(self):
-        self.destroy()
-        print("Orders Window destroyed")

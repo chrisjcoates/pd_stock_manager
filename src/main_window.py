@@ -65,13 +65,6 @@ class MainWindow(QMainWindow):
         Switches the page based on Navigation button selection.
         Also check for methods and calls them.
         """
-        # Checks if theres a page previously loaded and destroys it to save memory
-        if self.last_page:
-            print("Last Page is HERE!!!!!")
-            if hasattr(self.last_page, "destroy_window"):
-                self.last_page.destroy_window()
-        else:
-            print("NO LAST PAGE")
 
         # Set page to the index passed into method
         self.pages.setCurrentIndex(index)
