@@ -387,3 +387,19 @@ class Database:
         self.disconnect_from_db()
 
         return data
+
+    def custom_query(self, query):
+
+        data = None
+
+        self.connect_to_db()
+
+        try:
+            self.cursor.execute(query)
+            data = self.cursor.fetchall()
+        except Exception as e:
+            print(f"custom_query: {e}")
+
+        self.disconnect_from_db()
+
+        return data
