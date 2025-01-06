@@ -388,18 +388,40 @@ class Database:
 
         return data
 
-    def custom_query(self, query):
+    def custom_query(self, query, arg=None):
 
         data = None
 
         self.connect_to_db()
 
-        try:
-            self.cursor.execute(query)
-            data = self.cursor.fetchall()
-        except Exception as e:
-            print(f"custom_query: {e}")
+        if arg:
+            try:
+                self.cursor.execute(query, arg)
+                data = self.cursor.fetchall()
+            except Exception as e:
+                print(f"custom_query: {e}")
 
-        self.disconnect_from_db()
+            self.disconnect_from_db()
 
-        return data
+            return data
+        else:
+            try:
+                self.cursor.execute(query)
+                data = self.cursor.fetchall()
+            except Exception as e:
+                print(f"custom_query: {e}")
+
+            self.disconnect_from_db()
+
+            return data
+
+
+# sql_query = """
+#                     SELECT DISTINCT productName
+#                     FROM product
+#                     WHERE prod_cat_id = %(id)s;
+#                     """
+
+# arg = {"id": 1}
+
+# print(Database().custom_query(sql_query, arg))
