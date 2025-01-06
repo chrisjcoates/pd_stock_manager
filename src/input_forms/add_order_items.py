@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QVBoxLayout,
     QFormLayout,
+    QTableWidgetItem,
 )
 from PySide6.QtCore import Qt
 from database.database import Database
@@ -19,6 +20,9 @@ class Add_Items_Window(QWidget):
         super().__init__()
 
         self.window_layout = QVBoxLayout(self)
+
+        self.items = []
+        self.add_item()
 
         self.order_details_widget()
         self.item_table_widget()
@@ -78,18 +82,20 @@ class Add_Items_Window(QWidget):
         widget = QWidget()
         layout = QVBoxLayout(widget)
 
-        table = QTableWidget()
+        self.table = QTableWidget()
 
-        headers = ["ID", "Name", "Qty"]
-        table.setColumnCount(3)
-        table.setRowCount(0)
-        table.setHorizontalHeaderLabels(headers)
+        headers = ["ID", "Name", "Product Code", "Qty", "Qty in stock"]
+        self.table.setColumnCount(5)
+        self.table.setRowCount(0)
+        self.table.setHorizontalHeaderLabels(headers)
 
-        table.setColumnWidth(0, 50)
-        table.setColumnWidth(1, 200)
-        table.setColumnWidth(0, 50)
+        self.table.setColumnWidth(0, 50)
+        self.table.setColumnWidth(1, 200)
+        self.table.setColumnWidth(2, 200)
+        self.table.setColumnWidth(3, 50)
+        self.table.setColumnWidth(4, 100)
 
-        layout.addWidget(table)
+        layout.addWidget(self.table)
 
         self.window_layout.addWidget(widget)
 
@@ -145,12 +151,14 @@ class Add_Items_Window(QWidget):
         arg = {"id": prod_cat_id}
 
         data = Database().custom_query(sql_query, arg)
-        print(len(data))
 
         self.item_combo.clear()
 
         for id, name in data:
             self.item_combo.addItem(name)
+
+    def add_item(self):
+        pass
 
 
 # app = QApplication([])
