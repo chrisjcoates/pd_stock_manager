@@ -134,11 +134,13 @@ class Add_Items_Window(QWidget):
                     SELECT customerID, customerName 
                     FROM customer;
                     """
+        try:
+            data = Database().custom_query(sql_query)
 
-        data = Database().custom_query(sql_query)
-
-        for id, name in data:
-            self.cust_input.addItem(name, userData=id)
+            for id, name in data:
+                self.cust_input.addItem(name, userData=id)
+        except Exception as e:
+            print(e)
 
     def get_types(self):
 
@@ -148,11 +150,13 @@ class Add_Items_Window(QWidget):
                     SELECT prod_cat_id, prod_catName
                     FROM product_categories;
                     """
+        try:
+            data = Database().custom_query(sql_query)
 
-        data = Database().custom_query(sql_query)
-
-        for id, name in data:
-            self.type_combo.addItem(name, userData=id)
+            for id, name in data:
+                self.type_combo.addItem(name, userData=id)
+        except Exception as e:
+            print(e)
 
     def get_items(self, prod_cat_id):
 
@@ -166,12 +170,15 @@ class Add_Items_Window(QWidget):
 
         arg = {"id": prod_cat_id}
 
-        data = Database().custom_query(sql_query, arg)
+        try:
+            data = Database().custom_query(sql_query, arg)
 
-        self.item_combo.clear()
+            self.item_combo.clear()
 
-        for id, name in data:
-            self.item_combo.addItem(name, userData=id)
+            for id, name in data:
+                self.item_combo.addItem(name, userData=id)
+        except Exception as e:
+            print(e)
 
     def add_item(self, prod_cat_id):
         # Set sql query
@@ -301,9 +308,3 @@ class Add_Items_Window(QWidget):
             self.table.removeRow(selected_row)
         except:
             print("No items to remove.")
-
-
-# app = QApplication([])
-# window = Add_Items_Window()
-# window.show()
-# app.exec()
