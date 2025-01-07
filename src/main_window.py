@@ -65,7 +65,8 @@ class MainWindow(QMainWindow):
         Switches the page based on Navigation button selection.
         Also check for methods and calls them.
         """
-        self.pages.removeWidget(self.pages.currentWidget())
+        if self.pages.currentWidget():
+            self.pages.removeWidget(self.pages.currentWidget())
 
         match page:
             case "stock":
