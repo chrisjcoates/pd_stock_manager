@@ -30,7 +30,7 @@ class OrdersTable(QWidget):
         self._column_count = 0
         # Set the database object
         self._database = Database()
-        self.data = self._database.get_stock_data()
+        self.data = self._database.get_orders_data()
         self.update_row_column_count()
 
         # Add widgets to layout
