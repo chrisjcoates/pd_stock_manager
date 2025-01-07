@@ -22,7 +22,6 @@ class Add_Items_Window(QWidget):
         self.window_layout = QVBoxLayout(self)
 
         self.items = []
-        self.add_item()
 
         self.order_details_widget()
         self.item_table_widget()
@@ -50,7 +49,7 @@ class Add_Items_Window(QWidget):
         btn_layout.setAlignment(Qt.AlignBottom)
 
         # control widgets
-        sage_input = QLineEdit()
+        self.sage_input = QLineEdit()
         self.cust_input = QComboBox()
 
         self.type_combo = QComboBox()
@@ -60,10 +59,11 @@ class Add_Items_Window(QWidget):
         self.item_combo = QComboBox()
 
         add_btn = QPushButton("Add")
+        add_btn.clicked.connect(lambda: self.add_item(self.item_combo.currentData()))
         remove_btn = QPushButton("Remove")
 
         # Add widgets to layout
-        layout.addRow("Sage No.", sage_input)
+        layout.addRow("Sage No.", self.sage_input)
         layout.addRow("Customer:", self.cust_input)
         layout.addRow("Type:", self.type_combo)
         layout.addRow("Item:", self.item_combo)
@@ -84,16 +84,18 @@ class Add_Items_Window(QWidget):
 
         self.table = QTableWidget()
 
-        headers = ["ID", "Name", "Product Code", "Qty", "Qty in stock"]
+        headers = ["Name", "Product Code", "Qty", "Qty in stock"]
+
         self.table.setColumnCount(5)
         self.table.setRowCount(0)
         self.table.setHorizontalHeaderLabels(headers)
 
-        self.table.setColumnWidth(0, 50)
-        self.table.setColumnWidth(1, 200)
-        self.table.setColumnWidth(2, 200)
-        self.table.setColumnWidth(3, 50)
-        self.table.setColumnWidth(4, 100)
+        self.table.setColumnWidth(0, 200)
+        self.table.setColumnWidth(1, 250)
+        self.table.setColumnWidth(2, 70)
+        self.table.setColumnWidth(3, 70)
+
+        self.table.hideColumn(4)
 
         layout.addWidget(self.table)
 
@@ -105,6 +107,7 @@ class Add_Items_Window(QWidget):
         layout = QHBoxLayout(widget)
 
         save_btn = QPushButton("Save & Exit")
+        save_btn.clicked.connect(self.save_order)
 
         layout.addWidget(save_btn)
 
@@ -155,10 +158,94 @@ class Add_Items_Window(QWidget):
         self.item_combo.clear()
 
         for id, name in data:
-            self.item_combo.addItem(name)
+            self.item_combo.addItem(name, userData=id)
 
-    def add_item(self):
-        pass
+    def add_item(self, prod_cat_id):
+        # Set sql query
+        sql_query = """
+                    SELECT product.productName, product.productCode, stock.stockQty, stock.stockID
+                    FROM product
+                    INNER JOIN stock ON product.productID = stock.productID
+                    WHERE product.productID = %(id)s;
+                    """
+        # Set query argument
+        arg = {"id": prod_cat_id}
+        # run query
+        data = Database().custom_query(sql_query, arg)
+        # create item
+        item = (data[0][0], data[0][1], 0, data[0][2], data[0][3])
+        # add item to items list
+        self.items.append(item)
+        # Add item to table
+        row_position = self.table.rowCount()
+        # insert new row
+        self.table.insertRow(row_position)
+        # add data to that row
+        for column, data in enumerate(item):
+            item = QTableWidgetItem(str(data))
+            self.table.setItem(row_position, column, item)
+
+    def save_order(self):
+
+        table_array = []
+
+        for row in range(self.table.rowCount()):
+            row_data = tuple(
+                self.table.item(row, col).text()
+                for col in range(self.table.columnCount())
+            )
+            table_array.append(row_data)
+
+        self.items = table_array
+
+        sage_number = self.sage_input.text()
+        cust_id = self.cust_input.currentData()
+
+        # create dict for order table record
+        order_dict = {"sage_number": sage_number, "cust_id": cust_id, "user_id": 1}
+
+        # Insert into order table
+        sql_query = """
+                    INSERT INTO orders (sageNumber, customerID, userID)
+                    VALUES (%(sage_number)s, %(cust_id)s, %(user_id)s)
+                    RETURNING orderID;
+                    """
+
+        # Create database object and connect to db
+        database = Database()
+        database.connect_to_db()
+
+        try:
+            # Execute query
+            database.cursor.execute(sql_query, order_dict)
+            # get order id
+            order_id = database.cursor.fetchone()
+            order_id = order_id[0]
+
+            # Insert into order item table
+            sql_query = """
+                        INSERT INTO order_item (orderID, stockID, orderItemQty)
+                        VALUES (%(order_id)s, %(stock_id)s, %(order_qty)s);
+                        """
+
+            for row in table_array:
+                stock_id = row[-1]
+                order_qty = row[-3]
+                database.cursor.execute(
+                    sql_query,
+                    {
+                        "order_id": order_id,
+                        "stock_id": stock_id,
+                        "order_qty": order_qty,
+                    },
+                )
+
+        except Exception as e:
+            print(f"Error inserting data {e}")
+
+        database.conn.commit()
+
+        database.disconnect_from_db()
 
 
 # app = QApplication([])
