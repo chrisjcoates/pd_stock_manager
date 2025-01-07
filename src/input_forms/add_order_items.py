@@ -61,6 +61,7 @@ class Add_Items_Window(QWidget):
         add_btn = QPushButton("Add")
         add_btn.clicked.connect(lambda: self.add_item(self.item_combo.currentData()))
         remove_btn = QPushButton("Remove")
+        remove_btn.clicked.connect(self.remove_item)
 
         # Add widgets to layout
         layout.addRow("Sage No.", self.sage_input)
@@ -246,6 +247,16 @@ class Add_Items_Window(QWidget):
         database.conn.commit()
 
         database.disconnect_from_db()
+
+    def remove_item(self):
+
+        selected_row = self.table.currentRow()
+
+        try:
+            self.items.pop(selected_row)
+            self.table.removeRow(selected_row)
+        except:
+            print("No items to remove.")
 
 
 # app = QApplication([])
