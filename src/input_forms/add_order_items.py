@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QFormLayout,
     QTableWidgetItem,
+    QMessageBox,
 )
 from PySide6.QtCore import Qt
 from database.database import Database
@@ -20,6 +21,9 @@ class Add_Items_Window(QWidget):
         super().__init__()
 
         self.window_layout = QVBoxLayout(self)
+
+        self.setWindowTitle("Create new picking list")
+        self.setWindowModality(Qt.ApplicationModal)
 
         self.items = []
 
@@ -50,13 +54,20 @@ class Add_Items_Window(QWidget):
 
         # control widgets
         self.sage_input = QLineEdit()
+        self.sage_input.setPlaceholderText("Enter Sage number")
         self.cust_input = QComboBox()
+        self.cust_input.setPlaceholderText("Select a customer")
+        self.cust_input.setFixedWidth(200)
 
         self.type_combo = QComboBox()
+        self.type_combo.setFixedWidth(200)
+        self.type_combo.setPlaceholderText("Select a type")
         self.type_combo.currentIndexChanged.connect(
             lambda: self.get_items(self.type_combo.currentData())
         )
         self.item_combo = QComboBox()
+        self.item_combo.setFixedWidth(350)
+        self.item_combo.setPlaceholderText("Select an item")
 
         add_btn = QPushButton("Add")
         add_btn.clicked.connect(lambda: self.add_item(self.item_combo.currentData()))
@@ -64,7 +75,8 @@ class Add_Items_Window(QWidget):
         remove_btn.clicked.connect(self.remove_item)
 
         # Add widgets to layout
-        layout.addRow("Sage No.", self.sage_input)
+        layout.addRow("Sage No: ", self.sage_input)
+        layout.addRow("", QLabel())
         layout.addRow("Customer:", self.cust_input)
         layout.addRow("Type:", self.type_combo)
         layout.addRow("Item:", self.item_combo)
@@ -93,8 +105,8 @@ class Add_Items_Window(QWidget):
 
         self.table.setColumnWidth(0, 200)
         self.table.setColumnWidth(1, 250)
-        self.table.setColumnWidth(2, 70)
-        self.table.setColumnWidth(3, 70)
+        self.table.setColumnWidth(2, 75)
+        self.table.setColumnWidth(3, 75)
 
         self.table.hideColumn(4)
 
@@ -108,7 +120,7 @@ class Add_Items_Window(QWidget):
         layout = QHBoxLayout(widget)
 
         save_btn = QPushButton("Save & Exit")
-        save_btn.clicked.connect(self.save_order)
+        save_btn.clicked.connect(self.save_order_btn_click)
 
         layout.addWidget(save_btn)
 
@@ -186,18 +198,47 @@ class Add_Items_Window(QWidget):
             item = QTableWidgetItem(str(data))
             self.table.setItem(row_position, column, item)
 
+    def save_order_btn_click(self):
+
+        if self.sage_input.text():
+            pass
+            # self.save_order()
+        else:
+            # Create message box to tell used record was saved
+            msg = QMessageBox(self)
+            msg.setText(
+                "You need to enter a Sage number to be able to create an order."
+            )
+            msg.setWindowTitle("Message")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec()
+
+        if self.cust_input.currentText():
+            pass
+            # self.save_order()
+        else:
+            # Create message box to tell used record was saved
+            msg = QMessageBox(self)
+            msg.setText("You need to select a Customer to be able to create an order.")
+            msg.setWindowTitle("Message")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec()
+
     def save_order(self):
 
         table_array = []
 
-        for row in range(self.table.rowCount()):
-            row_data = tuple(
-                self.table.item(row, col).text()
-                for col in range(self.table.columnCount())
-            )
-            table_array.append(row_data)
+        try:
+            for row in range(self.table.rowCount()):
+                row_data = tuple(
+                    self.table.item(row, col).text()
+                    for col in range(self.table.columnCount())
+                )
+                table_array.append(row_data)
 
-        self.items = table_array
+            self.items = table_array
+        except:
+            pass
 
         sage_number = self.sage_input.text()
         cust_id = self.cust_input.currentData()
@@ -228,23 +269,26 @@ class Add_Items_Window(QWidget):
                         INSERT INTO order_item (orderID, stockID, orderItemQty)
                         VALUES (%(order_id)s, %(stock_id)s, %(order_qty)s);
                         """
-
-            for row in table_array:
-                stock_id = row[-1]
-                order_qty = row[-3]
-                database.cursor.execute(
-                    sql_query,
-                    {
-                        "order_id": order_id,
-                        "stock_id": stock_id,
-                        "order_qty": order_qty,
-                    },
-                )
+            if len(table_array) > 0:
+                for row in table_array:
+                    stock_id = row[-1]
+                    order_qty = row[-3]
+                    database.cursor.execute(
+                        sql_query,
+                        {
+                            "order_id": order_id,
+                            "stock_id": stock_id,
+                            "order_qty": order_qty,
+                        },
+                    )
 
         except Exception as e:
             print(f"Error inserting data {e}")
 
-        database.conn.commit()
+        try:
+            database.conn.commit()
+        except Exception as e:
+            print(e)
 
         database.disconnect_from_db()
 
