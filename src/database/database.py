@@ -52,7 +52,7 @@ class Database:
 
     def connect_to_db(self):
         try:
-            print("attempting database connection...")
+            # print("attempting database connection...")
             self.conn = psycopg2.connect(
                 host=self.HOST,
                 port=self.PORT,
@@ -61,10 +61,10 @@ class Database:
                 password=self.PASSWORD,
                 connect_timeout=5,
             )
-            print("connecting...")
+            # print("connecting...")
 
             self.cursor = self.conn.cursor()
-            print(f"Connected to database '{self.DB_NAME}'")
+            # print(f"Connected to database '{self.DB_NAME}'")
         except Exception as e:
             print(f"Error connecting to database '{self.DB_NAME}', '{e}'")
 
@@ -414,14 +414,3 @@ class Database:
             self.disconnect_from_db()
 
             return data
-
-
-# sql_query = """
-#                     SELECT DISTINCT productName
-#                     FROM product
-#                     WHERE prod_cat_id = %(id)s;
-#                     """
-
-# arg = {"id": 1}
-
-# print(Database().custom_query(sql_query, arg))
