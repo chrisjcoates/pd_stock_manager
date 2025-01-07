@@ -210,8 +210,11 @@ class StockTable(QWidget):
                     break
 
                 # set the row and column count of the table widget
-                self.table_widget.setRowCount(self._row_count)
-                self.table_widget.setColumnCount(self._column_count)
+                try:
+                    self.table_widget.setRowCount(self._row_count)
+                    self.table_widget.setColumnCount(self._column_count)
+                except:
+                    pass
             else:
                 no_data = True
         except Exception as e:
