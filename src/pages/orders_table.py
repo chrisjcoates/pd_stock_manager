@@ -44,14 +44,12 @@ class OrdersTable(QWidget):
         button_widget = QWidget()
         button_layout = QHBoxLayout(button_widget)
         # Create buttons
-        add_button = QPushButton(text="Create Order")
-        add_items_btn = QPushButton(text="Add Items")
+        add_button = QPushButton(text="Create Picking List")
         edit_button = QPushButton(text="Edit")
         delete_button = QPushButton(text="Delete")
         export_btn = QPushButton(text="Export data")
         # Add buttons to layout
         button_layout.addWidget(add_button)
-        button_layout.addWidget(add_items_btn)
         button_layout.addWidget(edit_button)
         button_layout.addWidget(delete_button)
         button_layout.addWidget(export_btn)
