@@ -72,7 +72,7 @@ class Database:
         try:
             self.cursor.close()
             self.conn.close()
-            print(f"Disconnected from database {self.DB_NAME}")
+            # print(f"Disconnected from database {self.DB_NAME}")
         except Exception as e:
             print(e)
 
