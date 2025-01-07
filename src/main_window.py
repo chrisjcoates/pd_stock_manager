@@ -41,8 +41,8 @@ class MainWindow(QMainWindow):
 
         # Create button click events
         self.home_btn.clicked.connect(lambda: self.switch_page(0))
-        self.stock_btn.clicked.connect(lambda: self.switch_page(1))
-        self.orders_btn.clicked.connect(lambda: self.switch_page(2))
+        self.stock_btn.clicked.connect(lambda: self.switch_page(1, "stock"))
+        self.orders_btn.clicked.connect(lambda: self.switch_page(2, "orders"))
         self.options_btn.clicked.connect(lambda: self.switch_page(4))
 
         self.nav_bar.addWidget(self.home_btn)
@@ -54,17 +54,24 @@ class MainWindow(QMainWindow):
         # Stacked widgets for pages
         self.pages = QStackedWidget()
         main_layout.addWidget(self.pages)
-        self.pages.addWidget(Home())
-        self.pages.addWidget(StockTable())
-        self.pages.addWidget(OrdersTable())
-        self.pages.addWidget(Home())
-        self.pages.addWidget(OptionsWindow())
+        # self.pages.addWidget(Home())
+        # self.pages.addWidget(StockTable())
+        # self.pages.addWidget(OrdersTable())
+        # self.pages.addWidget(Home())
+        # self.pages.addWidget(OptionsWindow())
 
-    def switch_page(self, index):
+    def switch_page(self, index, page):
         """
         Switches the page based on Navigation button selection.
         Also check for methods and calls them.
         """
+        self.pages.removeWidget(self.pages.currentWidget())
+
+        match page:
+            case "stock":
+                self.pages.addWidget(StockTable())
+            case "orders":
+                self.pages.addWidget(OrdersTable())
 
         # Set page to the index passed into method
         self.pages.setCurrentIndex(index)
