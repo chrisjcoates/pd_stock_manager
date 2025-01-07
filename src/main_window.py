@@ -35,7 +35,7 @@ class MainWindow(QMainWindow):
 
         self.home_btn = QPushButton(text="Home")
         self.stock_btn = QPushButton(text="Stock")
-        self.orders_btn = QPushButton(text="Orders")
+        self.orders_btn = QPushButton(text="Picking Lists")
         self.reports_btn = QPushButton(text="Reports")
         self.options_btn = QPushButton(text="Options")
 
