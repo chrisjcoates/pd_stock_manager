@@ -187,7 +187,7 @@ class Edit_Order_Items(QWidget):
         self.table.setRowCount(len(self.items))
 
         for row_index, row_data in enumerate(self.items):
-            for col_index, cell_data in enumerate(row_data[1:-1]):
+            for col_index, cell_data in enumerate(row_data[0:-1]):
                 self.table.setItem(
                     row_index, col_index, QTableWidgetItem(str(cell_data))
                 )
@@ -272,7 +272,7 @@ class Edit_Order_Items(QWidget):
         # run query
         data = Database().custom_query(sql_query, arg)
         # create item
-        item = (data[0][0], data[0][1], 0, data[0][2], data[0][3])
+        item = (data[0][0], data[0][1], 0, data[0][2], data[0][3], "", "WIP")
         # add item to items list
         self.additional_items.append(item)
         # Add item to table
@@ -280,9 +280,15 @@ class Edit_Order_Items(QWidget):
         # insert new row
         self.table.insertRow(row_position)
         # add data to that row
-        for column, data in enumerate(item):
+        for column, data in enumerate(item[0:-1]):
             item = QTableWidgetItem(str(data))
             self.table.setItem(row_position, column, item)
+
+        combo_items = ["WIP", "Complete"]
+        combo = QComboBox()
+        combo.addItems(combo_items)
+        combo.setCurrentText("WIP")
+        self.table.setCellWidget(row_position, 5, combo)
 
     def save_order_btn_click(self):
 
