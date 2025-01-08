@@ -49,6 +49,8 @@ class Edit_Order_Items(QWidget):
         self.get_order(self.record_id)
         self.get_order_items(self.record_id)
 
+        self.resize(760, 600)
+
     def closeEvent(self, event):
         self.closed_signal.emit()
         event.accept()
@@ -118,16 +120,17 @@ class Edit_Order_Items(QWidget):
 
         self.table = QTableWidget()
 
-        headers = ["Name", "Product Code", "Qty", "Qty in stock"]
+        headers = ["Name", "Product Code", "Qty", "Qty in stock", "", "Picking Status"]
 
-        self.table.setColumnCount(5)
+        self.table.setColumnCount(6)
         self.table.setRowCount(0)
         self.table.setHorizontalHeaderLabels(headers)
 
         self.table.setColumnWidth(0, 200)
-        self.table.setColumnWidth(1, 250)
+        self.table.setColumnWidth(1, 220)
         self.table.setColumnWidth(2, 75)
         self.table.setColumnWidth(3, 75)
+        self.table.setColumnWidth(5, 105)
 
         self.table.hideColumn(4)
 
@@ -167,7 +170,7 @@ class Edit_Order_Items(QWidget):
     def get_order_items(self, order_id):
 
         sql_query = """
-                    SELECT product.productName, product.productCode, order_item.orderItemQty, stock.stockQty, product.productID
+                    SELECT product.productName, product.productCode, order_item.orderItemQty, stock.stockQty, product.productID, order_item.pickingStatus
                     FROM order_item
                     INNER JOIN stock ON stock.stockID = order_item.stockID
                     INNER JOIN product ON product.productID = stock.productID
@@ -184,10 +187,23 @@ class Edit_Order_Items(QWidget):
         self.table.setRowCount(len(self.items))
 
         for row_index, row_data in enumerate(self.items):
-            for col_index, cell_data in enumerate(row_data):
+            for col_index, cell_data in enumerate(row_data[1:-1]):
                 self.table.setItem(
                     row_index, col_index, QTableWidgetItem(str(cell_data))
                 )
+
+        combo_items = ["WIP", "Complete"]
+
+        self.table.setRowCount(len(self.items))
+
+        for row_index, row in enumerate(self.items):
+            combo = QComboBox()
+            combo.addItems(combo_items)
+
+            if row[-1]:
+                combo.setCurrentText(row[-1])
+
+            self.table.setCellWidget(row_index, 5, combo)
 
     def get_customers(self):
 
