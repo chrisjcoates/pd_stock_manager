@@ -145,7 +145,8 @@ class OrdersTable(QWidget):
                 "ID",
                 "Sage No.",
                 "Customer",
-                "User",
+                "Delivery Date",
+                "Picking Status",
                 "Date Created",
                 "Last Edit",
             ]
@@ -161,6 +162,7 @@ class OrdersTable(QWidget):
         self.table_widget.setColumnWidth(3, 200)
         self.table_widget.setColumnWidth(4, 200)
         self.table_widget.setColumnWidth(5, 200)
+        self.table_widget.setColumnWidth(6, 200)
 
     def on_header_click(self, section_index):
         pass
@@ -186,7 +188,7 @@ class OrdersTable(QWidget):
         except Exception as e:
             print(e)
 
-        # self.format_qty_cells()
+        self.format_qty_cells()
 
     def update_row_column_count(self):
         """updates the row and column count of the table widget"""
@@ -289,22 +291,11 @@ class OrdersTable(QWidget):
         # Loop through each row in the table widget
         for row in range(self.table_widget.rowCount()):
             # set the qty / reorder fields as variables
-            qty_field = self.table_widget.item(row, 5)
-            reorder_field = self.table_widget.item(row, 6)
+            status_field = self.table_widget.item(row, 4)
+
             # check is the qty and reorder have values
-            if qty_field and reorder_field:
-                try:
-                    # Set the fields values to ints
-                    qty = int(qty_field.text())
-                    reorder = int(reorder_field.text())
-                    # Check if qty =< reorder
-                    if qty <= reorder:
-                        # Set cell colour to red
-                        qty_field.setBackground(QColor(227, 127, 127))
-                    else:
-                        # Set cell colour to default
-                        qty_field.setBackground(QColor(113, 191, 114))
-                except Exception as e:
-                    print(e)
-                    # Set cell colour to default
-                    qty_field.setBackground(QColor(113, 191, 114))
+            if status_field.text() == "WIP":
+                status_field.setBackground(QColor(250, 243, 30))
+            else:
+                # Set cell colour to default
+                status_field.setBackground(QColor(113, 191, 114))
