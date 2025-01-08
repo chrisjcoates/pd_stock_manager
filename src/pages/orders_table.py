@@ -12,11 +12,10 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QBrush
 from database.database import Database
-from input_forms.add_product import AddProduct
-from input_forms.edit_product import EditProduct
 from popup_boxes.delete_product import DeletePopup
 from classes.functions import export_array_to_excel
 from input_forms.add_order_items import Add_Items_Window
+from input_forms.edit_order_items import Edit_Order_Items
 
 
 class OrdersTable(QWidget):
@@ -56,7 +55,7 @@ class OrdersTable(QWidget):
 
         # button binds
         add_button.clicked.connect(self.open_add_product_form)
-        # edit_button.clicked.connect(self.open_edit_product_form)
+        edit_button.clicked.connect(self.open_edit_product_form)
         # delete_button.clicked.connect(self.delete_product)
         # export_btn.clicked.connect(self.export_to_excel)
 
@@ -247,9 +246,8 @@ class OrdersTable(QWidget):
         """
         # Get the id of the current selected record
         current_record = self.current_record_selected()
-        print(current_record)
         # Creates the product input form
-        self.add_product_form = EditProduct(current_record)
+        self.add_product_form = Edit_Order_Items(current_record)
         # Create an on close signal event to refresh the table data
         self.add_product_form.closed_signal.connect(update_table)
         # Open the input form
