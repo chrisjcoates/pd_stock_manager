@@ -11,12 +11,15 @@ from PySide6.QtWidgets import (
     QFormLayout,
     QTableWidgetItem,
     QMessageBox,
+    QDateEdit,
 )
-from PySide6.QtCore import Qt
 from database.database import Database
+from PySide6.QtCore import Qt, Signal, QDate
 
 
-class Add_Items_Window(QWidget):
+class Edit_Order_Items(QWidget):
+    closed_signal = Signal()
+
     def __init__(self, record_id):
         super().__init__()
 
@@ -25,7 +28,14 @@ class Add_Items_Window(QWidget):
         self.setWindowTitle("Create new picking list")
         self.setWindowModality(Qt.ApplicationModal)
 
+        # Current records items
         self.items = []
+
+        # Separate array for new items
+        self.additional_items = []
+
+        # Removed items
+        self.removed_items = []
 
         self.record_id = record_id
 
@@ -36,6 +46,12 @@ class Add_Items_Window(QWidget):
         self.get_customers()
         self.get_types()
         self.get_items(prod_cat_id=self.type_combo.currentData())
+        self.get_order(self.record_id)
+        self.get_order_items(self.record_id)
+
+    def closeEvent(self, event):
+        self.closed_signal.emit()
+        event.accept()
 
     def order_details_widget(self):
 
@@ -61,6 +77,8 @@ class Add_Items_Window(QWidget):
         self.cust_input.setPlaceholderText("Select a customer")
         self.cust_input.setFixedWidth(200)
 
+        self.date_input = QDateEdit()
+
         self.type_combo = QComboBox()
         self.type_combo.setFixedWidth(200)
         self.type_combo.setPlaceholderText("Select a type")
@@ -78,6 +96,7 @@ class Add_Items_Window(QWidget):
 
         # Add widgets to layout
         layout.addRow("Sage No: ", self.sage_input)
+        layout.addRow("Delivery Date:", self.date_input)
         layout.addRow("", QLabel())
         layout.addRow("Customer:", self.cust_input)
         layout.addRow("Type:", self.type_combo)
@@ -127,6 +146,48 @@ class Add_Items_Window(QWidget):
         layout.addWidget(save_btn)
 
         self.window_layout.addWidget(widget)
+
+    def get_order(self, id):
+
+        sql_query = """
+                    SELECT orders.sageNumber, customer.customerName, orders.deliveryDate
+                    FROM orders
+                    INNER JOIN customer ON customer.customerID = orders.customerID
+                    WHERE orderID = %(order_id)s;
+                    """
+
+        arg = {"order_id": self.record_id}
+
+        data = Database().custom_query(sql_query, arg)
+
+        self.sage_input.setText(str(data[0][0]))
+        self.cust_input.setCurrentText(str(data[0][1]))
+        self.date_input.setDate(data[0][2])
+
+    def get_order_items(self, order_id):
+
+        sql_query = """
+                    SELECT product.productName, product.productCode, order_item.orderItemQty, stock.stockQty, product.productID
+                    FROM order_item
+                    INNER JOIN stock ON stock.stockID = order_item.stockID
+                    INNER JOIN product ON product.productID = stock.productID
+                    WHERE order_item.orderID = %(order_id)s;
+                    """
+
+        arg = {"order_id": order_id}
+
+        data = Database().custom_query(sql_query, arg)
+
+        for row in data:
+            self.items.append(row)
+
+        self.table.setRowCount(len(self.items))
+
+        for row_index, row_data in enumerate(self.items):
+            for col_index, cell_data in enumerate(row_data):
+                self.table.setItem(
+                    row_index, col_index, QTableWidgetItem(str(cell_data))
+                )
 
     def get_customers(self):
 
@@ -197,7 +258,7 @@ class Add_Items_Window(QWidget):
         # create item
         item = (data[0][0], data[0][1], 0, data[0][2], data[0][3])
         # add item to items list
-        self.items.append(item)
+        self.additional_items.append(item)
         # Add item to table
         row_position = self.table.rowCount()
         # insert new row
@@ -306,7 +367,8 @@ class Add_Items_Window(QWidget):
         selected_row = self.table.currentRow()
 
         try:
-            self.items.pop(selected_row)
+            removed_row = self.items.pop(selected_row)
+            self.removed_items.append(removed_row)
             self.table.removeRow(selected_row)
         except:
             print("No items to remove.")
