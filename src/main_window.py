@@ -43,7 +43,7 @@ class MainWindow(QMainWindow):
         self.home_btn.clicked.connect(lambda: self.switch_page(0))
         self.stock_btn.clicked.connect(lambda: self.switch_page(1, "stock"))
         self.orders_btn.clicked.connect(lambda: self.switch_page(2, "orders"))
-        self.options_btn.clicked.connect(lambda: self.switch_page(4))
+        self.options_btn.clicked.connect(lambda: self.switch_page(4, "options"))
 
         self.nav_bar.addWidget(self.home_btn)
         self.nav_bar.addWidget(self.stock_btn)
@@ -73,6 +73,8 @@ class MainWindow(QMainWindow):
                 self.pages.addWidget(StockTable())
             case "orders":
                 self.pages.addWidget(OrdersTable())
+            case "options":
+                self.pages.addWidget(OptionsWindow())
 
         # Set page to the index passed into method
         self.pages.setCurrentIndex(index)
