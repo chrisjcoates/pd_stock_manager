@@ -31,13 +31,14 @@ def export_array_to_excel(array, filepath):
         "ID",
         "Name",
         "Description",
+        "Type",
         "Product Code",
         "Qty",
-        "Re-Order Qty",
+        "Re-Order",
         "Supplier",
         "Location",
         "Bay",
-        "Value in Stock",
+        "Value",
     ]
 
     df = pd.DataFrame(array, columns=headers)
