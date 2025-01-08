@@ -80,7 +80,7 @@ class Database:
 
         if id:
             sql_query = """
-            SELECT stock.stockID, product.productName, productDescription, product.productCode, stock.stockQty, stock.reOrderQty, supplier.supplierName, locations.locationName, bays.bayName, product.productPrice, product.productID, stock.stockDateUpdated, product_categories.prod_catName
+            SELECT stock.stockID, product.productName, productDescription, product.productCode, stock.stockQty, stock.reOrderQty, supplier.supplierName, locations.locationName, bays.bayName, product.productPrice, product.productID, TO_CHAR(stock.stockDateUpdated, 'DD/MM/YYYY HH:MM:SS'), product_categories.prod_catName
             FROM stock
             INNER JOIN product ON stock.productID = product.productID
             INNER JOIN supplier ON product.supplierID = supplier.supplierID
@@ -370,11 +370,14 @@ class Database:
         data = None
 
         orders_sql = """
-        SELECT orders.orderID, orders.sageNumber, customer.customerName, users.userName, SUBSTRING(orders.orderDateCreated::TEXT FROM 1 FOR 19), SUBSTRING(orders.orderDateUpdated::TEXT FROM 1 FOR 19)
-        FROM orders
-        INNER JOIN customer on customer.customerID = orders.customerID
-        INNER JOIN users on users.userID = orders.userID;
-                """
+                    SELECT orders.orderID, orders.sageNumber, customer.customerName, TO_CHAR(orders.deliveryDate, 'DD/MM/YYYY'), orders.orderStatus, 
+                    TO_CHAR(orders.orderDateCreated, 'DD/MM/YYYY'), 
+                    TO_CHAR(orders.orderDateUpdated, 'DD/MM/YYYY')
+                    FROM orders
+                    INNER JOIN customer on customer.customerID = orders.customerID
+                    INNER JOIN users on users.userID = orders.userID
+                    ORDER BY orders.deliveryDate;
+                    """
 
         self.connect_to_db()
 
