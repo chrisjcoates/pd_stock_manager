@@ -11,8 +11,9 @@ from PySide6.QtWidgets import (
     QFormLayout,
     QTableWidgetItem,
     QMessageBox,
+    QDateEdit,
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QDate
 from database.database import Database
 
 
@@ -55,6 +56,10 @@ class Add_Items_Window(QWidget):
         # control widgets
         self.sage_input = QLineEdit()
         self.sage_input.setPlaceholderText("Enter Sage number")
+
+        self.date_input = QDateEdit()
+        self.date_input.setDate(QDate.currentDate())
+
         self.cust_input = QComboBox()
         self.cust_input.setPlaceholderText("Select a customer")
         self.cust_input.setFixedWidth(200)
@@ -76,6 +81,7 @@ class Add_Items_Window(QWidget):
 
         # Add widgets to layout
         layout.addRow("Sage No: ", self.sage_input)
+        layout.addRow("Delivery Date:", self.date_input)
         layout.addRow("", QLabel())
         layout.addRow("Customer:", self.cust_input)
         layout.addRow("Type:", self.type_combo)
@@ -207,26 +213,14 @@ class Add_Items_Window(QWidget):
 
     def save_order_btn_click(self):
 
-        if self.sage_input.text():
-            pass
-            # self.save_order()
+        if self.sage_input.text() or self.cust_input.text():
+            self.save_order()
         else:
             # Create message box to tell used record was saved
             msg = QMessageBox(self)
             msg.setText(
-                "You need to enter a Sage number to be able to create an order."
+                "You need to enter a Sage number and customer name to be able to create an order."
             )
-            msg.setWindowTitle("Message")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.exec()
-
-        if self.cust_input.currentText():
-            pass
-            # self.save_order()
-        else:
-            # Create message box to tell used record was saved
-            msg = QMessageBox(self)
-            msg.setText("You need to select a Customer to be able to create an order.")
             msg.setWindowTitle("Message")
             msg.setStandardButtons(QMessageBox.Ok)
             msg.exec()
@@ -249,14 +243,20 @@ class Add_Items_Window(QWidget):
 
         sage_number = self.sage_input.text()
         cust_id = self.cust_input.currentData()
+        delivery_date = self.date_input.date().toString("dd-MM-yyyy")
 
         # create dict for order table record
-        order_dict = {"sage_number": sage_number, "cust_id": cust_id, "user_id": 1}
+        order_dict = {
+            "sage_number": sage_number,
+            "cust_id": cust_id,
+            "user_id": 1,
+            "delivery_date": delivery_date,
+        }
 
         # Insert into order table
         sql_query = """
-                    INSERT INTO orders (sageNumber, customerID, userID)
-                    VALUES (%(sage_number)s, %(cust_id)s, %(user_id)s)
+                    INSERT INTO orders (sageNumber, customerID, userID, deliveryDate)
+                    VALUES (%(sage_number)s, %(cust_id)s, %(user_id)s, %(delivery_date)s)
                     RETURNING orderID;
                     """
 
