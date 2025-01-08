@@ -41,12 +41,16 @@ class AddProduct(QWidget):
     def create_widgets(self):
         """Create the widgets for the input form"""
         self.name_input = QLineEdit()
+        self.name_input.setPlaceholderText("Enter item name")
         self.name_input.setFixedWidth(175)
         self.desc_input = QLineEdit()
+        self.desc_input.setPlaceholderText("Enter item description")
         self.desc_input.setFixedWidth(175)
         self.prod_code_input = QLineEdit()
+        self.prod_code_input.setPlaceholderText("Enter product code")
         # Create combo box
         self.prod_cat_input = QComboBox()
+        self.prod_cat_input.setPlaceholderText("Select item type")
         # Add values to combo box
         prod_cats = Database().get_prod_categories()
         for cat_id, cat_name in prod_cats:
@@ -58,6 +62,7 @@ class AddProduct(QWidget):
 
         # Create supplier combo box
         self.sup_input = QComboBox()
+        self.sup_input.setPlaceholderText("Select Supplier")
         # Get suppliers from database
         suppliers = Database().get_suppliers()
         # Only get the first 2 columns (id, name)
@@ -68,6 +73,7 @@ class AddProduct(QWidget):
 
         # Create location combo box
         self.loc_input = QComboBox()
+        self.loc_input.setPlaceholderText("Select location")
         # Get locations from database
         locations = Database().get_locations()
         # Only get the first 2 columns (id, name)
@@ -80,6 +86,7 @@ class AddProduct(QWidget):
 
         # Create bay combo box
         self.bay_input = QComboBox()
+        self.bay_input.setPlaceholderText("Select bay")
         self.update_bays_combo()
 
         # Create spin boxes
@@ -120,15 +127,16 @@ class AddProduct(QWidget):
         """update the bays combo box values based on the selection of the location combo box value"""
         self.bay_input.clear()
 
-        # get the bays from the database
-        bays = Database().get_bays()
-        # Get location id from the location combo box
-        loc_id = int(self.loc_input.currentData())
-        # filter the bays by the location id
-        bays = [row for row in bays if row[3] == loc_id]
-        # add the filtered bays to the combo box
-        for bay_id, bay_name, bay_desc, loc_id in bays:
-            self.bay_input.addItem(bay_name, userData=(bay_id, loc_id))
+        if self.loc_input.currentText():
+            # get the bays from the database
+            bays = Database().get_bays()
+            # Get location id from the location combo box
+            loc_id = int(self.loc_input.currentData())
+            # filter the bays by the location id
+            bays = [row for row in bays if row[3] == loc_id]
+            # add the filtered bays to the combo box
+            for bay_id, bay_name, bay_desc, loc_id in bays:
+                self.bay_input.addItem(bay_name, userData=(bay_id, loc_id))
 
     def create_product(self):
         """
