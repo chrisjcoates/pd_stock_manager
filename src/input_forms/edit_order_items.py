@@ -387,10 +387,11 @@ class Edit_Order_Items(QWidget):
     def remove_item(self):
 
         selected_row = self.table.currentRow()
+        print(selected_row)
 
         try:
             removed_row = self.items.pop(selected_row)
             self.removed_items.append(removed_row)
             self.table.removeRow(selected_row)
-        except:
-            print("No items to remove.")
+        except Exception as e:
+            print(f"No items to remove: {e}")
