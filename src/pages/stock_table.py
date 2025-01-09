@@ -146,11 +146,11 @@ class StockTable(QWidget):
                 "Description",
                 "Type",
                 "Product Code",
+                "Supplier",
                 "Qty",
                 "Allocated Stock",
                 "Stock Available",
                 "Re-Order",
-                "Supplier",
                 "Location",
                 "Bay",
                 "Value",
@@ -163,19 +163,19 @@ class StockTable(QWidget):
         # Set the table column widths
         self.table_widget.setColumnWidth(0, 50)
         self.table_widget.setColumnWidth(1, 250)
-        self.table_widget.setColumnWidth(2, 250)
-        self.table_widget.setColumnWidth(3, 200)
+        self.table_widget.setColumnWidth(2, 290)
+        self.table_widget.setColumnWidth(3, 150)
         self.table_widget.setColumnWidth(4, 200)
-        self.table_widget.setColumnWidth(5, 100)
+        self.table_widget.setColumnWidth(5, 150)
         self.table_widget.setColumnWidth(6, 100)
         self.table_widget.setColumnWidth(7, 100)
-        self.table_widget.setColumnWidth(8, 200)
+        self.table_widget.setColumnWidth(8, 100)
         self.table_widget.setColumnWidth(9, 100)
         self.table_widget.setColumnWidth(10, 100)
-        self.table_widget.setColumnWidth(11, 100)
+        self.table_widget.setColumnWidth(11, 70)
         self.table_widget.setColumnWidth(12, 100)
 
-        self.table_widget.hideColumn(8)
+        self.table_widget.hideColumn(9)
 
     def on_header_click(self, section_index):
         pass
@@ -306,8 +306,8 @@ class StockTable(QWidget):
         # Loop through each row in the table widget
         for row in range(self.table_widget.rowCount()):
             # set the qty / reorder fields as variables
-            qty_field = self.table_widget.item(row, 5)
-            reorder_field = self.table_widget.item(row, 8)
+            qty_field = self.table_widget.item(row, 6)
+            reorder_field = self.table_widget.item(row, 9)
             # check is the qty and reorder have values
             if qty_field and reorder_field:
                 try:
