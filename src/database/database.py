@@ -103,14 +103,42 @@ class Database:
                 return data
         else:
             sql_query = """
-            SELECT stock.stockID, product.productName, product.productDescription, product_categories.prod_catName, product.productCode, stock.stockQty, stock.reOrderQty, supplier.supplierName, locations.locationName, bays.bayName, CONCAT('£', product.productPrice * stock.stockQty)
-            FROM stock
+            SELECT 
+                stock.stockID, 
+                product.productName, 
+                product.productDescription,
+                product_categories.prod_catName, 
+                product.productCode, 
+                stock.stockQty, 
+                COALESCE(SUM(order_item.orderItemQty), 0) AS allocatedStock, 
+                (stock.stockQty - COALESCE(SUM(order_item.orderItemQty), 0)) AS stockAvailable,
+                stock.reOrderQty, 
+                supplier.supplierName, 
+                locations.locationName, 
+                bays.bayName, 
+                CONCAT('£', TO_CHAR(product.productPrice * stock.stockQty, 'FM999999.00')) AS totalStockValue
+            FROM 
+                stock
             INNER JOIN product ON stock.productID = product.productID
             INNER JOIN supplier ON product.supplierID = supplier.supplierID
             INNER JOIN bays ON stock.bayID = bays.bayID
             INNER JOIN locations ON bays.locationID = locations.locationID
             INNER JOIN product_categories ON product.prod_cat_id = product_categories.prod_cat_id
-            ORDER BY stock.stockID;
+            LEFT JOIN order_item ON order_item.stockID = stock.stockID
+            GROUP BY 
+                stock.stockID, 
+                product.productName, 
+                product.productDescription, 
+                product_categories.prod_catName, 
+                product.productCode, 
+                stock.stockQty, 
+                stock.reOrderQty, 
+                supplier.supplierName, 
+                locations.locationName, 
+                bays.bayName, 
+                product.productPrice
+            ORDER BY 
+                stock.stockID;
             """
 
             self.connect_to_db()
