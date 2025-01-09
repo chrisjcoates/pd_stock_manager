@@ -116,7 +116,7 @@ class Database:
                 supplier.supplierName, 
                 locations.locationName, 
                 bays.bayName, 
-                CONCAT('£', TO_CHAR(product.productPrice * stock.stockQty, 'FM999999.00')) AS totalStockValue
+                TO_CHAR(product.productPrice * stock.stockQty, 'FM"£"0.00') AS totalStockValue
             FROM 
                 stock
             INNER JOIN product ON stock.productID = product.productID
