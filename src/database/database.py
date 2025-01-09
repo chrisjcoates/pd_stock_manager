@@ -109,11 +109,27 @@ class Database:
                 product.productDescription,
                 product_categories.prod_catName, 
                 product.productCode, 
-                stock.stockQty, 
-                COALESCE(SUM(order_item.orderItemQty), 0) AS allocatedStock, 
-                (stock.stockQty - COALESCE(SUM(order_item.orderItemQty), 0)) AS stockAvailable,
-                stock.reOrderQty, 
                 supplier.supplierName, 
+                stock.stockQty, 
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN orders.deliveryDate >= CURRENT_DATE THEN order_item.orderItemQty
+                            ELSE 0
+                        END
+                    ), 
+                    0
+                ) AS allocatedStock, 
+                (stock.stockQty - COALESCE(
+                    SUM(
+                        CASE
+                            WHEN orders.deliveryDate >= CURRENT_DATE THEN order_item.orderItemQty
+                            ELSE 0
+                        END
+                    ), 
+                    0
+                )) AS stockAvailable,
+                stock.reOrderQty, 
                 locations.locationName, 
                 bays.bayName, 
                 TO_CHAR(product.productPrice * stock.stockQty, 'FM"£"0.00') AS totalStockValue
@@ -125,6 +141,7 @@ class Database:
             INNER JOIN locations ON bays.locationID = locations.locationID
             INNER JOIN product_categories ON product.prod_cat_id = product_categories.prod_cat_id
             LEFT JOIN order_item ON order_item.stockID = stock.stockID
+            LEFT JOIN orders ON order_item.orderID = orders.orderID
             GROUP BY 
                 stock.stockID, 
                 product.productName, 
