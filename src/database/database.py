@@ -132,7 +132,7 @@ class Database:
                             stock.reOrderQty, 
                             locations.locationName, 
                             bays.bayName, 
-                            TO_CHAR(product.productPrice * stock.stockQty, 'FM"£"990D00') AS totalStockValue
+                            TO_CHAR(product.productPrice * stock.stockQty, 'FM"£"999G999G999G990D00') AS totalStockValue
                         FROM 
                             stock
                         INNER JOIN product ON stock.productID = product.productID
