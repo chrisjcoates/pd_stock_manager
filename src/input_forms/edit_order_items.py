@@ -319,81 +319,26 @@ class Edit_Order_Items(QWidget):
             msg.exec()
 
     def save_order(self):
-
-        table_array = []
-
-        try:
-            for row in range(self.table.rowCount()):
-                row_data = tuple(
-                    self.table.item(row, col).text()
-                    for col in range(self.table.columnCount())
-                )
-                table_array.append(row_data)
-
-            self.items = table_array
-        except:
-            pass
-
-        sage_number = self.sage_input.text()
-        cust_id = self.cust_input.currentData()
-
-        # create dict for order table record
-        order_dict = {"sage_number": sage_number, "cust_id": cust_id, "user_id": 1}
-
-        # Insert into order table
-        sql_query = """
-                    INSERT INTO orders (sageNumber, customerID, userID)
-                    VALUES (%(sage_number)s, %(cust_id)s, %(user_id)s)
-                    RETURNING orderID;
-                    """
-
-        # Create database object and connect to db
-        database = Database()
-        database.connect_to_db()
-
-        try:
-            # Execute query
-            database.cursor.execute(sql_query, order_dict)
-            # get order id
-            order_id = database.cursor.fetchone()
-            order_id = order_id[0]
-
-            # Insert into order item table
-            sql_query = """
-                        INSERT INTO order_item (orderID, stockID, orderItemQty)
-                        VALUES (%(order_id)s, %(stock_id)s, %(order_qty)s);
-                        """
-            if len(table_array) > 0:
-                for row in table_array:
-                    stock_id = row[-1]
-                    order_qty = row[-3]
-                    database.cursor.execute(
-                        sql_query,
-                        {
-                            "order_id": order_id,
-                            "stock_id": stock_id,
-                            "order_qty": order_qty,
-                        },
-                    )
-
-        except Exception as e:
-            print(f"Error inserting data {e}")
-
-        try:
-            database.conn.commit()
-        except Exception as e:
-            print(e)
-
-        database.disconnect_from_db()
+        pass
 
     def remove_item(self):
 
         selected_row = self.table.currentRow()
-        print(selected_row)
 
-        try:
-            removed_row = self.items.pop(selected_row)
-            self.removed_items.append(removed_row)
-            self.table.removeRow(selected_row)
-        except Exception as e:
-            print(f"No items to remove: {e}")
+        if selected_row < len(self.items):
+            try:
+                removed_row = self.items.pop(selected_row)
+                self.removed_items.append(removed_row)
+                self.table.removeRow(selected_row)
+            except Exception as e:
+                print(f"No items to remove: {e}")
+        else:
+            # Work out index for additional items list
+            index = selected_row - len(self.items)
+
+            try:
+                removed_row = self.additional_items.pop(index)
+                self.removed_items.append(removed_row)
+                self.table.removeRow(selected_row)
+            except Exception as e:
+                print(f"No items to remove: {e}")
