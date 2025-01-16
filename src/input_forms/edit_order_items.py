@@ -144,7 +144,7 @@ class Edit_Order_Items(QWidget):
         layout = QHBoxLayout(widget)
 
         save_btn = QPushButton("Save & Exit")
-        save_btn.clicked.connect(self.save_order_btn_click)
+        # save_btn.clicked.connect(self.save_order_btn_click)
 
         layout.addWidget(save_btn)
 
@@ -269,26 +269,28 @@ class Edit_Order_Items(QWidget):
                     """
         # Set query argument
         arg = {"id": prod_cat_id}
-        # run query
-        data = Database().custom_query(sql_query, arg)
-        # create item
-        item = (data[0][0], data[0][1], 0, data[0][2], data[0][3], "", "WIP")
-        # add item to items list
-        self.additional_items.append(item)
-        # Add item to table
-        row_position = self.table.rowCount()
-        # insert new row
-        self.table.insertRow(row_position)
-        # add data to that row
-        for column, data in enumerate(item[0:-1]):
-            item = QTableWidgetItem(str(data))
-            self.table.setItem(row_position, column, item)
+        if self.item_combo.currentText():
+            # run query
+            data = Database().custom_query(sql_query, arg)
+            # create item
+            item = (data[0][0], data[0][1], 0, data[0][2], data[0][3], "", "WIP")
+            # add item to items list
+            self.additional_items.append(item)
 
-        combo_items = ["WIP", "Complete"]
-        combo = QComboBox()
-        combo.addItems(combo_items)
-        combo.setCurrentText("WIP")
-        self.table.setCellWidget(row_position, 5, combo)
+            # Add item to table
+            row_position = self.table.rowCount()
+            # insert new row
+            self.table.insertRow(row_position)
+            # add data to that row
+            for column, data in enumerate(item[0:-1]):
+                item = QTableWidgetItem(str(data))
+                self.table.setItem(row_position, column, item)
+
+            combo_items = ["WIP", "Complete"]
+            combo = QComboBox()
+            combo.addItems(combo_items)
+            combo.setCurrentText("WIP")
+            self.table.setCellWidget(row_position, 5, combo)
 
     def save_order_btn_click(self):
 
