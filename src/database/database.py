@@ -123,7 +123,7 @@ class Database:
                             (stock.stockQty - COALESCE(
                                 SUM(
                                     CASE
-                                        WHEN order_item.pickingStatus = 'Complete' THEN order_item.orderItemQty
+                                        WHEN order_item.pickingStatus = 'WIP' THEN order_item.orderItemQty
                                         ELSE 0
                                     END
                                 ), 
