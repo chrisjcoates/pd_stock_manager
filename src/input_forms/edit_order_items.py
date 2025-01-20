@@ -120,9 +120,17 @@ class Edit_Order_Items(QWidget):
 
         self.table = QTableWidget()
 
-        headers = ["Name", "Product Code", "Qty", "Qty in stock", "", "Picking Status"]
+        headers = [
+            "Name",
+            "Product Code",
+            "Qty",
+            "Qty in stock",
+            "ProductID",
+            "Picking Status",
+            "Order Item ID",
+        ]
 
-        self.table.setColumnCount(6)
+        self.table.setColumnCount(7)
         self.table.setRowCount(0)
         self.table.setHorizontalHeaderLabels(headers)
 
@@ -144,7 +152,7 @@ class Edit_Order_Items(QWidget):
         layout = QHBoxLayout(widget)
 
         save_btn = QPushButton("Save & Exit")
-        # save_btn.clicked.connect(self.save_order_btn_click)
+        save_btn.clicked.connect(self.save_order_btn_click)
 
         layout.addWidget(save_btn)
 
@@ -170,7 +178,9 @@ class Edit_Order_Items(QWidget):
     def get_order_items(self, order_id):
 
         sql_query = """
-                    SELECT product.productName, product.productCode, order_item.orderItemQty, stock.stockQty, product.productID, order_item.pickingStatus
+                    SELECT product.productName, product.productCode, 
+                    order_item.orderItemQty, stock.stockQty, stock.stockID, 
+                    order_item.pickingStatus, order_item.orderItemID
                     FROM order_item
                     INNER JOIN stock ON stock.stockID = order_item.stockID
                     INNER JOIN product ON product.productID = stock.productID
@@ -187,7 +197,7 @@ class Edit_Order_Items(QWidget):
         self.table.setRowCount(len(self.items))
 
         for row_index, row_data in enumerate(self.items):
-            for col_index, cell_data in enumerate(row_data[0:-1]):
+            for col_index, cell_data in enumerate(row_data):
                 self.table.setItem(
                     row_index, col_index, QTableWidgetItem(str(cell_data))
                 )
@@ -201,7 +211,7 @@ class Edit_Order_Items(QWidget):
             combo.addItems(combo_items)
 
             if row[-1]:
-                combo.setCurrentText(row[-1])
+                combo.setCurrentText(row[-2])
 
             self.table.setCellWidget(row_index, 5, combo)
 
@@ -294,32 +304,79 @@ class Edit_Order_Items(QWidget):
 
     def save_order_btn_click(self):
 
-        if self.sage_input.text():
-            pass
-            # self.save_order()
-        else:
-            # Create message box to tell used record was saved
-            msg = QMessageBox(self)
-            msg.setText(
-                "You need to enter a Sage number to be able to create an order."
-            )
-            msg.setWindowTitle("Message")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.exec()
-
-        if self.cust_input.currentText():
-            pass
-            # self.save_order()
-        else:
-            # Create message box to tell used record was saved
-            msg = QMessageBox(self)
-            msg.setText("You need to select a Customer to be able to create an order.")
-            msg.setWindowTitle("Message")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.exec()
+        self.save_order()
 
     def save_order(self):
-        pass
+
+        database = Database()
+        database.connect_to_db()
+
+        current_items = []
+        combo_index = 5
+        # Loop through rows in table widget, append data to current_items
+        try:
+            for row in range(self.table.rowCount()):
+                row_data = []
+                for col in range(self.table.columnCount()):
+                    item = self.table.item(row, col)
+
+                    if col == combo_index:
+                        combo = self.table.cellWidget(row, col)
+                        if isinstance(combo, QComboBox):
+                            row_data.append(combo.currentText())
+                    else:
+                        row_data.append(item.text() if item else "")
+
+                current_items.append(tuple(row_data))
+        except Exception as e:
+            print(f"save_order() 'looping through current_items': {e}")
+
+        [print(row) for row in enumerate(current_items)]
+
+        try:
+            for row in current_items:
+                order_item_id = row[6]
+
+                if order_item_id != "":
+                    database.cursor.execute(
+                        """
+                    SELECT 1 FROM order_item WHERE orderItemID = %s
+                    """,
+                        (order_item_id,),
+                    )
+
+                if row[6] != "":
+                    database.cursor.execute(
+                        """
+                    UPDATE order_item
+                    SET orderItemQty = %s, pickingStatus = %s
+                    WHERE orderItemID = %s;
+                    """,
+                        (row[2], row[5], order_item_id),
+                    )
+                    database.conn.commit()
+                    print("row updated")
+                else:
+                    database.cursor.execute(
+                        """
+                    INSERT INTO order_item (orderID, stockID, orderItemQty, pickingStatus)
+                    VALUES (%s, %s, %s)
+                    """,
+                        (self.record_id, row[4], row[2], row[5]),
+                    )
+                    database.conn.commit()
+                    print("row inserted")
+
+        except Exception as e:
+            print(f"save_order() 'Executing database query': {e}")
+        finally:
+            database.disconnect_from_db()
+
+        # DELETE removed line items
+        delete_sql = """
+                        DELETE FROM order_item
+                        WHERE orderItemID = %(order_item_id)s;
+                    """
 
     def remove_item(self):
 
