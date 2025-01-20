@@ -382,6 +382,16 @@ class Edit_Order_Items(QWidget):
                         )
                         database.conn.commit()
                         print("Stock qty removed from stock")
+                elif row[5] == "Complete":
+                    # Remove qty from stock
+                    database.cursor.execute(
+                        """UPDATE stock
+                            SET stockQty = stockQty - %s
+                            WHERE stockID = %s;""",
+                        (row[2], row[4]),
+                    )
+                    database.conn.commit()
+                    print("Stock qty removed from stock")
 
                 # If orderItemID exists then there is a current order item to update
                 if row[6] != "":
