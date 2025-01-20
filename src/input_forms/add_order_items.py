@@ -243,7 +243,7 @@ class Add_Items_Window(QWidget):
 
         sage_number = self.sage_input.text()
         cust_id = self.cust_input.currentData()
-        delivery_date = self.date_input.date().toString("dd-MM-yyyy")
+        delivery_date = self.date_input.date().toString("MM-dd-yyyy")
 
         # create dict for order table record
         order_dict = {
