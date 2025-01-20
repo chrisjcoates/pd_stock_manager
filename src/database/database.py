@@ -114,7 +114,7 @@ class Database:
                             COALESCE(
                                 SUM(
                                     CASE
-                                        WHEN orders.deliveryDate >= CURRENT_DATE THEN order_item.orderItemQty
+                                        WHEN order_item.pickingStatus = 'WIP' THEN order_item.orderItemQty
                                         ELSE 0
                                     END
                                 ), 
@@ -123,7 +123,7 @@ class Database:
                             (stock.stockQty - COALESCE(
                                 SUM(
                                     CASE
-                                        WHEN orders.deliveryDate >= CURRENT_DATE THEN order_item.orderItemQty
+                                        WHEN order_item.pickingStatus = 'Complete' THEN order_item.orderItemQty
                                         ELSE 0
                                     END
                                 ), 
