@@ -333,8 +333,7 @@ class Edit_Order_Items(QWidget):
         except Exception as e:
             print(f"save_order() 'looping through current_items': {e}")
 
-        [print(row) for row in enumerate(current_items)]
-
+        # Loop through each row in current items and update / insert rows to database
         try:
             for row in current_items:
                 order_item_id = row[6]
@@ -357,7 +356,6 @@ class Edit_Order_Items(QWidget):
                             refill_qty = existing_item[3] - new_item_qty
                         elif existing_item[3] < new_item_qty:
                             refill_qty = new_item_qty - existing_item[3]
-                        print(f"Refill Qty: {refill_qty}")
                     except Exception as e:
                         print(f"error here {e}")
 
@@ -385,6 +383,7 @@ class Edit_Order_Items(QWidget):
                         database.conn.commit()
                         print("Stock qty removed from stock")
 
+                # If orderItemID exists then there is a current order item to update
                 if row[6] != "":
                     database.cursor.execute(
                         """
@@ -396,46 +395,74 @@ class Edit_Order_Items(QWidget):
                     )
                     database.conn.commit()
                     print("row updated")
-                else:
+                else:  # Else insert a new row into the table
                     database.cursor.execute(
                         """
                     INSERT INTO order_item (orderID, stockID, orderItemQty, pickingStatus)
-                    VALUES (%s, %s, %s)
+                    VALUES (%s, %s, %s, %s)
                     """,
                         (self.record_id, row[4], row[2], row[5]),
                     )
                     database.conn.commit()
                     print("row inserted")
 
+            # DELETE removed line items
+            if self.removed_items:
+                for row in self.removed_items:
+                    print(row)
+                    if row[6] != "":
+                        # Delete the row from the table
+                        database.cursor.execute(
+                            """
+                            DELETE FROM order_item
+                            WHERE orderItemID = %s;
+                            """,
+                            (row[6],),
+                        )
+                        database.conn.commit()
+                        print("row deleted")
+
+                        # check if item qty > 0
+                        if row[2] > 0 and row[5] == "Complete":
+                            # if so, input the order item qty back to stock
+                            database.cursor.execute(
+                                """
+                                UPDATE stock
+                                SET stockQty = stockQty + %s
+                                WHERE orderID = %s;
+                                """,
+                                (row[2], row[4]),
+                            )
+                            database.conn.commit()
+                            print("stock qty updated")
+
         except Exception as e:
             print(f"save_order() 'Executing database query': {e}")
         finally:
             database.disconnect_from_db()
 
-        # DELETE removed line items
-        delete_sql = """
-                        DELETE FROM order_item
-                        WHERE orderItemID = %(order_item_id)s;
-                    """
-
     def remove_item(self):
 
         selected_row = self.table.currentRow()
+        item_status = self.items[selected_row][5]
 
         if selected_row < len(self.items):
             try:
                 removed_row = self.items.pop(selected_row)
-                self.removed_items.append(removed_row)
+                if item_status == "Complete":
+                    self.removed_items.append(removed_row)
                 self.table.removeRow(selected_row)
             except Exception as e:
                 print(f"No items to remove: {e}")
         else:
             # Work out index for additional items list
             index = selected_row - len(self.items)
+            item_status = self.additional_items[index][5]
 
             try:
                 removed_row = self.additional_items.pop(index)
-                self.removed_items.append(removed_row)
+                if item_status == "Complete":
+                    self.removed_items.append(removed_row)
                 self.table.removeRow(selected_row)
             except Exception as e:
                 print(f"No items to remove: {e}")
