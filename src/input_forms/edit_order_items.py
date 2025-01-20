@@ -429,7 +429,7 @@ class Edit_Order_Items(QWidget):
                                 """
                                 UPDATE stock
                                 SET stockQty = stockQty + %s
-                                WHERE orderID = %s;
+                                WHERE stockID = %s;
                                 """,
                                 (row[2], row[4]),
                             )
@@ -444,10 +444,10 @@ class Edit_Order_Items(QWidget):
     def remove_item(self):
 
         selected_row = self.table.currentRow()
-        item_status = self.items[selected_row][5]
 
         if selected_row < len(self.items):
             try:
+                item_status = self.items[selected_row][5]
                 removed_row = self.items.pop(selected_row)
                 if item_status == "Complete":
                     self.removed_items.append(removed_row)
