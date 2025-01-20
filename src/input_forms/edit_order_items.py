@@ -336,14 +336,52 @@ class Edit_Order_Items(QWidget):
         try:
             for row in current_items:
                 order_item_id = row[6]
+                new_item_qty = int(row[2])
+                refill_qty = 0
 
                 if order_item_id != "":
-                    database.cursor.execute(
-                        """
-                    SELECT 1 FROM order_item WHERE orderItemID = %s
-                    """,
-                        (order_item_id,),
-                    )
+                    try:
+                        # Fetch existing order item
+                        database.cursor.execute(
+                            """
+                        SELECT * FROM order_item WHERE orderItemID = %s
+                        """,
+                            (order_item_id,),
+                        )
+                        existing_item = database.cursor.fetchone()
+
+                        # get qty to put back in stock if qty has changed
+                        if existing_item[3] > new_item_qty:
+                            refill_qty = existing_item[3] - new_item_qty
+                        elif existing_item[3] < new_item_qty:
+                            refill_qty = new_item_qty - existing_item[3]
+                        print(f"Refill Qty: {refill_qty}")
+                    except Exception as e:
+                        print(f"error here {e}")
+
+                # Update stock qty for item qty change
+                if refill_qty > 0 and row[5] == "Complete":
+                    # Check if stock needs adding or removing
+                    if existing_item[3] > new_item_qty:
+                        # Put qty back into stock
+                        database.cursor.execute(
+                            """UPDATE stock
+                                SET stockQty = stockQty + %s
+                                WHERE stockID = %s;""",
+                            (refill_qty, row[4]),
+                        )
+                        database.conn.commit()
+                        print("Stock qty put back into stock")
+                    elif existing_item[3] < new_item_qty:
+                        # Remove qty from stock
+                        database.cursor.execute(
+                            """UPDATE stock
+                                SET stockQty = stockQty - %s
+                                WHERE stockID = %s;""",
+                            (refill_qty, row[4]),
+                        )
+                        database.conn.commit()
+                        print("Stock qty removed from stock")
 
                 if row[6] != "":
                     database.cursor.execute(
