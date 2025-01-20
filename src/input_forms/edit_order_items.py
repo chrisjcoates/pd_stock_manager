@@ -48,6 +48,7 @@ class Edit_Order_Items(QWidget):
         self.get_items(prod_cat_id=self.type_combo.currentData())
         self.get_order(self.record_id)
         self.get_order_items(self.record_id)
+        self.lock_complete_rows()
 
         self.resize(760, 600)
 
@@ -214,6 +215,7 @@ class Edit_Order_Items(QWidget):
                 combo.setCurrentText(row[-2])
 
             self.table.setCellWidget(row_index, 5, combo)
+            self.table.setItem(row_index, 5, QTableWidgetItem(""))
 
     def get_customers(self):
 
@@ -437,3 +439,20 @@ class Edit_Order_Items(QWidget):
                 self.table.removeRow(selected_row)
             except Exception as e:
                 print(f"No items to remove: {e}")
+
+    def lock_complete_rows(self):
+
+        # Loop through table rows
+        for row in range(self.table.rowCount()):
+            # get the combo box
+            combo_box_item = self.table.cellWidget(row, 5)
+
+            if isinstance(combo_box_item, QComboBox):
+                # check if the combo box value is complete
+                if combo_box_item.currentText() == "Complete":
+                    # loop through the columns of the table
+                    for column in range(self.table.columnCount()):
+                        # lock the row
+                        self.table.item(row, 2).setFlags(Qt.ItemFlag.NoItemFlags)
+                    # lock the combo box
+                    combo_box_item.setEnabled(False)
