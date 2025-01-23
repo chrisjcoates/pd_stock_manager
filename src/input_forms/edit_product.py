@@ -99,6 +99,10 @@ class EditProduct(QWidget):
         # Create edit time stamp label
         self.timestamp_label = QLabel()
 
+        # Create product status combo box
+        self.prod_status_combo = QComboBox()
+        self.prod_status_combo.addItems(["active", "inactive"])
+
         # Create submit button
         submit_button = QPushButton("Submit")
         submit_button.clicked.connect(self.update_product)
@@ -115,6 +119,7 @@ class EditProduct(QWidget):
         self.page_layout.addRow("Bay: ", self.bay_input)
         self.page_layout.addRow("Price: ", self.price_input)
         self.page_layout.addRow("Last Edit: ", self.timestamp_label)
+        self.page_layout.addRow("Product Status: ", self.prod_status_combo)
         self.page_layout.addRow(submit_button)
 
     def product_picture(self):
@@ -153,6 +158,7 @@ class EditProduct(QWidget):
         self.bay_input.setCurrentText(selected_record[0][8])
         self.price_input.setValue(float(selected_record[0][9]))
         self.timestamp_label.setText(str(selected_record[0][11])[0:19])
+        self.prod_status_combo.setCurrentText(selected_record[0][13])
 
     def update_product(self):
         """
@@ -169,6 +175,7 @@ class EditProduct(QWidget):
         sup_id = int(self.sup_input.currentData())
         bay_id = int(self.bay_input.currentData()[0])
         price = float(self.price_input.value())
+        status = self.prod_status_combo.currentText()
 
         record = Database().get_stock_data(self.record_id)
 
@@ -186,6 +193,7 @@ class EditProduct(QWidget):
                 bay_id=bay_id,
                 qty=qty,
                 reorder=reorder,
+                status=status,
             )
 
             # Create message box to tell used record was saved
