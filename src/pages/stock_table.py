@@ -6,8 +6,9 @@ from PySide6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QHBoxLayout,
-    QHeaderView,
+    QLabel,
     QFileDialog,
+    QMessageBox,
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QBrush
@@ -78,10 +79,17 @@ class StockTable(QWidget):
                 filter_data() if len(filter_line_edit.text()) > 0 else clear_filter()
             )
         )
+        # create status label
+        status_label = QLabel("Show inactive:")
+        # create status button
+        self.status_btn = QPushButton("Click")
+        self.status_btn.clicked.connect(self.show_inactive)
         # Add the widgets rto the layout
         filter_layout.addWidget(filter_line_edit)
         filter_layout.addWidget(filter_btn)
         filter_layout.addWidget(clear_filter_btn)
+        filter_layout.addWidget(status_label)
+        filter_layout.addWidget(self.status_btn)
         # Add to main class layout
         self.page_layout.addWidget(filter_widget)
 
@@ -196,7 +204,13 @@ class StockTable(QWidget):
                         row_index, col_index, QTableWidgetItem(str(cell_data))
                     )
         except Exception as e:
-            print(e)
+            print(f"refresh_table {e}")
+            # Create message box to tell used record was saved
+            msg = QMessageBox(self)
+            msg.setText("No data to filter.")
+            msg.setWindowTitle("Message")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec()
 
         self.format_qty_cells()
 
@@ -307,3 +321,10 @@ class StockTable(QWidget):
                     print(e)
                     # Set cell colour to default
                     qty_field.setBackground(QColor(113, 191, 114))
+
+    def show_inactive(self):
+
+        self.data = Database().get_stock_data(active=False)
+
+        self.update_row_column_count()
+        self.refresh_table(filter=True)
