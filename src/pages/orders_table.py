@@ -244,14 +244,17 @@ class OrdersTable(QWidget):
         """Opens the edit product input form
         and adds close event signal to update the table data
         """
-        # Get the id of the current selected record
-        current_record = self.current_record_selected()
-        # Creates the product input form
-        self.add_product_form = Edit_Order_Items(current_record)
-        # Create an on close signal event to refresh the table data
-        self.add_product_form.closed_signal.connect(update_table)
-        # Open the input form
-        self.add_product_form.show()
+        try:
+            # Get the id of the current selected record
+            current_record = self.current_record_selected()
+            # Creates the product input form
+            self.add_product_form = Edit_Order_Items(current_record)
+            # Create an on close signal event to refresh the table data
+            self.add_product_form.closed_signal.connect(update_table)
+            # Open the input form
+            self.add_product_form.show()
+        except:
+            pass
 
     def delete_product(self):
 
