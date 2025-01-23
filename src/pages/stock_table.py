@@ -45,18 +45,15 @@ class StockTable(QWidget):
         # Create buttons
         add_button = QPushButton(text="Add Product")
         edit_button = QPushButton(text="Edit")
-        delete_button = QPushButton(text="Delete")
         export_btn = QPushButton(text="Export data")
         # Add buttons to layout
         button_layout.addWidget(add_button)
         button_layout.addWidget(edit_button)
-        button_layout.addWidget(delete_button)
         button_layout.addWidget(export_btn)
 
         # button binds
         add_button.clicked.connect(self.open_add_product_form)
         edit_button.clicked.connect(self.open_edit_product_form)
-        delete_button.clicked.connect(self.delete_product)
         export_btn.clicked.connect(self.export_to_excel)
 
         self.page_layout.addWidget(button_widget)
@@ -269,21 +266,6 @@ class StockTable(QWidget):
             self.add_product_form.show()
         except:
             pass
-
-    def delete_product(self):
-
-        def update_table():
-            self.refresh_table()
-            self.delete_popup.destroy()
-
-        # Get the id of the current selected record
-        current_record = self.current_record_selected()
-        # Creates the product input form
-        self.delete_popup = DeletePopup(current_record)
-        # Create an on close signal event to refresh the table data
-        self.delete_popup.closed_signal.connect(update_table)
-        # Open the input form
-        self.delete_popup.show()
 
     def current_record_selected(self):
         selected_items = self.table_widget.selectedItems()
