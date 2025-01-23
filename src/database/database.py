@@ -170,36 +170,6 @@ class Database:
             if data:
                 return data
 
-    def delete_product(self, stock_id, prod_id):
-        # Connect to the database
-        self.connect_to_db()
-
-        # SQL  delete query's
-        delete_stock_sql = """
-        DELETE FROM stock
-        WHERE stockID = %(stock_id)s;
-        """
-
-        delete_product_sql = """
-        DELETE FROM product
-        WHERE productID = %(prod_id)s;
-        """
-
-        # Execute sql query's
-        try:
-            self.cursor.execute(delete_stock_sql, {"stock_id": stock_id})
-            self.conn.commit()
-        except Exception as e:
-            print(e)
-
-        try:
-            self.cursor.execute(delete_product_sql, {"prod_id": prod_id})
-            self.conn.commit()
-        except Exception as e:
-            print(e)
-        # Disconnect from database
-        self.disconnect_from_db()
-
     def update_product(
         self,
         stock_id,
