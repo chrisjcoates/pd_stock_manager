@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QHBoxLayout,
-    QHeaderView,
+    QMessageBox,
     QFileDialog,
 )
 from PySide6.QtCore import Qt
@@ -56,7 +56,7 @@ class OrdersTable(QWidget):
         # button binds
         add_button.clicked.connect(self.open_add_product_form)
         edit_button.clicked.connect(self.open_edit_product_form)
-        # delete_button.clicked.connect(self.delete_product)
+        delete_button.clicked.connect(self.delete_picking_list)
         # export_btn.clicked.connect(self.export_to_excel)
 
         self.page_layout.addWidget(button_widget)
@@ -175,7 +175,8 @@ class OrdersTable(QWidget):
             self.data = self._database.get_orders_data()
             print("Data retrieved")
             # update the row and column count
-            self.update_row_column_count()
+            if self.data:
+                self.update_row_column_count()
         # Add data to table
         try:
             # Loop though data and add data to table
@@ -217,13 +218,13 @@ class OrdersTable(QWidget):
 
         if no_data:
             self._row_count = 0
-            self._column_count = 5
+            self._column_count = 6
 
     def open_add_product_form(self):
 
-        # def update_table():
-        #     self.refresh_table()
-        #     self.add_product_form.destroy()
+        def update_table():
+            self.refresh_table()
+            self.add_product_form.destroy()
 
         """Opens the add product input form
         and adds close event signal to update the table data
@@ -231,7 +232,7 @@ class OrdersTable(QWidget):
         # Creates the product input form
         self.add_product_form = Add_Items_Window()
         # Create an on close signal event to refresh the table data
-        # self.add_product_form.closed_signal.connect(update_table)
+        self.add_product_form.closed_signal.connect(update_table)
         # Open the input form
         self.add_product_form.show()
 
@@ -300,3 +301,70 @@ class OrdersTable(QWidget):
             else:
                 # Set cell colour to default
                 status_field.setBackground(QColor(113, 191, 114))
+
+    def delete_picking_list(self):
+
+        current_record = self.current_record_selected()
+
+        msg = QMessageBox(self)
+        msg.setText(
+            f"This will return all items back to stock and delete the picking list, are you sure you want to continue?"
+        )
+        msg.setWindowTitle("Warning")
+        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        response = msg.exec()
+
+        if response == QMessageBox.Yes:
+            msg = QMessageBox(self)
+            msg.setText(
+                f"Data is about to be deleted, are you sure you want to continue?"
+            )
+            msg.setWindowTitle("Warning")
+            msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            response = msg.exec()
+            if response == QMessageBox.Yes:
+
+                database = Database()
+                database.connect_to_db()
+
+                select_sql = """SELECT stockID, orderItemQty, orderItemID
+                                FROM order_item
+                                WHERE orderID = %s;"""
+
+                try:
+                    database.cursor.execute(select_sql, (current_record,))
+                    data = database.cursor.fetchall()
+
+                    # Put items back into stock
+                    if data:
+                        for row in data:
+
+                            update_sql = """UPDATE stock
+                                            SET stockQty = stockQty + %s
+                                            WHERE stockID IN (
+                                                SELECT stockID
+                                                FROM order_item
+                                                WHERE stockID = %s AND removedFromStock = TRUE);"""
+
+                            database.cursor.execute(update_sql, (row[1], row[0]))
+
+                            # Delete order_items
+                            delete_items_sql = (
+                                """DELETE FROM order_item WHERE orderID = %s;"""
+                            )
+
+                            database.cursor.execute(delete_items_sql, (current_record,))
+
+                    # Delete the picking list
+                    delete_sql = """DELETE FROM orders
+                                    WHERE orderID = %s;"""
+
+                    database.cursor.execute(delete_sql, (current_record,))
+
+                    database.conn.commit()
+                except Exception as e:
+                    print(f"delete_picking_list(): {e}")
+                finally:
+                    database.disconnect_from_db()
+
+        self.refresh_table()
