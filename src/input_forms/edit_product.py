@@ -57,7 +57,7 @@ class EditProduct(QWidget):
             self.prod_cat.addItem(cat_name, userData=cat_id)
 
         self.qty_input = QSpinBox()
-        self.qty_input.setMinimum(0)
+        self.qty_input.setMinimum(-9999)
         self.qty_input.setMaximum(9999)
 
         # Create supplier combo box
@@ -88,7 +88,7 @@ class EditProduct(QWidget):
 
         # Create spin boxes
         self.re_order_input = QSpinBox()
-        self.re_order_input.setMinimum(0)
+        self.re_order_input.setMinimum(-9999)
         self.re_order_input.setMaximum(9999)
         self.price_input = QDoubleSpinBox()
         self.price_input.setMinimum(0)
