@@ -13,11 +13,13 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QDateEdit,
 )
-from PySide6.QtCore import Qt, QDate
+from PySide6.QtCore import Qt, QDate, Signal
 from database.database import Database
 
 
 class Add_Items_Window(QWidget):
+    closed_signal = Signal()
+
     def __init__(self):
         super().__init__()
 
@@ -35,6 +37,10 @@ class Add_Items_Window(QWidget):
         self.get_customers()
         self.get_types()
         self.get_items(prod_cat_id=self.type_combo.currentData())
+
+    def closeEvent(self, event):
+        self.closed_signal.emit()
+        event.accept()
 
     def order_details_widget(self):
 
@@ -224,6 +230,8 @@ class Add_Items_Window(QWidget):
             msg.setWindowTitle("Message")
             msg.setStandardButtons(QMessageBox.Ok)
             msg.exec()
+
+        self.close()
 
     def save_order(self):
 
