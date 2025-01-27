@@ -211,9 +211,6 @@ class StockTable(QWidget):
             ]
         )
 
-        # Get the table header and set a click event to it
-        self.header = self.table_widget.horizontalHeader()
-        self.header.sectionClicked.connect(self.on_header_click)
         # Set the table column widths
         self.table_widget.setColumnWidth(0, 50)
         self.table_widget.setColumnWidth(1, 250)
@@ -230,9 +227,6 @@ class StockTable(QWidget):
         self.table_widget.setColumnWidth(12, 100)
 
         self.table_widget.hideColumn(9)
-
-    def on_header_click(self, section_index):
-        pass
 
     def refresh_table(self, filter=None):
         """refreshes the table data by querying the database to get the most upto data data"""
