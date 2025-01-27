@@ -151,9 +151,6 @@ class OrdersTable(QWidget):
             ]
         )
 
-        # Get the table header and set a click event to it
-        self.header = self.table_widget.horizontalHeader()
-        self.header.sectionClicked.connect(self.on_header_click)
         # Set the table column widths
         self.table_widget.setColumnWidth(0, 50)
         self.table_widget.setColumnWidth(1, 250)
@@ -162,9 +159,6 @@ class OrdersTable(QWidget):
         self.table_widget.setColumnWidth(4, 200)
         self.table_widget.setColumnWidth(5, 200)
         self.table_widget.setColumnWidth(6, 200)
-
-    def on_header_click(self, section_index):
-        pass
 
     def refresh_table(self, filter=None):
         """refreshes the table data by querying the database to get the most upto data data"""
@@ -218,7 +212,7 @@ class OrdersTable(QWidget):
 
         if no_data:
             self._row_count = 0
-            self._column_count = 6
+            self._column_count = 7
 
     def open_add_product_form(self):
 
@@ -256,21 +250,6 @@ class OrdersTable(QWidget):
             self.add_product_form.show()
         except:
             pass
-
-    def delete_product(self):
-
-        def update_table():
-            self.refresh_table()
-            self.delete_popup.destroy()
-
-        # Get the id of the current selected record
-        current_record = self.current_record_selected()
-        # Creates the product input form
-        self.delete_popup = DeletePopup(current_record)
-        # Create an on close signal event to refresh the table data
-        self.delete_popup.closed_signal.connect(update_table)
-        # Open the input form
-        self.delete_popup.show()
 
     def current_record_selected(self):
         selected_items = self.table_widget.selectedItems()
