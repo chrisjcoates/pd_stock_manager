@@ -15,6 +15,7 @@ from PySide6.QtWidgets import (
 )
 from database.database import Database
 from PySide6.QtCore import Qt, Signal, QDate
+from datetime import datetime
 
 
 class Edit_Order_Items(QWidget):
@@ -451,8 +452,22 @@ class Edit_Order_Items(QWidget):
 
         except Exception as e:
             print(f"save_order() 'Executing database query': {e}")
+            msg = QMessageBox(self)
+            msg.setText(f"Error updating picking list record, {e}")
+            msg.setWindowTitle("Message")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec()
+            self.close()
         finally:
             database.disconnect_from_db()
+            self.update_picking_list_timestamp()
+            # Create message box to tell used record was saved
+            msg = QMessageBox(self)
+            msg.setText("Picking list record has been updated.")
+            msg.setWindowTitle("Message")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec()
+            self.close()
 
     def remove_item(self):
 
@@ -577,3 +592,22 @@ class Edit_Order_Items(QWidget):
                             finally:
                                 database.conn.commit()
                                 database.disconnect_from_db()
+
+    def update_picking_list_timestamp(self):
+
+        database = Database()
+        database.connect_to_db()
+
+        timestamp = datetime.now()
+
+        update_sql = """UPDATE orders
+                        SET orderDateUpdated = %s
+                        WHERE orderID = %s;"""
+
+        try:
+            database.cursor.execute(update_sql, (timestamp, self.record_id))
+            database.conn.commit()
+        except Exception as e:
+            print(f"update_picking_list_timestamp(): {e}")
+        finally:
+            database.disconnect_from_db()
