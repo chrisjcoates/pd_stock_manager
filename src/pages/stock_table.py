@@ -362,8 +362,6 @@ class StockTable(QWidget):
                         qty_field.setBackground(QColor(113, 191, 114))
                 except Exception as e:
                     print(e)
-                    # Set cell colour to default
-                    qty_field.setBackground(QColor(113, 191, 114))
 
     def show_inactive(self):
 
