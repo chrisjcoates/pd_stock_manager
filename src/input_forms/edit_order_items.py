@@ -381,8 +381,15 @@ class Edit_Order_Items(QWidget):
                         database.cursor.execute(
                             """UPDATE stock
                                 SET stockQty = stockQty - %s
-                                WHERE stockID = %s;""",
-                            (refill_qty, row[4]),
+                                WHERE stockID IN (
+                                    SELECT stockID
+                                    FROM order_item
+                                    WHERE stockID = %s AND removedFromStock = FALSE);
+                                UPDATE order_item
+                                SET removedFromStock = TRUE
+                                WHERE stockID = %s AND removedFromStock = FALSE;
+                                """,
+                            (refill_qty, row[4], row[4]),
                         )
                         database.conn.commit()
                         print("Stock qty removed from stock")
@@ -391,8 +398,15 @@ class Edit_Order_Items(QWidget):
                     database.cursor.execute(
                         """UPDATE stock
                             SET stockQty = stockQty - %s
-                            WHERE stockID = %s;""",
-                        (row[2], row[4]),
+                            WHERE stockID IN (
+                                SELECT stockID
+                                FROM order_item
+                                WHERE stockID = %s AND removedFromStock = FALSE);
+                                UPDATE order_item
+                                SET removedFromStock = TRUE
+                                WHERE stockID = %s AND removedFromStock = FALSE;
+                            """,
+                        (row[2], row[4], row[4]),
                     )
                     database.conn.commit()
                     print("Stock qty removed from stock")
