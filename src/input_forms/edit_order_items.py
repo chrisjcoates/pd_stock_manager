@@ -309,6 +309,8 @@ class Edit_Order_Items(QWidget):
 
         self.save_order()
 
+        self.update_picking_list_status()
+
     def save_order(self):
 
         database = Database()
@@ -494,3 +496,84 @@ class Edit_Order_Items(QWidget):
                         self.table.item(row, 2).setFlags(Qt.ItemFlag.NoItemFlags)
                     # lock the combo box
                     combo_box_item.setEnabled(False)
+
+    def update_picking_list_status(self):
+
+        update_flag = True
+
+        # Get the current orderStatus
+        database = Database()
+        database.connect_to_db()
+
+        order_status_sql = """SELECT orderStatus FROM orders WHERE orderID = %s;"""
+
+        # Get the current order status
+        try:
+            database.cursor.execute(order_status_sql, (self.record_id,))
+            order_status = database.cursor.fetchone()
+        except Exception as e:
+            print(f"update_picking_list_status(): {e}")
+        finally:
+            database.disconnect_from_db()
+
+        # Get he picking status for each line item
+        database = Database()
+        database.connect_to_db()
+
+        select_sql = """SELECT pickingStatus
+                        FROM order_item
+                        WHERE orderID = %s;"""
+
+        try:
+            database.cursor.execute(select_sql, (self.record_id,))
+            data = database.cursor.fetchall()
+        except Exception as e:
+            print(f"update_picking_list_status(): {e}")
+        finally:
+            database.disconnect_from_db()
+
+        # Loop though the status' and update flag if status is WIP
+        if data:
+            for record in data:
+                if record[0] == "WIP":
+                    update_flag = False
+                    break
+
+            # If update flag is False update the orderStatus to 'Complete'
+            if update_flag:
+                database = Database()
+                database.connect_to_db()
+
+                update_sql = """UPDATE orders
+                                SET orderStatus = 'Complete'
+                                WHERE orderID = %s;"""
+
+                try:
+                    database.cursor.execute(update_sql, (self.record_id,))
+                except Exception as e:
+                    print(f"Update_picking_list_status(): {e}")
+                finally:
+                    database.conn.commit()
+                    database.disconnect_from_db()
+
+        # If order status is complete, but line item status is WIP update order status to WIP
+        if order_status:
+            if order_status[0] == "Complete":
+                if data:
+                    for record in data:
+                        if record[0] == "WIP":
+
+                            database = Database()
+                            database.connect_to_db()
+
+                            update_sql = """UPDATE orders
+                                            SET orderStatus = 'WIP'
+                                            WHERE orderID = %s;"""
+
+                            try:
+                                database.cursor.execute(update_sql, (self.record_id,))
+                            except Exception as e:
+                                print(f"Update_picking_list_status(): {e}")
+                            finally:
+                                database.conn.commit()
+                                database.disconnect_from_db()
