@@ -14,7 +14,7 @@ from PySide6.QtGui import QColor, QBrush
 from database.database import Database
 from popup_boxes.delete_product import DeletePopup
 from classes.functions import export_array_to_excel
-from input_forms.add_order_items import Add_Items_Window
+from input_forms.add_purchase_order import AddPurchaseOrderWindow
 from input_forms.edit_order_items import Edit_Order_Items
 
 
@@ -28,13 +28,45 @@ class PurchaseOrdersTable(QWidget):
         self._row_count = 0
         self._column_count = 0
         # Set the database object
-        self._database = Database()
-        self.data = self._database.get_orders_data()
+        self.data = None
 
         # Add widgets to layout
         self.create_button_widgets()
         self.create_text_filter_widget()
         self.create_table_widget()
+        self.update_table_data()
+
+    def update_table_data(self):
+
+        select_sql = """SELECT 
+                        purchaseOrderID, 
+                        purchaseOrderNumber, 
+                        TO_CHAR(deliveryDate, 'DD/MM/YYYY'), 
+                        purchaseOrderStatus, 
+                        TO_CHAR(dateCreated, 'DD/MM/YYYY'), 
+                        TO_CHAR(dateUpdated, 'DD/MM/YYYY')
+                        FROM purchase_orders
+                        """
+        database = Database()
+        try:
+            database.connect_to_db()
+            database.cursor.execute(select_sql)
+            returned_data = database.cursor.fetchall()
+            if returned_data:
+                self.data = returned_data
+        except Exception as e:
+            print(f"update_table_data(): {e}")
+        finally:
+            database.disconnect_from_db()
+
+        self.table_widget.setRowCount(len(self.data))
+
+        if self.data:
+            for row_index, row_data in enumerate(self.data):
+                for col_index, col_data in enumerate(row_data):
+                    self.table_widget.setItem(
+                        row_index, col_index, QTableWidgetItem(str(col_data))
+                    )
 
     def create_button_widgets(self):
         """Create button widgets"""
@@ -42,7 +74,7 @@ class PurchaseOrdersTable(QWidget):
         button_widget = QWidget()
         button_layout = QHBoxLayout(button_widget)
         # Create buttons
-        add_button = QPushButton(text="Create Purchase Order")
+        add_button = QPushButton(text="Add Purchase Order")
         edit_button = QPushButton(text="Edit")
         delete_button = QPushButton(text="Delete")
         export_btn = QPushButton(text="Export data")
@@ -168,7 +200,7 @@ class PurchaseOrdersTable(QWidget):
         and adds close event signal to update the table data
         """
         # Creates the product input form
-        self.add_product_form = Add_Items_Window()
+        self.add_product_form = AddPurchaseOrderWindow()
         # Create an on close signal event to refresh the table data
         self.add_product_form.closed_signal.connect(update_table)
         # Open the input form
