@@ -11,6 +11,7 @@ from pages.home import Home
 from pages.stock_table import StockTable
 from pages.options import OptionsWindow
 from pages.orders_table import OrdersTable
+from pages.purchase_orders_table import PurchaseOrdersTable
 
 
 class MainWindow(QMainWindow):
@@ -36,6 +37,7 @@ class MainWindow(QMainWindow):
         self.home_btn = QPushButton(text="Home")
         self.stock_btn = QPushButton(text="Stock")
         self.orders_btn = QPushButton(text="Picking Lists")
+        self.po_btn = QPushButton(text="Purchase Orders")
         self.reports_btn = QPushButton(text="Reports")
         self.options_btn = QPushButton(text="Options")
 
@@ -43,22 +45,19 @@ class MainWindow(QMainWindow):
         self.home_btn.clicked.connect(lambda: self.switch_page(0))
         self.stock_btn.clicked.connect(lambda: self.switch_page(1, "stock"))
         self.orders_btn.clicked.connect(lambda: self.switch_page(2, "orders"))
+        self.po_btn.clicked.connect(lambda: self.switch_page(3, "po"))
         self.options_btn.clicked.connect(lambda: self.switch_page(4, "options"))
 
         self.nav_bar.addWidget(self.home_btn)
         self.nav_bar.addWidget(self.stock_btn)
         self.nav_bar.addWidget(self.orders_btn)
+        self.nav_bar.addWidget(self.po_btn)
         self.nav_bar.addWidget(self.reports_btn)
         self.nav_bar.addWidget(self.options_btn)
 
         # Stacked widgets for pages
         self.pages = QStackedWidget()
         main_layout.addWidget(self.pages)
-        # self.pages.addWidget(Home())
-        # self.pages.addWidget(StockTable())
-        # self.pages.addWidget(OrdersTable())
-        # self.pages.addWidget(Home())
-        # self.pages.addWidget(OptionsWindow())
 
     def switch_page(self, index, page):
         """
@@ -75,6 +74,8 @@ class MainWindow(QMainWindow):
                 self.pages.addWidget(OrdersTable())
             case "options":
                 self.pages.addWidget(OptionsWindow())
+            case "po":
+                self.pages.addWidget(PurchaseOrdersTable())
 
         # Set page to the index passed into method
         self.pages.setCurrentIndex(index)
