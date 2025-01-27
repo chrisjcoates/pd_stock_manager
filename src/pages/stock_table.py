@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QFileDialog,
     QMessageBox,
+    QCheckBox,
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QBrush
@@ -36,6 +37,7 @@ class StockTable(QWidget):
         # Add widgets to layout
         self.create_button_widgets()
         self.create_text_filter_widget()
+        self.create_column_checks()
         self.create_table_widget()
 
     def create_button_widgets(self):
@@ -66,7 +68,7 @@ class StockTable(QWidget):
 
         # Create filter text box
         filter_line_edit = QLineEdit()
-        filter_widget.setMaximumWidth(500)
+        filter_widget.setMaximumWidth(600)
         # Create filter / clear button
         filter_btn = QPushButton(text="Filter")
         clear_filter_btn = QPushButton(text="Clear")
@@ -84,6 +86,7 @@ class StockTable(QWidget):
         # create status button
         self.status_btn = QPushButton("Click")
         self.status_btn.clicked.connect(self.show_inactive)
+
         # Add the widgets rto the layout
         filter_layout.addWidget(filter_line_edit)
         filter_layout.addWidget(filter_btn)
@@ -130,6 +133,52 @@ class StockTable(QWidget):
                 print("Data un-filtered.")
             except Exception as e:
                 print(e)
+
+    def create_column_checks(self):
+
+        check_widget = QWidget()
+        check_layout = QHBoxLayout(check_widget)
+
+        labels = [
+            "Name",
+            "Description",
+            "Type",
+            "Product Code",
+            "Supplier",
+            "Qty",
+            "Allocated",
+            "Available",
+            "Reorder",
+            "Location",
+            "Bay",
+            "Value",
+        ]
+        checkboxes = []
+
+        for label in labels:
+            check_layout.addWidget(QLabel(label))
+            checkbox = QCheckBox()
+            checkbox.setObjectName(label)
+            if label != "Reorder":
+                checkbox.setChecked(True)
+            check_layout.addWidget(checkbox)
+            checkboxes.append(checkbox)
+
+        index = 0
+        for widget in check_widget.findChildren(QCheckBox):
+            if isinstance(widget, QCheckBox):
+                widget.clicked.connect(
+                    lambda checked, idx=index: self.columns_hide_show(idx)
+                )
+                index += 1
+
+        self.page_layout.addWidget(check_widget)
+
+    def columns_hide_show(self, column):
+        if self.table_widget.isColumnHidden(column + 1):
+            self.table_widget.showColumn(column + 1)
+        else:
+            self.table_widget.hideColumn(column + 1)
 
     def create_table_widget(self):
         """Creates a table widget"""
