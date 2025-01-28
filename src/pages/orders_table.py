@@ -14,8 +14,11 @@ from PySide6.QtGui import QColor, QBrush
 from database.database import Database
 from popup_boxes.delete_product import DeletePopup
 from classes.functions import export_array_to_excel
+from classes.generate_picking_list import create_picking_list
 from input_forms.add_order_items import Add_Items_Window
 from input_forms.edit_order_items import Edit_Order_Items
+import datetime
+import os
 
 
 class OrdersTable(QWidget):
@@ -47,17 +50,20 @@ class OrdersTable(QWidget):
         edit_button = QPushButton(text="Edit")
         delete_button = QPushButton(text="Delete")
         export_btn = QPushButton(text="Export data")
+        pdf_btn = QPushButton(text="Create PDF")
         # Add buttons to layout
         button_layout.addWidget(add_button)
         button_layout.addWidget(edit_button)
         button_layout.addWidget(delete_button)
-        button_layout.addWidget(export_btn)
+        # button_layout.addWidget(export_btn)
+        button_layout.addWidget(pdf_btn)
 
         # button binds
         add_button.clicked.connect(self.open_add_product_form)
         edit_button.clicked.connect(self.open_edit_product_form)
         delete_button.clicked.connect(self.delete_picking_list)
         # export_btn.clicked.connect(self.export_to_excel)
+        pdf_btn.clicked.connect(self.create_pdf_report)
 
         self.page_layout.addWidget(button_widget)
 
@@ -347,3 +353,76 @@ class OrdersTable(QWidget):
                     database.disconnect_from_db()
 
         self.refresh_table()
+
+    def create_pdf_report(self):
+
+        folder_path = QFileDialog.getExistingDirectory(self, "Select folder")
+
+        current_record = self.current_record_selected()
+
+        if current_record:
+            database = Database()
+            database.connect_to_db()
+
+            details_sql = """SELECT
+                                customer.customerName, 
+                                orders.sageNumber,
+                                TO_CHAR(orders.deliveryDate, 'DD/MM/YYYY')
+                            FROM orders
+                            INNER JOIN customer ON customer.customerID = orders.customerID
+                            WHERE orders.orderID = %s;"""
+
+            line_items_sql = """SELECT
+                                    CAST(row_number() OVER () AS TEXT) AS row_num,
+                                    product.productName,
+                                    product.productCode,
+                                    order_item.orderItemQty,
+                                    locations.locationName,
+                                    bays.bayName,
+                                    '' AS picked
+                                FROM order_item
+                                INNER JOIN stock ON order_item.stockID = stock.stockID
+                                INNER JOIN bays ON bays.bayID = stock.BayID
+                                INNER JOIN locations ON locations.locationID = bays.locationID
+                                INNER JOIN product ON product.productID = stock.ProductID
+                                WHERE order_item.orderID = %s;"""
+
+            try:
+                database.cursor.execute(details_sql, (current_record,))
+                details = database.cursor.fetchall()
+
+                database.cursor.execute(line_items_sql, (current_record,))
+                line_items = database.cursor.fetchall()
+            except Exception as e:
+                print(e)
+            finally:
+                database.disconnect_from_db()
+
+            details_dict = {
+                "name": details[0][0],
+                "order_number": details[0][1],
+                "delivery_date": details[0][2],
+            }
+
+            timestamp = datetime.datetime.today()
+
+            filename = f"{folder_path}/{details_dict['order_number']}_pickinglist_{str(timestamp)[0:9]}.pdf"
+
+            try:
+                create_picking_list(
+                    filename,
+                    details_dict,
+                    line_items,
+                )
+
+                # For Windows
+                if os.name == "nt":
+                    os.startfile(filename)
+                # For macOS
+                elif os.name == "posix":
+                    os.system(f"open {filename}")
+                # For Linux
+                else:
+                    os.system(f"xdg-open {filename}")
+            except Exception as e:
+                print(e)
