@@ -130,6 +130,15 @@ class Database:
                                     ), 
                                     0
                                 )) AS stockAvailable,
+                                COALESCE(
+                                    SUM(
+                                        CASE
+                                            WHEN po_line_items.deliveryStatus = 'WIP' THEN po_line_items.qtyOrdered
+                                            ELSE 0
+                                        END
+                                    ), 
+                                    0
+                                ) AS onOrder, 
                                 stock.reOrderQty, 
                                 locations.locationName, 
                                 bays.bayName, 
@@ -142,6 +151,7 @@ class Database:
                             INNER JOIN locations ON bays.locationID = locations.locationID
                             INNER JOIN product_categories ON product.prod_cat_id = product_categories.prod_cat_id
                             LEFT JOIN order_item ON order_item.stockID = stock.stockID
+                            LEFT JOIN po_line_items ON po_line_items.stockID = stock.stockID
                             LEFT JOIN orders ON order_item.orderID = orders.orderID
                             WHERE 
                                 product.status = 'active'
@@ -151,7 +161,8 @@ class Database:
                                 product.productDescription, 
                                 product_categories.prod_catName, 
                                 product.productCode, 
-                                stock.stockQty, 
+                                stock.stockQty,
+                                po_line_items.qtyOrdered,
                                 stock.reOrderQty, 
                                 supplier.supplierName, 
                                 locations.locationName, 
@@ -188,6 +199,15 @@ class Database:
                                     ), 
                                     0
                                 )) AS stockAvailable,
+                                COALESCE(
+                                    SUM(
+                                        CASE
+                                            WHEN po_line_items.deliveryStatus = 'WIP' THEN po_line_items.qtyOrdered
+                                            ELSE 0
+                                        END
+                                    ), 
+                                    0
+                                ) AS onOrder,
                                 stock.reOrderQty, 
                                 locations.locationName, 
                                 bays.bayName, 
@@ -200,6 +220,7 @@ class Database:
                             INNER JOIN locations ON bays.locationID = locations.locationID
                             INNER JOIN product_categories ON product.prod_cat_id = product_categories.prod_cat_id
                             LEFT JOIN order_item ON order_item.stockID = stock.stockID
+                            LEFT JOIN po_line_items ON po_line_items.stockID = stock.stockID
                             LEFT JOIN orders ON order_item.orderID = orders.orderID
                             WHERE product.status = 'inactive'
                             GROUP BY 
@@ -209,6 +230,7 @@ class Database:
                                 product_categories.prod_catName, 
                                 product.productCode, 
                                 stock.stockQty, 
+                                po_line_items.qtyOrdered,
                                 stock.reOrderQty, 
                                 supplier.supplierName, 
                                 locations.locationName, 
