@@ -15,7 +15,7 @@ from database.database import Database
 from popup_boxes.delete_product import DeletePopup
 from classes.functions import export_array_to_excel
 from input_forms.add_purchase_order import AddPurchaseOrderWindow
-from input_forms.edit_order_items import Edit_Order_Items
+from input_forms.edit_purchase_order_items import EditPurchaseOrderItems
 
 
 class PurchaseOrdersTable(QWidget):
@@ -67,6 +67,8 @@ class PurchaseOrdersTable(QWidget):
                     self.table_widget.setItem(
                         row_index, col_index, QTableWidgetItem(str(col_data))
                     )
+
+        self.format_cells()
 
     def create_button_widgets(self):
         """Create button widgets"""
@@ -209,7 +211,7 @@ class PurchaseOrdersTable(QWidget):
     def open_edit_product_form(self):
 
         def update_table():
-            self.refresh_table()
+            self.update_table_data()
             self.add_product_form.destroy()
 
         """Opens the edit product input form
@@ -219,13 +221,13 @@ class PurchaseOrdersTable(QWidget):
             # Get the id of the current selected record
             current_record = self.current_record_selected()
             # Creates the product input form
-            self.add_product_form = Edit_Order_Items(current_record)
+            self.add_product_form = EditPurchaseOrderItems(current_record)
             # Create an on close signal event to refresh the table data
             self.add_product_form.closed_signal.connect(update_table)
             # Open the input form
             self.add_product_form.show()
-        except:
-            pass
+        except Exception as e:
+            print(e)
 
     def current_record_selected(self):
         selected_items = self.table_widget.selectedItems()
@@ -237,3 +239,16 @@ class PurchaseOrdersTable(QWidget):
                 return record_id_item.text()
         except Exception as e:
             print(e)
+
+    def format_cells(self):
+        # Loop through each row in the table widget
+        for row in range(self.table_widget.rowCount()):
+            # set the qty / reorder fields as variables
+            status_field = self.table_widget.item(row, 3)
+
+            # check is the qty and reorder have values
+            if status_field.text() == "WIP":
+                status_field.setBackground(QColor(250, 243, 30))
+            else:
+                # Set cell colour to default
+                status_field.setBackground(QColor(113, 191, 114))
