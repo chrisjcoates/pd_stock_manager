@@ -312,7 +312,11 @@ class Edit_Order_Items(QWidget):
 
         self.update_picking_list_status()
 
+        self.close()
+
     def save_order(self):
+
+        self.sage_input.setFocus()
 
         database = Database()
         database.connect_to_db()
@@ -439,30 +443,36 @@ class Edit_Order_Items(QWidget):
                 for row in self.removed_items:
                     print(row)
                     if row[6] != "":
-                        # Delete the row from the table
-                        database.cursor.execute(
-                            """
-                            DELETE FROM order_item
-                            WHERE orderItemID = %s;
-                            """,
-                            (row[6],),
-                        )
-                        database.conn.commit()
-                        print("row deleted")
+                        try:
+                            # Delete the row from the table
+                            database.cursor.execute(
+                                """
+                                DELETE FROM order_item
+                                WHERE orderItemID = %s;
+                                """,
+                                (row[6],),
+                            )
+                            database.conn.commit()
+                            print("row deleted")
+                        except Exception as e:
+                            print(e)
 
                         # check if item qty > 0
                         if row[2] > 0 and row[5] == "Complete":
-                            # if so, input the order item qty back to stock
-                            database.cursor.execute(
-                                """
-                                UPDATE stock
-                                SET stockQty = stockQty + %s
-                                WHERE stockID = %s;
-                                """,
-                                (row[2], row[4]),
-                            )
-                            database.conn.commit()
-                            print("stock qty updated")
+                            try:
+                                # if so, input the order item qty back to stock
+                                database.cursor.execute(
+                                    """
+                                    UPDATE stock
+                                    SET stockQty = stockQty + %s
+                                    WHERE stockID = %s;
+                                    """,
+                                    (row[2], row[4]),
+                                )
+                                database.conn.commit()
+                                print("stock qty updated")
+                            except Exception as e:
+                                print(e)
 
         except Exception as e:
             print(f"save_order() 'Executing database query': {e}")
@@ -471,7 +481,6 @@ class Edit_Order_Items(QWidget):
             msg.setWindowTitle("Message")
             msg.setStandardButtons(QMessageBox.Ok)
             msg.exec()
-            self.close()
         finally:
             database.disconnect_from_db()
             self.update_picking_list_timestamp()
@@ -481,7 +490,6 @@ class Edit_Order_Items(QWidget):
             msg.setWindowTitle("Message")
             msg.setStandardButtons(QMessageBox.Ok)
             msg.exec()
-            self.close()
 
     def remove_item(self):
 
@@ -491,8 +499,9 @@ class Edit_Order_Items(QWidget):
             try:
                 item_status = self.items[selected_row][5]
                 removed_row = self.items.pop(selected_row)
-                if item_status == "Complete":
-                    self.removed_items.append(removed_row)
+                self.removed_items.append(removed_row)
+                # if item_status == "Complete":
+                #     self.removed_items.append(removed_row)
                 self.table.removeRow(selected_row)
             except Exception as e:
                 print(f"No items to remove: {e}")
@@ -503,11 +512,14 @@ class Edit_Order_Items(QWidget):
 
             try:
                 removed_row = self.additional_items.pop(index)
-                if item_status == "Complete":
-                    self.removed_items.append(removed_row)
+                self.removed_items.append(removed_row)
+                # if item_status == "Complete":
+                #     self.removed_items.append(removed_row)
                 self.table.removeRow(selected_row)
             except Exception as e:
                 print(f"No items to remove: {e}")
+        print(self.items)
+        print(self.removed_items)
 
     def lock_complete_rows(self):
 
