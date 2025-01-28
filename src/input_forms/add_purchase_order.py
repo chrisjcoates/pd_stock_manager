@@ -103,7 +103,7 @@ class AddPurchaseOrderWindow(QWidget):
 
         self.table = QTableWidget()
 
-        headers = ["Name", "Product Code", "Qty", "Qty in stock"]
+        headers = ["Name", "Product Code", "Qty", "Qty in stock", "Stock ID"]
 
         self.table.setColumnCount(5)
         self.table.setRowCount(0)
@@ -113,6 +113,7 @@ class AddPurchaseOrderWindow(QWidget):
         self.table.setColumnWidth(1, 250)
         self.table.setColumnWidth(2, 75)
         self.table.setColumnWidth(3, 75)
+        self.table.setColumnWidth(4, 75)
 
         self.table.hideColumn(4)
 
@@ -256,7 +257,7 @@ class AddPurchaseOrderWindow(QWidget):
 
             # Insert into order item table
             sql_query = """
-                        INSERT INTO po_line_item (purchaseOrderID, stockID, qtyOrdered)
+                        INSERT INTO po_line_items (purchaseOrderID, stockID, qtyOrdered)
                         VALUES (%(purchase_order_id)s, %(stock_id)s, %(order_qty)s);
                         """
             if len(table_array) > 0:
