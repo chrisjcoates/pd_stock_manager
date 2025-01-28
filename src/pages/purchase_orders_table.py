@@ -84,7 +84,7 @@ class PurchaseOrdersTable(QWidget):
         button_layout.addWidget(add_button)
         button_layout.addWidget(edit_button)
         button_layout.addWidget(delete_button)
-        button_layout.addWidget(export_btn)
+        # button_layout.addWidget(export_btn)
 
         # button binds
         add_button.clicked.connect(self.open_add_product_form)
