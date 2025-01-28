@@ -26,7 +26,7 @@ class Edit_Order_Items(QWidget):
 
         self.window_layout = QVBoxLayout(self)
 
-        self.setWindowTitle("Edit new picking list")
+        self.setWindowTitle("Edit picking list")
         self.setWindowModality(Qt.ApplicationModal)
 
         # Current records items
