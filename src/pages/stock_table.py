@@ -148,6 +148,7 @@ class StockTable(QWidget):
             "Qty",
             "Allocated",
             "Available",
+            "On Order",
             "Reorder",
             "Location",
             "Bay",
@@ -204,6 +205,7 @@ class StockTable(QWidget):
                 "Qty",
                 "Allocated Stock",
                 "Stock Available",
+                "On Order",
                 "Re-Order",
                 "Location",
                 "Bay",
@@ -223,10 +225,11 @@ class StockTable(QWidget):
         self.table_widget.setColumnWidth(8, 100)
         self.table_widget.setColumnWidth(9, 100)
         self.table_widget.setColumnWidth(10, 100)
-        self.table_widget.setColumnWidth(11, 70)
+        self.table_widget.setColumnWidth(11, 100)
         self.table_widget.setColumnWidth(12, 100)
+        self.table_widget.setColumnWidth(13, 70)
 
-        self.table_widget.hideColumn(9)
+        self.table_widget.hideColumn(10)
 
     def refresh_table(self, filter=None):
         """refreshes the table data by querying the database to get the most upto data data"""
@@ -285,7 +288,7 @@ class StockTable(QWidget):
 
         if no_data:
             self._row_count = 0
-            self._column_count = 11
+            self._column_count = 12
 
     def open_add_product_form(self):
 
@@ -346,7 +349,7 @@ class StockTable(QWidget):
         for row in range(self.table_widget.rowCount()):
             # set the qty / reorder fields as variables
             qty_field = self.table_widget.item(row, 6)
-            reorder_field = self.table_widget.item(row, 9)
+            reorder_field = self.table_widget.item(row, 10)
             # check is the qty and reorder have values
             if qty_field and reorder_field:
                 try:
