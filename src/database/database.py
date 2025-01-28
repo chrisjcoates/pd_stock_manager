@@ -104,7 +104,7 @@ class Database:
         else:
             if active:
                 sql_query = """
-                            SELECT 
+                            SELECT DISTINCT 
                                 stock.stockID, 
                                 product.productName, 
                                 product.productDescription,
@@ -130,15 +130,7 @@ class Database:
                                     ), 
                                     0
                                 )) AS stockAvailable,
-                                COALESCE(
-                                    SUM(
-                                        CASE
-                                            WHEN po_line_items.deliveryStatus = 'WIP' THEN po_line_items.qtyOrdered
-                                            ELSE 0
-                                        END
-                                    ), 
-                                    0
-                                ) AS onOrder, 
+                                COALESCE(po_line_items_summary.totalOnOrder, 0) AS onOrder,
                                 stock.reOrderQty, 
                                 locations.locationName, 
                                 bays.bayName, 
@@ -151,7 +143,12 @@ class Database:
                             INNER JOIN locations ON bays.locationID = locations.locationID
                             INNER JOIN product_categories ON product.prod_cat_id = product_categories.prod_cat_id
                             LEFT JOIN order_item ON order_item.stockID = stock.stockID
-                            LEFT JOIN po_line_items ON po_line_items.stockID = stock.stockID
+                            LEFT JOIN (
+                                SELECT stockID, 
+                                    SUM(CASE WHEN deliveryStatus = 'WIP' THEN qtyOrdered ELSE 0 END) AS totalOnOrder
+                                FROM po_line_items
+                                GROUP BY stockID
+                            ) AS po_line_items_summary ON po_line_items_summary.stockID = stock.stockID
                             LEFT JOIN orders ON order_item.orderID = orders.orderID
                             WHERE 
                                 product.status = 'active'
@@ -162,18 +159,18 @@ class Database:
                                 product_categories.prod_catName, 
                                 product.productCode, 
                                 stock.stockQty,
-                                po_line_items.qtyOrdered,
                                 stock.reOrderQty, 
                                 supplier.supplierName, 
                                 locations.locationName, 
                                 bays.bayName, 
-                                product.productPrice
+                                product.productPrice,
+                                po_line_items_summary.totalOnOrder
                             ORDER BY 
                                 stock.stockID;
                             """
             else:
                 sql_query = """
-                            SELECT 
+                            SELECT DISTINCT 
                                 stock.stockID, 
                                 product.productName, 
                                 product.productDescription,
@@ -199,15 +196,7 @@ class Database:
                                     ), 
                                     0
                                 )) AS stockAvailable,
-                                COALESCE(
-                                    SUM(
-                                        CASE
-                                            WHEN po_line_items.deliveryStatus = 'WIP' THEN po_line_items.qtyOrdered
-                                            ELSE 0
-                                        END
-                                    ), 
-                                    0
-                                ) AS onOrder,
+                                COALESCE(po_line_items_summary.totalOnOrder, 0) AS onOrder,
                                 stock.reOrderQty, 
                                 locations.locationName, 
                                 bays.bayName, 
@@ -220,22 +209,28 @@ class Database:
                             INNER JOIN locations ON bays.locationID = locations.locationID
                             INNER JOIN product_categories ON product.prod_cat_id = product_categories.prod_cat_id
                             LEFT JOIN order_item ON order_item.stockID = stock.stockID
-                            LEFT JOIN po_line_items ON po_line_items.stockID = stock.stockID
+                            LEFT JOIN (
+                                SELECT stockID, 
+                                    SUM(CASE WHEN deliveryStatus = 'WIP' THEN qtyOrdered ELSE 0 END) AS totalOnOrder
+                                FROM po_line_items
+                                GROUP BY stockID
+                            ) AS po_line_items_summary ON po_line_items_summary.stockID = stock.stockID
                             LEFT JOIN orders ON order_item.orderID = orders.orderID
-                            WHERE product.status = 'inactive'
+                            WHERE 
+                                product.status = 'inactive'
                             GROUP BY 
                                 stock.stockID, 
                                 product.productName, 
                                 product.productDescription, 
                                 product_categories.prod_catName, 
                                 product.productCode, 
-                                stock.stockQty, 
-                                po_line_items.qtyOrdered,
+                                stock.stockQty,
                                 stock.reOrderQty, 
                                 supplier.supplierName, 
                                 locations.locationName, 
                                 bays.bayName, 
-                                product.productPrice
+                                product.productPrice,
+                                po_line_items_summary.totalOnOrder
                             ORDER BY 
                                 stock.stockID;
                             """
