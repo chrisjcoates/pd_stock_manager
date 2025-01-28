@@ -198,7 +198,7 @@ class AddPurchaseOrderWindow(QWidget):
 
     def save_order_btn_click(self):
 
-        if self.sage_input.text() or self.cust_input.text():
+        if self.sage_input.text():
             self.save_order()
         else:
             # Create message box to tell used record was saved
