@@ -291,7 +291,11 @@ class EditPurchaseOrderItems(QWidget):
 
         self.update_po_line_item_status()
 
+        self.close()
+
     def save_order(self):
+
+        self.sage_input.setFocus()
 
         database = Database()
         database.connect_to_db()
@@ -399,7 +403,6 @@ class EditPurchaseOrderItems(QWidget):
             msg.setWindowTitle("Message")
             msg.setStandardButtons(QMessageBox.Ok)
             msg.exec()
-            self.close()
         finally:
             database.disconnect_from_db()
             self.update_picking_list_timestamp()
@@ -409,7 +412,6 @@ class EditPurchaseOrderItems(QWidget):
             msg.setWindowTitle("Message")
             msg.setStandardButtons(QMessageBox.Ok)
             msg.exec()
-            self.close()
 
     def remove_item(self):
 
@@ -419,8 +421,9 @@ class EditPurchaseOrderItems(QWidget):
             try:
                 item_status = self.items[selected_row][5]
                 removed_row = self.items.pop(selected_row)
-                if item_status == "Complete":
-                    self.removed_items.append(removed_row)
+                self.removed_items.append(removed_row)
+                # if item_status == "Complete":
+                #     self.removed_items.append(removed_row)
                 self.table.removeRow(selected_row)
             except Exception as e:
                 print(f"No items to remove: {e}")
@@ -431,8 +434,9 @@ class EditPurchaseOrderItems(QWidget):
 
             try:
                 removed_row = self.additional_items.pop(index)
-                if item_status == "Complete":
-                    self.removed_items.append(removed_row)
+                self.removed_items.append(removed_row)
+                # if item_status == "Complete":
+                #     self.removed_items.append(removed_row)
                 self.table.removeRow(selected_row)
             except Exception as e:
                 print(f"No items to remove: {e}")
@@ -479,7 +483,7 @@ class EditPurchaseOrderItems(QWidget):
 
         select_sql = """SELECT deliveryStatus
                         FROM po_line_items
-                        WHERE poLineItemID = %s;"""
+                        WHERE purchaseOrderID = %s;"""
 
         try:
             database.cursor.execute(select_sql, (self.record_id,))
