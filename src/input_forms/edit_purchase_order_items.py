@@ -182,7 +182,8 @@ class EditPurchaseOrderItems(QWidget):
                     FROM po_line_items
                     INNER JOIN stock ON stock.stockID = po_line_items.stockID
                     INNER JOIN product ON product.productID = stock.productID
-                    WHERE po_line_items.purchaseOrderID = %(order_id)s;
+                    WHERE po_line_items.purchaseOrderID = %(order_id)s
+                    ORDER BY po_line_items,poLineItemID;
                     """
 
         arg = {"order_id": order_id}
