@@ -373,10 +373,10 @@ class OrdersTable(QWidget):
                             WHERE orders.orderID = %s;"""
 
             line_items_sql = """SELECT
-                                    CAST(row_number() OVER () AS TEXT) AS row_num,
+                                    CAST(ROW_NUMBER() OVER () AS TEXT) AS row_num,
                                     product.productName,
                                     product.productCode,
-                                    order_item.orderItemQty,
+                                    SUM(order_item.orderItemQty) AS total_order_qty,
                                     locations.locationName,
                                     bays.bayName,
                                     '' AS picked
@@ -385,7 +385,9 @@ class OrdersTable(QWidget):
                                 INNER JOIN bays ON bays.bayID = stock.BayID
                                 INNER JOIN locations ON locations.locationID = bays.locationID
                                 INNER JOIN product ON product.productID = stock.ProductID
-                                WHERE order_item.orderID = %s;"""
+                                WHERE order_item.orderID = %s
+                                GROUP BY product.productID, product.productName, product.productCode, locations.locationName, bays.bayName;
+                                """
 
             try:
                 database.cursor.execute(details_sql, (current_record,))
