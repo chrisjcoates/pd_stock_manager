@@ -385,7 +385,7 @@ class OrdersTable(QWidget):
                                 INNER JOIN bays ON bays.bayID = stock.BayID
                                 INNER JOIN locations ON locations.locationID = bays.locationID
                                 INNER JOIN product ON product.productID = stock.ProductID
-                                WHERE order_item.orderID = %s
+                                WHERE order_item.orderID = %s AND order_item.pickingStatus = 'WIP'
                                 GROUP BY product.productID, product.productName, product.productCode, locations.locationName, bays.bayName;
                                 """
 
