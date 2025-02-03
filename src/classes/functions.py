@@ -37,6 +37,7 @@ def export_array_to_excel(array, filepath):
         "Qty",
         "Allocated Qty",
         "Available Qty",
+        "On-order",
         "Re-Order",
         "Location",
         "Bay",
