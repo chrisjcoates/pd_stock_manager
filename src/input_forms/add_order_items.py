@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import (
-    QApplication,
+    QCheckBox,
     QWidget,
     QLabel,
     QComboBox,
@@ -79,6 +79,7 @@ class Add_Items_Window(QWidget):
         self.item_combo = QComboBox()
         self.item_combo.setFixedWidth(350)
         self.item_combo.setPlaceholderText("Select an item")
+        self.lock_set_check = QCheckBox()
 
         add_btn = QPushButton("Add")
         add_btn.clicked.connect(lambda: self.add_item(self.item_combo.currentData()))
@@ -92,6 +93,7 @@ class Add_Items_Window(QWidget):
         layout.addRow("Customer:", self.cust_input)
         layout.addRow("Type:", self.type_combo)
         layout.addRow("Item:", self.item_combo)
+        layout.addRow("Add as a lock set? ", self.lock_set_check)
 
         btn_layout.addWidget(add_btn)
         btn_layout.addWidget(remove_btn)
@@ -193,29 +195,59 @@ class Add_Items_Window(QWidget):
             print(e)
 
     def add_item(self, prod_cat_id):
-        # Set sql query
-        sql_query = """
-                    SELECT product.productName, product.productCode, stock.stockQty, stock.stockID
-                    FROM product
-                    INNER JOIN stock ON product.productID = stock.productID
-                    WHERE product.productID = %(id)s;
-                    """
-        # Set query argument
-        arg = {"id": prod_cat_id}
-        # run query
-        data = Database().custom_query(sql_query, arg)
-        # create item
-        item = (data[0][0], data[0][1], 0, data[0][2], data[0][3])
-        # add item to items list
-        self.items.append(item)
-        # Add item to table
-        row_position = self.table.rowCount()
-        # insert new row
-        self.table.insertRow(row_position)
-        # add data to that row
-        for column, data in enumerate(item):
-            item = QTableWidgetItem(str(data))
-            self.table.setItem(row_position, column, item)
+        if not self.lock_set_check.isChecked():
+            # Set sql query
+            sql_query = """
+                        SELECT product.productName, product.productCode, stock.stockQty, stock.stockID
+                        FROM product
+                        INNER JOIN stock ON product.productID = stock.productID
+                        WHERE product.productID = %(id)s;
+                        """
+            # Set query argument
+            arg = {"id": prod_cat_id}
+            # run query
+            data = Database().custom_query(sql_query, arg)
+            # create item
+            item = (data[0][0], data[0][1], 0, data[0][2], data[0][3])
+            # add item to items list
+            self.items.append(item)
+            # Add item to table
+            row_position = self.table.rowCount()
+            # insert new row
+            self.table.insertRow(row_position)
+            # add data to that row
+            for column, data in enumerate(item):
+                item = QTableWidgetItem(str(data))
+                self.table.setItem(row_position, column, item)
+        else:
+            items = self.add_as_lock_set(prod_cat_id)
+            print(items)
+            if items == None:
+                msg = QMessageBox(self)
+                msg.setText(f"No Lock set found for the selected item.")
+                msg.setWindowTitle("Message")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.exec()
+            else:
+                for item in items:
+                    row = (item[0], item[1], 0, item[2], item[3], "", "WIP")
+                    self.items.append(row)
+                    # Gte row count
+                    row_position = self.table.rowCount()
+                    # insert new row
+                    self.table.insertRow(row_position)
+                    # add data to that row
+                    for column, data in enumerate(row[0:-1]):
+                        item = QTableWidgetItem(str(data))
+                        self.table.setItem(row_position, column, item)
+
+                    combo_items = ["WIP", "Complete"]
+                    combo = QComboBox()
+                    combo.addItems(combo_items)
+                    combo.setCurrentText("WIP")
+                    self.table.setCellWidget(row_position, 5, combo)
+
+        self.lock_set_check.setChecked(False)
 
     def save_order_btn_click(self):
 
@@ -316,3 +348,53 @@ class Add_Items_Window(QWidget):
             self.table.removeRow(selected_row)
         except:
             print("No items to remove.")
+
+    def add_as_lock_set(self, item_id):
+
+        lock_set = {"lock_id": 0, "intumescent_id": 0, "handle_id": 0, "cylinder_id": 0}
+
+        # Check if item ID is in the lock_sets table
+        database = Database()
+        database.connect_to_db()
+
+        check_for_item_sql = """SELECT lock_id, intumescent_id, handle_id, cylinder_id FROM lock_sets WHERE lock_id = %s;"""
+        try:
+            database.cursor.execute(check_for_item_sql, (item_id,))
+            result = database.cursor.fetchone()
+
+            if result:  # Check if a result is found
+                row = [
+                    id_value if id_value is not None and id_value > 0 else 0
+                    for id_value in result
+                ]  # Ensure no None values
+                for key, id_value in zip(lock_set.keys(), row):
+                    lock_set[key] = id_value
+            else:
+                result = []
+
+        except Exception as e:
+            print(f"add_as_lock_set(): first query - {e}")
+            result = []
+
+        # If a lock set is found
+        if result:
+            lock_set_items_sql = """
+                SELECT product.productName, product.productCode, stock.stockQty, stock.stockID
+                FROM product
+                INNER JOIN stock ON product.productID = stock.productID
+                WHERE product.productID = %s;
+            """
+
+            items = []
+            for key, value in lock_set.items():
+                if value:
+                    try:
+                        database.cursor.execute(lock_set_items_sql, (value,))
+                        items.append(database.cursor.fetchone())
+                    except Exception as e:
+                        print(f"add_as_lock_set(): second query - {e}")
+
+            if items:
+                return items
+            else:
+                return False
