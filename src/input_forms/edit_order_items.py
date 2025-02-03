@@ -190,7 +190,8 @@ class Edit_Order_Items(QWidget):
                     FROM order_item
                     INNER JOIN stock ON stock.stockID = order_item.stockID
                     INNER JOIN product ON product.productID = stock.productID
-                    WHERE order_item.orderID = %(order_id)s;
+                    WHERE order_item.orderID = %(order_id)s
+                    ORDER BY order_item.orderItemID;
                     """
 
         arg = {"order_id": order_id}
@@ -244,7 +245,8 @@ class Edit_Order_Items(QWidget):
 
         sql_query = """
                     SELECT prod_cat_id, prod_catName
-                    FROM product_categories;
+                    FROM product_categories
+                    ORDER BY prod_catName;
                     """
         try:
             data = Database().custom_query(sql_query)
