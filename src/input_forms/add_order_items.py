@@ -162,7 +162,8 @@ class Add_Items_Window(QWidget):
 
         sql_query = """
                     SELECT prod_cat_id, prod_catName
-                    FROM product_categories;
+                    FROM product_categories
+                    ORDER BY prod_catName;
                     """
         try:
             data = Database().custom_query(sql_query)
