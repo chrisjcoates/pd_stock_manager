@@ -12,6 +12,7 @@ from pages.stock_table import StockTable
 from pages.options import OptionsWindow
 from pages.orders_table import OrdersTable
 from pages.purchase_orders_table import PurchaseOrdersTable
+from pages.customers_table import CustomerTable
 
 
 class MainWindow(QMainWindow):
@@ -38,6 +39,7 @@ class MainWindow(QMainWindow):
         self.stock_btn = QPushButton(text="Stock")
         self.orders_btn = QPushButton(text="Picking Lists")
         self.po_btn = QPushButton(text="Purchase Orders")
+        self.customer_btn = QPushButton(text="Customers")
         self.reports_btn = QPushButton(text="Reports")
         self.options_btn = QPushButton(text="Options")
 
@@ -46,12 +48,14 @@ class MainWindow(QMainWindow):
         self.stock_btn.clicked.connect(lambda: self.switch_page(1, "stock"))
         self.orders_btn.clicked.connect(lambda: self.switch_page(2, "orders"))
         self.po_btn.clicked.connect(lambda: self.switch_page(3, "po"))
-        self.options_btn.clicked.connect(lambda: self.switch_page(4, "options"))
+        self.customer_btn.clicked.connect(lambda: self.switch_page(4, "customer"))
+        self.options_btn.clicked.connect(lambda: self.switch_page(5, "options"))
 
         self.nav_bar.addWidget(self.home_btn)
         self.nav_bar.addWidget(self.stock_btn)
         self.nav_bar.addWidget(self.orders_btn)
         self.nav_bar.addWidget(self.po_btn)
+        self.nav_bar.addWidget(self.customer_btn)
         self.nav_bar.addWidget(self.reports_btn)
         self.nav_bar.addWidget(self.options_btn)
 
@@ -76,6 +80,8 @@ class MainWindow(QMainWindow):
                 self.pages.addWidget(OptionsWindow())
             case "po":
                 self.pages.addWidget(PurchaseOrdersTable())
+            case "customer":
+                self.pages.addWidget(CustomerTable())
 
         # Set page to the index passed into method
         self.pages.setCurrentIndex(index)
