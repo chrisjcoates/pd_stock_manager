@@ -676,13 +676,19 @@ class Edit_Order_Items(QWidget):
 
     def add_as_lock_set(self, item_id):
 
-        lock_set = {"lock_id": 0, "intumescent_id": 0, "handle_id": 0, "cylinder_id": 0}
+        lock_set = {
+            "lock_id": 0,
+            "intumescent_id": 0,
+            "handle_id": 0,
+            "cylinder_id": 0,
+            "escutcheon_id": 0,
+        }
 
         # Check if item ID is in the lock_sets table
         database = Database()
         database.connect_to_db()
 
-        check_for_item_sql = """SELECT lock_id, intumescent_id, handle_id, cylinder_id FROM lock_sets WHERE lock_id = %s;"""
+        check_for_item_sql = """SELECT lock_id, intumescent_id, handle_id, cylinder_id, escutcheon_id FROM lock_sets WHERE lock_id = %s;"""
         try:
             database.cursor.execute(check_for_item_sql, (item_id,))
             result = database.cursor.fetchone()
