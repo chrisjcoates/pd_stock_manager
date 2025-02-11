@@ -59,7 +59,10 @@ class PurchaseOrdersTable(QWidget):
         finally:
             database.disconnect_from_db()
 
-        self.table_widget.setRowCount(len(self.data))
+        try:
+            self.table_widget.setRowCount(len(self.data))
+        except:
+            self.table_widget.setRowCount(0)
 
         if self.data:
             for row_index, row_data in enumerate(self.data):
