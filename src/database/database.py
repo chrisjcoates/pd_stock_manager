@@ -512,3 +512,34 @@ class Database:
             self.disconnect_from_db()
 
             return data
+
+    def insert_new_customer(self, name, phone, email):
+
+        self.connect_to_db()
+
+        sql_product = """
+        INSERT INTO customer (customerName, customerPhone, customerEmail)
+        VALUES (%(name)s, %(phone)s, %(email)s);
+        """
+
+        try:
+            print("trying first statement")
+            self.cursor.execute(
+                sql_product,
+                {
+                    "name": name,
+                    "phone": phone,
+                    "email": email,
+                },
+            )
+            print("first statement complete")
+            self.conn.commit()
+            print("Insert successful.")
+
+            self.disconnect_from_db()
+
+        except Exception as e:
+            print("Insert Failed.")
+            self.conn.rollback()
+            print(e)
+            self.disconnect_from_db()
