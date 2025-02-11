@@ -128,7 +128,7 @@ class PurchaseOrdersTable(QWidget):
             """Function to filter the data based on text input value"""
             # Get filter text
             filter_text = filter_line_edit.text()
-            self.data = self._database.get_orders_data()
+            self.update_table_data()
             try:
                 if filter_text:
                     # Loop through each row in data and keep only records that match the filter
@@ -139,10 +139,19 @@ class PurchaseOrdersTable(QWidget):
                     ]
                     # Set the data to filtered data
                     self.data = filtered_data
+
                     # update row and column count, and refresh table
                     if len(self.data) > 0:
-                        self.update_row_column_count()
-                        self.refresh_table(True)
+                        self.table_widget.clearContents()
+                        self.table_widget.setRowCount(len(self.data))
+                        for row_index, row_data in enumerate(self.data):
+                            for col_index, col_data in enumerate(row_data):
+                                self.table_widget.setItem(
+                                    row_index,
+                                    col_index,
+                                    QTableWidgetItem(str(col_data)),
+                                )
+                        self.format_cells()
                         print("Data filtered.")
             except Exception as e:
                 print(e)
@@ -150,12 +159,7 @@ class PurchaseOrdersTable(QWidget):
         def clear_filter():
             """clears the current filter and returns the table data back to normal"""
             try:
-                # get data from database
-                self.data = self._database.get_orders_data()
-                # Update the row and column count
-                self.update_row_column_count()
-                # Refresh the table
-                self.refresh_table()
+                self.update_table_data()
                 # Clear the filter text
                 filter_line_edit.clear()
                 print("Data un-filtered.")
