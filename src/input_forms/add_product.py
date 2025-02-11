@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QHBoxLayout,
     QLabel,
+    QVBoxLayout,
 )
 from PySide6.QtCore import Qt, Signal
 from database.database import Database
@@ -22,7 +23,9 @@ class AddProduct(QWidget):
 
         self.setWindowTitle("Add New Product")
 
-        self.main_layout = QHBoxLayout(self)
+        self.top_layout = QVBoxLayout(self)
+        main_layout_widget = QWidget()
+        self.main_layout = QHBoxLayout(main_layout_widget)
         self.page_layout = QFormLayout()
         self.page_widget = QWidget()
         self.page_widget.setLayout(self.page_layout)
@@ -31,6 +34,7 @@ class AddProduct(QWidget):
         self.create_widgets()
 
         self.main_layout.addWidget(self.page_widget)
+        self.top_layout.addWidget(main_layout_widget)
 
         self.product_picture()
 
