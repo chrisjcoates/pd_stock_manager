@@ -1,10 +1,11 @@
+from functools import partial
 from PySide6.QtWidgets import (
     QWidget,
     QLabel,
     QLineEdit,
     QGridLayout,
     QVBoxLayout,
-    QHBoxLayout,
+    QPushButton,
     QPushButton,
 )
 from PySide6.QtCore import Qt
@@ -17,6 +18,9 @@ class OptionsWindow(QWidget):
 
         # Set the layout of the options screen
         self.page_layout = QVBoxLayout(self)
+
+        # Add buttons
+        # self.drop_down_buttons()
 
         # Add database details to screen
         self.database_details()
@@ -92,3 +96,46 @@ class OptionsWindow(QWidget):
         write_settings_json(
             "src/settings/settings.json", host, port, db_name, user, password
         )
+
+    def drop_down_buttons(self):
+
+        button_widget = QWidget()
+        button_layout = QVBoxLayout(button_widget)
+        button_widget.setFixedWidth(300)
+
+        input_form_buttons = [
+            "Locations",
+            "Bays",
+            "Suppliers",
+            "Product Categories",
+            "Customers",
+            "Lock Sets",
+        ]
+        input_form_buttons.sort()
+
+        for button in input_form_buttons:
+            new_button = QPushButton(button)
+            new_button.setObjectName(button)
+            new_button.clicked.connect(partial(self.button_click, button))
+            button_layout.addWidget(new_button)
+
+        self.page_layout.addWidget(button_widget)
+
+    def button_click(self, button_name):
+
+        match button_name:
+            case "Locations":
+                pass
+            case "Bays":
+                pass
+            case "Suppliers":
+                pass
+            case "Customers":
+                self.customer_form = CreateCustomers()
+                # Open the input form
+                self.customer_form.show()
+                print("customers selected")
+            case "Product Categories":
+                pass
+            case "Lock Sets":
+                pass
