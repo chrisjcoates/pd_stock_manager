@@ -40,12 +40,14 @@ class PurchaseOrdersTable(QWidget):
 
         select_sql = """SELECT 
                         purchaseOrderID, 
-                        purchaseOrderNumber, 
+                        purchaseOrderNumber,
+                        supplier.supplierName,
                         TO_CHAR(deliveryDate, 'DD/MM/YYYY'), 
                         purchaseOrderStatus, 
                         TO_CHAR(dateCreated, 'DD/MM/YYYY'), 
                         TO_CHAR(dateUpdated, 'DD/MM/YYYY')
                         FROM purchase_orders
+                        INNER JOIN supplier ON purchase_orders.supplierID = supplier.supplierID;
                         """
         database = Database()
         try:
@@ -171,6 +173,7 @@ class PurchaseOrdersTable(QWidget):
         header_labels = [
             "ID",
             "PO No.",
+            "Supplier",
             "Delivery Date",
             "Delivery Status",
             "Date Created",
@@ -251,7 +254,7 @@ class PurchaseOrdersTable(QWidget):
         # Loop through each row in the table widget
         for row in range(self.table_widget.rowCount()):
             # set the qty / reorder fields as variables
-            status_field = self.table_widget.item(row, 3)
+            status_field = self.table_widget.item(row, 4)
 
             # check is the qty and reorder have values
             if status_field.text() == "WIP":
