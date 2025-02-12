@@ -46,6 +46,7 @@ class EditPurchaseOrderItems(QWidget):
 
         self.get_types()
         self.get_items(prod_cat_id=self.type_combo.currentData())
+        self.get_suppliers()
         self.get_order(self.record_id)
         self.get_order_items(self.record_id)
         self.lock_complete_rows()
@@ -77,6 +78,10 @@ class EditPurchaseOrderItems(QWidget):
         self.sage_input = QLineEdit()
         self.sage_input.setPlaceholderText("Enter PO number")
 
+        self.supplier_input = QComboBox()
+        self.supplier_input.setFixedWidth(200)
+        self.supplier_input.setPlaceholderText("Select a supplier")
+
         self.date_input = QDateEdit()
 
         self.type_combo = QComboBox()
@@ -96,6 +101,7 @@ class EditPurchaseOrderItems(QWidget):
 
         # Add widgets to layout
         layout.addRow("Purchase Order No: ", self.sage_input)
+        layout.addRow("Supplier: ", self.supplier_input)
         layout.addRow("Delivery Date:", self.date_input)
         layout.addRow("", QLabel())
         layout.addRow("Type:", self.type_combo)
@@ -161,8 +167,9 @@ class EditPurchaseOrderItems(QWidget):
     def get_order(self, id):
 
         sql_query = """
-                    SELECT purchase_orders.purchaseOrderNumber, purchase_orders.deliveryDate
+                    SELECT purchase_orders.purchaseOrderNumber,purchase_orders.deliveryDate, supplier.supplierName
                     FROM purchase_orders
+                    INNER JOIN supplier ON purchase_orders.supplierID = supplier.supplierID
                     WHERE purchaseOrderID = %(order_id)s;
                     """
 
@@ -171,6 +178,7 @@ class EditPurchaseOrderItems(QWidget):
         data = Database().custom_query(sql_query, arg)
 
         self.sage_input.setText(str(data[0][0]))
+        self.supplier_input.setCurrentText(str(data[0][2]))
         self.date_input.setDate(data[0][1])
 
     def get_order_items(self, order_id):
@@ -250,6 +258,24 @@ class EditPurchaseOrderItems(QWidget):
 
             for id, name in data:
                 self.item_combo.addItem(name, userData=id)
+        except Exception as e:
+            print(e)
+
+    def get_suppliers(self):
+
+        data = None
+
+        sql_query = """
+                    SELECT  supplierID, supplierName
+                    FROM supplier;
+                    """
+        try:
+            data = Database().custom_query(sql_query)
+
+            self.supplier_input.clear()
+
+            for id, name in data:
+                self.supplier_input.addItem(name, userData=id)
         except Exception as e:
             print(e)
 
