@@ -36,6 +36,7 @@ class AddPurchaseOrderWindow(QWidget):
 
         self.get_types()
         self.get_items(prod_cat_id=self.type_combo.currentData())
+        self.get_suppliers()
 
     def closeEvent(self, event):
         self.closed_signal.emit()
@@ -62,6 +63,10 @@ class AddPurchaseOrderWindow(QWidget):
         self.sage_input = QLineEdit()
         self.sage_input.setPlaceholderText("Enter Sage number")
 
+        self.supplier_input = QComboBox()
+        self.supplier_input.setFixedWidth(200)
+        self.supplier_input.setPlaceholderText("Select a supplier")
+
         self.date_input = QDateEdit()
         self.date_input.setDate(QDate.currentDate())
 
@@ -82,6 +87,7 @@ class AddPurchaseOrderWindow(QWidget):
 
         # Add widgets to layout
         layout.addRow("Purchase Order No: ", self.sage_input)
+        layout.addRow("Supplier: ", self.supplier_input)
         layout.addRow("Delivery Date:", self.date_input)
         layout.addRow("", QLabel())
         layout.addRow("Type:", self.type_combo)
@@ -171,6 +177,24 @@ class AddPurchaseOrderWindow(QWidget):
         except Exception as e:
             print(e)
 
+    def get_suppliers(self):
+
+        data = None
+
+        sql_query = """
+                    SELECT  supplierID, supplierName
+                    FROM supplier;
+                    """
+        try:
+            data = Database().custom_query(sql_query)
+
+            self.supplier_input.clear()
+
+            for id, name in data:
+                self.supplier_input.addItem(name, userData=id)
+        except Exception as e:
+            print(e)
+
     def add_item(self, prod_cat_id):
         # Set sql query
         sql_query = """
@@ -229,18 +253,20 @@ class AddPurchaseOrderWindow(QWidget):
             pass
 
         sage_number = self.sage_input.text()
+        supplier_name = self.supplier_input.currentData()
         delivery_date = self.date_input.date().toString("MM-dd-yyyy")
 
         # create dict for order table record
         order_dict = {
             "sage_number": sage_number,
+            "supplier_name": supplier_name,
             "delivery_date": delivery_date,
         }
 
         # Insert into order table
         sql_query = """
                     INSERT INTO purchase_orders (purchaseOrderNumber, deliveryDate)
-                    VALUES (%(sage_number)s, %(delivery_date)s)
+                    VALUES (%(sage_number)s, %(supplier_name)s, %(delivery_date)s)
                     RETURNING purchaseOrderID;
                     """
 
