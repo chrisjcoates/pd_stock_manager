@@ -97,7 +97,7 @@ class CustomerTable(QWidget):
         # button binds
         add_button.clicked.connect(self.open_add_customer_form)
         edit_button.clicked.connect(self.open_edit_product_form)
-        delete_button.clicked.connect(self.delete_purchase_order)
+        delete_button.clicked.connect(self.delete_customer)
         # export_btn.clicked.connect(self.export_to_excel)
 
         self.page_layout.addWidget(button_widget)
@@ -250,13 +250,13 @@ class CustomerTable(QWidget):
         except Exception as e:
             print(e)
 
-    def delete_purchase_order(self):
+    def delete_customer(self):
 
         current_record = self.current_record_selected()
 
         msg = QMessageBox(self)
         msg.setText(
-            f"This will remove all items from stock if allocated and delete the PO, are you sure you want to continue?"
+            f"This will delete the customer record, are you sure you want to continue?"
         )
         msg.setWindowTitle("Warning")
         msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
@@ -265,7 +265,7 @@ class CustomerTable(QWidget):
         if response == QMessageBox.Yes:
             msg = QMessageBox(self)
             msg.setText(
-                f"Data is about to be deleted, are you sure you want to continue?"
+                f"Customer is about to be deleted, are you sure you want to continue?"
             )
             msg.setWindowTitle("Warning")
             msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
@@ -275,41 +275,17 @@ class CustomerTable(QWidget):
                 database = Database()
                 database.connect_to_db()
 
-                select_sql = """SELECT stockID, qtyOrdered, poLineItemID
-                                FROM po_line_items
-                                WHERE purchaseOrderID = %s;"""
+                delete_sql = """DELETE FROM customer
+                                WHERE customerID = %s;"""
 
                 try:
-                    database.cursor.execute(select_sql, (current_record,))
-                    data = database.cursor.fetchall()
-
-                    # Put items back into stock
-                    if data:
-                        for row in data:
-
-                            update_sql = """UPDATE stock
-                                            SET stockQty = stockQty - %s
-                                            WHERE stockID IN (
-                                                SELECT stockID
-                                                FROM po_line_items
-                                                WHERE stockID = %s AND addedToStock = TRUE);"""
-
-                            database.cursor.execute(update_sql, (row[1], row[0]))
-
-                            # Delete order_items
-                            delete_items_sql = """DELETE FROM po_line_items WHERE purchaseOrderID = %s;"""
-
-                            database.cursor.execute(delete_items_sql, (current_record,))
-
-                    # Delete the picking list
-                    delete_sql = """DELETE FROM purchase_orders
-                                    WHERE purchaseOrderID = %s;"""
-
-                    database.cursor.execute(delete_sql, (current_record,))
-
+                    database.cursor.execute(
+                        delete_sql, (self.current_record_selected(),)
+                    )
                     database.conn.commit()
                 except Exception as e:
-                    print(f"delete_purchase_order(): {e}")
+                    database.conn.rollback()
+                    print(f"delete_customer(): {e}")
                 finally:
                     database.disconnect_from_db()
 
