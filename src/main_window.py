@@ -13,6 +13,7 @@ from pages.options import OptionsWindow
 from pages.orders_table import OrdersTable
 from pages.purchase_orders_table import PurchaseOrdersTable
 from pages.customers_table import CustomerTable
+from pages.supplier_table import SupplierTable
 
 
 class MainWindow(QMainWindow):
@@ -40,22 +41,25 @@ class MainWindow(QMainWindow):
         self.orders_btn = QPushButton(text="Picking Lists")
         self.po_btn = QPushButton(text="Purchase Orders")
         self.customer_btn = QPushButton(text="Customers")
+        self.supplier_btn = QPushButton(text="Suppliers")
         self.reports_btn = QPushButton(text="Reports")
         self.options_btn = QPushButton(text="Options")
 
         # Create button click events
-        self.home_btn.clicked.connect(lambda: self.switch_page(0))
+        self.home_btn.clicked.connect(lambda: self.switch_page(0, "home"))
         self.stock_btn.clicked.connect(lambda: self.switch_page(1, "stock"))
         self.orders_btn.clicked.connect(lambda: self.switch_page(2, "orders"))
         self.po_btn.clicked.connect(lambda: self.switch_page(3, "po"))
         self.customer_btn.clicked.connect(lambda: self.switch_page(4, "customer"))
-        self.options_btn.clicked.connect(lambda: self.switch_page(5, "options"))
+        self.supplier_btn.clicked.connect(lambda: self.switch_page(5, "supplier"))
+        self.options_btn.clicked.connect(lambda: self.switch_page(56, "options"))
 
         self.nav_bar.addWidget(self.home_btn)
         self.nav_bar.addWidget(self.stock_btn)
         self.nav_bar.addWidget(self.orders_btn)
         self.nav_bar.addWidget(self.po_btn)
         self.nav_bar.addWidget(self.customer_btn)
+        self.nav_bar.addWidget(self.supplier_btn)
         self.nav_bar.addWidget(self.reports_btn)
         self.nav_bar.addWidget(self.options_btn)
 
@@ -72,6 +76,8 @@ class MainWindow(QMainWindow):
             self.pages.removeWidget(self.pages.currentWidget())
 
         match page:
+            case "home":
+                pass
             case "stock":
                 self.pages.addWidget(StockTable())
             case "orders":
@@ -82,6 +88,8 @@ class MainWindow(QMainWindow):
                 self.pages.addWidget(PurchaseOrdersTable())
             case "customer":
                 self.pages.addWidget(CustomerTable())
+            case "supplier":
+                self.pages.addWidget(SupplierTable())
 
         # Set page to the index passed into method
         self.pages.setCurrentIndex(index)
