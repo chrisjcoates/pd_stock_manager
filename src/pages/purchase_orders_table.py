@@ -258,7 +258,7 @@ class PurchaseOrdersTable(QWidget):
 
             # check is the qty and reorder have values
             if status_field.text() == "WIP":
-                status_field.setBackground(QColor(250, 243, 30))
+                status_field.setBackground(QColor(227, 182, 5))
             else:
                 # Set cell colour to default
                 status_field.setBackground(QColor(113, 191, 114))
