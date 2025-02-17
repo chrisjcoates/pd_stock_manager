@@ -7,15 +7,12 @@ from PySide6.QtWidgets import (
     QTableWidgetItem,
     QHBoxLayout,
     QMessageBox,
-    QFileDialog,
 )
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor, QBrush
 from database.database import Database
-from popup_boxes.delete_product import DeletePopup
 from classes.functions import export_array_to_excel
-from input_forms.add_customer import AddCustomer
-from input_forms.edit_customer import EditCustomer
+from input_forms.add_supplier import AddSupplier
+from input_forms.edit_supplier import EditSupplier
 
 
 class SupplierTable(QWidget):
@@ -88,7 +85,7 @@ class SupplierTable(QWidget):
         button_widget = QWidget()
         button_layout = QHBoxLayout(button_widget)
         # Create buttons
-        add_button = QPushButton(text="Add Customer")
+        add_button = QPushButton(text="Add Supplier")
         edit_button = QPushButton(text="Edit")
         delete_button = QPushButton(text="Delete")
         export_btn = QPushButton(text="Export data")
@@ -99,9 +96,9 @@ class SupplierTable(QWidget):
         # button_layout.addWidget(export_btn)
 
         # button binds
-        add_button.clicked.connect(self.open_add_customer_form)
+        add_button.clicked.connect(self.open_add_supplier_form)
         edit_button.clicked.connect(self.open_edit_product_form)
-        delete_button.clicked.connect(self.delete_customer)
+        delete_button.clicked.connect(self.delete_supplier)
         # export_btn.clicked.connect(self.export_to_excel)
 
         self.page_layout.addWidget(button_widget)
@@ -208,7 +205,7 @@ class SupplierTable(QWidget):
         self.table_widget.setColumnWidth(5, 200)
         self.table_widget.setColumnWidth(6, 200)
 
-    def open_add_customer_form(self):
+    def open_add_supplier_form(self):
 
         def update_table():
             self.update_table_data()
@@ -218,7 +215,7 @@ class SupplierTable(QWidget):
         and adds close event signal to update the table data
         """
         # Creates the product input form
-        self.add_customer_form = AddCustomer()
+        self.add_customer_form = AddSupplier()
         # Create an on close signal event to refresh the table data
         self.add_customer_form.closed_signal.connect(update_table)
         # Open the input form
@@ -237,7 +234,7 @@ class SupplierTable(QWidget):
             # Get the id of the current selected record
             current_record = self.current_record_selected()
             # Creates the product input form
-            self.add_customer_form = EditCustomer(current_record)
+            self.add_customer_form = EditSupplier(current_record)
             # Create an on close signal event to refresh the table data
             self.add_customer_form.closed_signal.connect(update_table)
             # Open the input form
@@ -256,13 +253,13 @@ class SupplierTable(QWidget):
         except Exception as e:
             print(e)
 
-    def delete_customer(self):
+    def delete_supplier(self):
 
         current_record = self.current_record_selected()
 
         msg = QMessageBox(self)
         msg.setText(
-            f"This will delete the customer record, are you sure you want to continue?"
+            f"This will delete the supplier record, are you sure you want to continue?"
         )
         msg.setWindowTitle("Warning")
         msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
@@ -271,7 +268,7 @@ class SupplierTable(QWidget):
         if response == QMessageBox.Yes:
             msg = QMessageBox(self)
             msg.setText(
-                f"Customer is about to be deleted, are you sure you want to continue?"
+                f"Supplier is about to be deleted, are you sure you want to continue?"
             )
             msg.setWindowTitle("Warning")
             msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
@@ -281,8 +278,8 @@ class SupplierTable(QWidget):
                 database = Database()
                 database.connect_to_db()
 
-                delete_sql = """DELETE FROM customer
-                                WHERE customerID = %s;"""
+                delete_sql = """DELETE FROM supplier
+                                WHERE supplierID = %s;"""
 
                 try:
                     database.cursor.execute(
@@ -291,7 +288,7 @@ class SupplierTable(QWidget):
                     database.conn.commit()
                 except Exception as e:
                     database.conn.rollback()
-                    print(f"delete_customer(): {e}")
+                    print(f"delete_supplier(): {e}")
                 finally:
                     database.disconnect_from_db()
 
