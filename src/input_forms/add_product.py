@@ -151,12 +151,12 @@ class AddProduct(QWidget):
         name = self.name_input.text()
         desc = self.desc_input.text()
         code = self.prod_code_input.text()
-        prod_cat_id = int(self.prod_cat_input.currentData())
+        prod_cat_id = int(self.prod_cat_input.currentData()) if self.prod_cat_input.currentData() else 1
         qty = int(self.qty_input.value())
-        reorder = int(self.re_order_input.value())
-        sup_id = int(self.sup_input.currentData())
-        bay_id = int(self.bay_input.currentData()[0])
-        price = float(self.price_input.value())
+        reorder = int(self.re_order_input.value()) if self.re_order_input.value() else 1
+        sup_id = int(self.sup_input.currentData()) if self.sup_input.currentData() else 1
+        bay_id = int(self.bay_input.currentData()[0]) if self.bay_input.currentData() else 1
+        price = float(self.price_input.value()) if self.price_input.value() else 1
 
         try:
             # Insert the records into the database
