@@ -265,7 +265,7 @@ class AddPurchaseOrderWindow(QWidget):
 
         # Insert into order table
         sql_query = """
-                    INSERT INTO purchase_orders (purchaseOrderNumber, deliveryDate)
+                    INSERT INTO purchase_orders (purchaseOrderNumber, supplierID, deliveryDate)
                     VALUES (%(sage_number)s, %(supplier_name)s, %(delivery_date)s)
                     RETURNING purchaseOrderID;
                     """
