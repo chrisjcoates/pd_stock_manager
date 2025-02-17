@@ -543,3 +543,36 @@ class Database:
             self.conn.rollback()
             print(e)
             self.disconnect_from_db()
+
+    def insert_new_supplier(self, name, first_name, last_name, phone, email):
+
+        self.connect_to_db()
+
+        sql_product = """
+        INSERT INTO supplier (supplierName, contactFirstName, contactLastName, supplierPhone, supplierEmail)
+        VALUES (%(name)s, %(first_name)s, %(last_name)s, %(phone)s, %(email)s);
+        """
+
+        try:
+            print("trying first statement")
+            self.cursor.execute(
+                sql_product,
+                {
+                    "name": name,
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "phone": phone,
+                    "email": email,
+                },
+            )
+            print("first statement complete")
+            self.conn.commit()
+            print("Insert successful.")
+
+            self.disconnect_from_db()
+
+        except Exception as e:
+            print("Insert Failed.")
+            self.conn.rollback()
+            print(e)
+            self.disconnect_from_db()
