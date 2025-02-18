@@ -38,9 +38,17 @@ class LocationsTable(QWidget):
 
         select_sql = """
                     SELECT
-                        *
+                        locations.locationID,
+                        locations.locationName,
+                        locations.locationDescription,
+                        locations.locationAddress,
+                        locations.locationCity,
+                        locations.locationPostCode,
+                        count(bays.bayID) as num_bays
                     FROM
                         locations
+                    LEFT JOIN bays ON bays.locationID = locations.locationID
+                    GROUP BY locations.locationID
                     ORDER BY locationID;
                     """
         database = Database()
@@ -168,6 +176,7 @@ class LocationsTable(QWidget):
             "Address",
             "City",
             "Post Code",
+            "No. Bays",
         ]
         self._column_count = len(header_labels)
         # Create table widget
