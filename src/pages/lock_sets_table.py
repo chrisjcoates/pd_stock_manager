@@ -252,52 +252,52 @@ class LockSetsTable(QWidget):
         except Exception as e:
             print(e)
 
-    def delete_location(self):
+    # def delete_location(self):
 
-        current_record = self.current_record_selected()
+    #     current_record = self.current_record_selected()
 
-        msg = QMessageBox(self)
-        msg.setText(
-            f"This will delete the location record, are you sure you want to continue?"
-        )
-        msg.setWindowTitle("Warning")
-        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        response = msg.exec()
+    #     msg = QMessageBox(self)
+    #     msg.setText(
+    #         f"This will delete the location record, are you sure you want to continue?"
+    #     )
+    #     msg.setWindowTitle("Warning")
+    #     msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+    #     response = msg.exec()
 
-        if response == QMessageBox.Yes:
-            msg = QMessageBox(self)
-            msg.setText(
-                f"Location is about to be deleted, are you sure you want to continue?"
-            )
-            msg.setWindowTitle("Warning")
-            msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-            response = msg.exec()
-            if response == QMessageBox.Yes:
+    #     if response == QMessageBox.Yes:
+    #         msg = QMessageBox(self)
+    #         msg.setText(
+    #             f"Location is about to be deleted, are you sure you want to continue?"
+    #         )
+    #         msg.setWindowTitle("Warning")
+    #         msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+    #         response = msg.exec()
+    #         if response == QMessageBox.Yes:
 
-                database = Database()
-                database.connect_to_db()
+    #             database = Database()
+    #             database.connect_to_db()
 
-                delete_sql = """DELETE FROM locations
-                                WHERE locationID = %s;"""
+    #             delete_sql = """DELETE FROM locations
+    #                             WHERE locationID = %s;"""
 
-                try:
-                    database.cursor.execute(
-                        delete_sql, (self.current_record_selected(),)
-                    )
-                    database.conn.commit()
-                except errors.ForeignKeyViolation as e:
-                    database.conn.rollback()
+    #             try:
+    #                 database.cursor.execute(
+    #                     delete_sql, (self.current_record_selected(),)
+    #                 )
+    #                 database.conn.commit()
+    #             except errors.ForeignKeyViolation as e:
+    #                 database.conn.rollback()
 
-                    msg = QMessageBox(self)
-                    msg.setText(
-                        f"Deletion failed, you need to remove the bay's for this location first."
-                    )
-                    msg.setWindowTitle("Warning")
-                    response = msg.exec()
-                except Exception as e:
-                    database.conn.rollback()
-                    print(f"delete_location(): {e}")
-                finally:
-                    database.disconnect_from_db()
+    #                 msg = QMessageBox(self)
+    #                 msg.setText(
+    #                     f"Deletion failed, you need to remove the bay's for this location first."
+    #                 )
+    #                 msg.setWindowTitle("Warning")
+    #                 response = msg.exec()
+    #             except Exception as e:
+    #                 database.conn.rollback()
+    #                 print(f"delete_location(): {e}")
+    #             finally:
+    #                 database.disconnect_from_db()
 
-        self.update_table_data()
+    #     self.update_table_data()
