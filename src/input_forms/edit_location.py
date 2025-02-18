@@ -125,15 +125,16 @@ class Edit_Location(QWidget):
 
         self.table = QTableWidget()
 
-        headers = ["Bay Name", "Description", "Location ID"]
+        headers = ["Bay Name", "Description", "Location ID", "Bay ID"]
 
-        self.table.setColumnCount(3)
+        self.table.setColumnCount(4)
         self.table.setRowCount(0)
         self.table.setHorizontalHeaderLabels(headers)
 
         self.table.setColumnWidth(0, 200)
         self.table.setColumnWidth(1, 450)
         self.table.hideColumn(2)
+        self.table.hideColumn(3)
 
         layout.addWidget(self.table)
 
@@ -330,50 +331,61 @@ class Edit_Location(QWidget):
         # Update existing items from bays table #
         #########################################
 
+        current_items = []
+
+        try:
+            for row in range(self.table.rowCount()):
+                row_data = []
+                for col in range(self.table.columnCount()):
+                    item = self.table.item(row, col)
+                    row_data.append(item.text() if item else "")
+
+                current_items.append(tuple(row_data))
+        except Exception as e:
+            print(f"save_order() 'looping through current_items': {e}")
+
         update_sql = """
                         UPDATE bays
-                            SET bayName = %s,
-                                bayDescription = %s
+                        SET bayName = %s,
+                            bayDescription = %s
                         WHERE bayID = %s;
                     """
 
-        if len(self.items) > 0:
+        if len(current_items) > 0:
             try:
                 database = Database()
                 database.connect_to_db()
 
-                for row in self.items:
+                for row in current_items:
                     database.cursor.execute(
-                        update_sql,
-                        (
-                            row[0],
-                            row[1],
-                            row[2],
-                        ),
+                        "SELECT COUNT(*) FROM bays WHERE bayID = %s", (row[3],)
                     )
-                database.conn.commit()
+                    if database.cursor.fetchone()[0] > 0:
+                        database.cursor.execute(
+                            update_sql,
+                            (
+                                row[0],
+                                row[1],
+                                row[3],
+                            ),
+                        )
+                    database.conn.commit()
             except Exception as e:
                 database.conn.rollback()
                 print(f"save_order(): <UPDATE EXISITING ITEMS> {e}")
+                msg = QMessageBox(self)
+                msg.setText(f"Error updating location, {e}")
+                msg.setWindowTitle("Message")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.exec()
             finally:
                 database.disconnect_from_db()
-
-        # except Exception as e:
-        #     print(f"save_order() 'Executing database query': {e}")
-        #     msg = QMessageBox(self)
-        #     msg.setText(f"Error updating picking list record, {e}")
-        #     msg.setWindowTitle("Message")
-        #     msg.setStandardButtons(QMessageBox.Ok)
-        #     msg.exec()
-        # finally:
-        #     database.disconnect_from_db()
-        #     self.update_picking_list_timestamp()
-        #     # Create message box to tell used record was saved
-        #     msg = QMessageBox(self)
-        #     msg.setText("Picking list record has been updated.")
-        #     msg.setWindowTitle("Message")
-        #     msg.setStandardButtons(QMessageBox.Ok)
-        #     msg.exec()
+                # Create message box to tell used record was saved
+                msg = QMessageBox(self)
+                msg.setText("Location record has been updated.")
+                msg.setWindowTitle("Message")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.exec()
 
     def remove_item(self):
 
