@@ -12,7 +12,7 @@ from PySide6.QtCore import Qt
 from database.database import Database
 from classes.functions import export_array_to_excel
 from input_forms.add_locksets import AddLockSets
-from input_forms.edit_location import Edit_Location
+from input_forms.edit_locksets import EditLockSet
 from psycopg2 import errors
 
 
@@ -233,7 +233,7 @@ class LockSetsTable(QWidget):
             # Get the id of the current selected record
             current_record = self.current_record_selected()
             # Creates the product input form
-            self.add_customer_form = Edit_Location(current_record)
+            self.add_customer_form = EditLockSet(current_record)
             # Create an on close signal event to refresh the table data
             self.add_customer_form.closed_signal.connect(update_table)
             # Open the input form
