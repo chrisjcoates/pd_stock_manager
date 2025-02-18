@@ -34,7 +34,6 @@ class Add_Location_Window(QWidget):
         self.item_table_widget()
         self.save_btn_widget()
 
-
     def closeEvent(self, event):
         self.closed_signal.emit()
         event.accept()
@@ -66,7 +65,7 @@ class Add_Location_Window(QWidget):
         self.description.setPlaceholderText("Enter description")
 
         self.address = QLineEdit()
-        self.address.setFixedWidth(175)
+        self.address.setFixedWidth(350)
         self.address.setPlaceholderText("Enter address")
 
         self.city = QLineEdit()
@@ -77,7 +76,7 @@ class Add_Location_Window(QWidget):
 
         self.bay = QLineEdit()
         self.bay.setPlaceholderText("Enter bay")
-        
+
         self.bay_description = QLineEdit()
         self.bay_description.setPlaceholderText("Enter bay description")
         self.bay_description.setFixedWidth(350)
@@ -139,7 +138,7 @@ class Add_Location_Window(QWidget):
         self.window_layout.addWidget(widget)
 
     def add_item(self):
-        
+
         bay_input = self.bay.text()
         bay_desc_input = self.bay_description.text()
 
@@ -151,7 +150,7 @@ class Add_Location_Window(QWidget):
 
         for column, data in enumerate(new_item):
             item = QTableWidgetItem(str(data))
-            self.table.setItem(self.table.rowCount()-1, column, item)
+            self.table.setItem(self.table.rowCount() - 1, column, item)
 
     def save_order_btn_click(self):
 
@@ -183,7 +182,7 @@ class Add_Location_Window(QWidget):
             "description": description,
             "address": address,
             "city": city,
-            "post_code": post_code
+            "post_code": post_code,
         }
 
         # Insert into locations table
@@ -209,7 +208,7 @@ class Add_Location_Window(QWidget):
                         INSERT INTO bays (bayName, bayDescription, locationID)
                         VALUES (%(bay_name)s, %(bay_description)s, %(location_id)s);
                         """
-            
+
             if len(self.items) > 0:
                 for row in self.items:
                     bay_name = row[0]
