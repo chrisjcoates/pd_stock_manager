@@ -12,7 +12,8 @@ from PySide6.QtCore import Qt
 from database.database import Database
 from classes.functions import export_array_to_excel
 from input_forms.add_locations import Add_Location_Window
-from input_forms.edit_supplier import EditSupplier
+from input_forms.edit_location import Edit_Location
+from psycopg2 import errors
 
 
 class LocationsTable(QWidget):
@@ -85,7 +86,7 @@ class LocationsTable(QWidget):
         # button binds
         add_button.clicked.connect(self.open_add_location_form)
         edit_button.clicked.connect(self.open_edit_location_form)
-        delete_button.clicked.connect(self.delete_supplier)
+        delete_button.clicked.connect(self.delete_location)
         # export_btn.clicked.connect(self.export_to_excel)
 
         self.page_layout.addWidget(button_widget)
@@ -219,7 +220,7 @@ class LocationsTable(QWidget):
             # Get the id of the current selected record
             current_record = self.current_record_selected()
             # Creates the product input form
-            self.add_customer_form = EditSupplier(current_record)
+            self.add_customer_form = Edit_Location(current_record)
             # Create an on close signal event to refresh the table data
             self.add_customer_form.closed_signal.connect(update_table)
             # Open the input form
@@ -238,13 +239,13 @@ class LocationsTable(QWidget):
         except Exception as e:
             print(e)
 
-    def delete_supplier(self):
+    def delete_location(self):
 
         current_record = self.current_record_selected()
 
         msg = QMessageBox(self)
         msg.setText(
-            f"This will delete the supplier record, are you sure you want to continue?"
+            f"This will delete the location record, are you sure you want to continue?"
         )
         msg.setWindowTitle("Warning")
         msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
@@ -253,7 +254,7 @@ class LocationsTable(QWidget):
         if response == QMessageBox.Yes:
             msg = QMessageBox(self)
             msg.setText(
-                f"Supplier is about to be deleted, are you sure you want to continue?"
+                f"Location is about to be deleted, are you sure you want to continue?"
             )
             msg.setWindowTitle("Warning")
             msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
@@ -263,17 +264,26 @@ class LocationsTable(QWidget):
                 database = Database()
                 database.connect_to_db()
 
-                delete_sql = """DELETE FROM supplier
-                                WHERE supplierID = %s;"""
+                delete_sql = """DELETE FROM locations
+                                WHERE locationID = %s;"""
 
                 try:
                     database.cursor.execute(
                         delete_sql, (self.current_record_selected(),)
                     )
                     database.conn.commit()
+                except errors.ForeignKeyViolation as e:
+                    database.conn.rollback()
+
+                    msg = QMessageBox(self)
+                    msg.setText(
+                        f"Deletion failed, you need to remove the bay's for this location first."
+                    )
+                    msg.setWindowTitle("Warning")
+                    response = msg.exec()
                 except Exception as e:
                     database.conn.rollback()
-                    print(f"delete_supplier(): {e}")
+                    print(f"delete_location(): {e}")
                 finally:
                     database.disconnect_from_db()
 
