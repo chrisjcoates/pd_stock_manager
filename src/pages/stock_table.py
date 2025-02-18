@@ -209,7 +209,7 @@ class StockTable(QWidget):
                 "Re-Order",
                 "Location",
                 "Bay",
-                "Value",
+                "Stock Value",
             ]
         )
 
@@ -227,7 +227,7 @@ class StockTable(QWidget):
         self.table_widget.setColumnWidth(10, 100)
         self.table_widget.setColumnWidth(11, 100)
         self.table_widget.setColumnWidth(12, 100)
-        self.table_widget.setColumnWidth(13, 70)
+        self.table_widget.setColumnWidth(13, 100)
 
         self.table_widget.hideColumn(10)
 
