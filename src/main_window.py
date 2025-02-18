@@ -15,6 +15,7 @@ from pages.purchase_orders_table import PurchaseOrdersTable
 from pages.customers_table import CustomerTable
 from pages.supplier_table import SupplierTable
 from pages.locations_table import LocationsTable
+from pages.lock_sets_table import LockSetsTable
 
 
 class MainWindow(QMainWindow):
@@ -44,6 +45,7 @@ class MainWindow(QMainWindow):
         self.customer_btn = QPushButton(text="Customers")
         self.supplier_btn = QPushButton(text="Suppliers")
         self.locations_btn = QPushButton(text="Locations")
+        self.locksets_btn = QPushButton(text="Lock Sets")
         self.reports_btn = QPushButton(text="Reports")
         self.options_btn = QPushButton(text="Options")
 
@@ -55,7 +57,8 @@ class MainWindow(QMainWindow):
         self.customer_btn.clicked.connect(lambda: self.switch_page(4, "customer"))
         self.supplier_btn.clicked.connect(lambda: self.switch_page(5, "supplier"))
         self.locations_btn.clicked.connect(lambda: self.switch_page(6, "locations"))
-        self.options_btn.clicked.connect(lambda: self.switch_page(7, "options"))
+        self.locksets_btn.clicked.connect(lambda: self.switch_page(7, "lock_sets"))
+        self.options_btn.clicked.connect(lambda: self.switch_page(8, "options"))
 
         self.nav_bar.addWidget(self.home_btn)
         self.nav_bar.addWidget(self.stock_btn)
@@ -64,6 +67,7 @@ class MainWindow(QMainWindow):
         self.nav_bar.addWidget(self.customer_btn)
         self.nav_bar.addWidget(self.supplier_btn)
         self.nav_bar.addWidget(self.locations_btn)
+        self.nav_bar.addWidget(self.locksets_btn)
         self.nav_bar.addWidget(self.reports_btn)
         self.nav_bar.addWidget(self.options_btn)
 
@@ -96,6 +100,8 @@ class MainWindow(QMainWindow):
                 self.pages.addWidget(SupplierTable())
             case "locations":
                 self.pages.addWidget(LocationsTable())
+            case "lock_sets":
+                self.pages.addWidget(LockSetsTable())
 
         # Set page to the index passed into method
         self.pages.setCurrentIndex(index)
