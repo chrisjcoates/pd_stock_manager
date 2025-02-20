@@ -3,3 +3,6 @@
 *.txt
 *.json
 /src/icon
+/dist
+/build
+PDStockManager.spec
