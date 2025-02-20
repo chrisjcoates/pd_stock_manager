@@ -15,44 +15,30 @@ import json
 
 
 def get_settings_path():
-    """Returns the correct path to settings.json, ensuring it remains writable."""
-    if getattr(sys, "frozen", False):  # Running as a PyInstaller EXE
-        base_path = os.path.dirname(sys.executable)  # Inside the installed directory
-    else:  # Running as a script
+    """Get the correct path for settings.json whether running as a script or as a packaged exe."""
+    if getattr(sys, "frozen", False):  # If running as a PyInstaller exe
+        base_path = os.path.join(
+            sys._MEIPASS, "settings"
+        )  # Ensures settings.json is inside 'settings' folder
+    else:
         base_path = os.path.abspath(
             os.path.join(os.path.dirname(__file__), "..", "settings")
         )
 
-    settings_file = os.path.join(base_path, "settings.json")
-
-    # Ensure settings directory exists
-    os.makedirs(os.path.dirname(settings_file), exist_ok=True)
-
-    return settings_file
-
-
-SETTINGS_FILEPATH = get_settings_path()
+    return os.path.join(base_path, "settings.json")
 
 
 def read_settings_json():
-    """Reads the settings.json file."""
-    try:
-        with open(SETTINGS_FILEPATH, "r") as file:
-            return json.load(file)
-    except (FileNotFoundError, json.JSONDecodeError):
-        return {
-            "database": {
-                "host": "",
-                "port": "",
-                "db_name": "",
-                "user": "",
-                "password": "",
-            }
-        }
+    """Read settings.json from the correct path."""
+    filepath = get_settings_path()
+    with open(filepath, "r") as file:
+        data = json.load(file)
+    return data
 
 
 def write_settings_json(host, port, db_name, user, password):
-    """Writes database settings to settings.json."""
+    """Write to settings.json at the correct path."""
+    filepath = get_settings_path()
     data = read_settings_json()
 
     data["database"]["host"] = host
@@ -61,7 +47,7 @@ def write_settings_json(host, port, db_name, user, password):
     data["database"]["user"] = user
     data["database"]["password"] = password
 
-    with open(SETTINGS_FILEPATH, "w") as file:
+    with open(filepath, "w") as file:
         json.dump(data, file, indent=4)
 
 
@@ -86,7 +72,7 @@ def export_array_to_excel(array, filepath):
 
     df = pd.DataFrame(array, columns=headers)
 
-    timestamp = datetime.today()
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
     file_name = f"stock_export_{timestamp}.xlsx"
 
