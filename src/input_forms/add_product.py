@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, Signal
 from database.database import Database
+from input_forms.add_prod_cat import AddProdCat
 
 
 class AddProduct(QWidget):
@@ -55,10 +56,19 @@ class AddProduct(QWidget):
         # Create combo box
         self.prod_cat_input = QComboBox()
         self.prod_cat_input.setPlaceholderText("Select item type")
+        self.prod_cat_input.setFixedWidth(175)
         # Add values to combo box
         prod_cats = Database().get_prod_categories()
         for cat_id, cat_name in prod_cats:
             self.prod_cat_input.addItem(cat_name, userData=cat_id)
+
+        self.prod_add_btn = QPushButton("Add New")
+        self.prod_add_btn.clicked.connect(self.open_add_cat_form)
+
+        prod_widget = QWidget()
+        prod_layout = QHBoxLayout(prod_widget)
+        prod_layout.addWidget(self.prod_cat_input)
+        prod_layout.addWidget(self.prod_add_btn)
 
         self.qty_input = QSpinBox()
         self.qty_input.setMinimum(0)
@@ -111,7 +121,7 @@ class AddProduct(QWidget):
         self.page_layout.addRow("Product Name: ", self.name_input)
         self.page_layout.addRow("Description: ", self.desc_input)
         self.page_layout.addRow("Product Code: ", self.prod_code_input)
-        self.page_layout.addRow("Type: ", self.prod_cat_input)
+        self.page_layout.addRow("Type: ", prod_widget)
         self.page_layout.addRow("Qty: ", self.qty_input)
         self.page_layout.addRow("Re-Order Qty: ", self.re_order_input)
         self.page_layout.addRow("Supplier: ", self.sup_input)
@@ -151,11 +161,19 @@ class AddProduct(QWidget):
         name = self.name_input.text()
         desc = self.desc_input.text()
         code = self.prod_code_input.text()
-        prod_cat_id = int(self.prod_cat_input.currentData()) if self.prod_cat_input.currentData() else 1
+        prod_cat_id = (
+            int(self.prod_cat_input.currentData())
+            if self.prod_cat_input.currentData()
+            else 1
+        )
         qty = int(self.qty_input.value())
         reorder = int(self.re_order_input.value()) if self.re_order_input.value() else 1
-        sup_id = int(self.sup_input.currentData()) if self.sup_input.currentData() else 1
-        bay_id = int(self.bay_input.currentData()[0]) if self.bay_input.currentData() else 1
+        sup_id = (
+            int(self.sup_input.currentData()) if self.sup_input.currentData() else 1
+        )
+        bay_id = (
+            int(self.bay_input.currentData()[0]) if self.bay_input.currentData() else 1
+        )
         price = float(self.price_input.value()) if self.price_input.value() else 1
 
         try:
@@ -188,3 +206,22 @@ class AddProduct(QWidget):
 
         # destroy the form object(close)
         self.close()
+
+    def open_add_cat_form(self):
+
+        def update_combo():
+            self.prod_cat_input.clear()
+            prod_cats = Database().get_prod_categories()
+            for cat_id, cat_name in prod_cats:
+                self.prod_cat_input.addItem(cat_name, userData=cat_id)
+            self.add_product_form.destroy()
+
+        """Opens the add product input form
+        and adds close event signal to update the table data
+        """
+        # Creates the product input form
+        self.add_product_form = AddProdCat()
+        # Create an on close signal event to refresh the table data
+        self.add_product_form.closed_signal.connect(update_combo)
+        # Open the input form
+        self.add_product_form.show()
