@@ -1,6 +1,7 @@
 import psycopg2
 import json
 from datetime import datetime
+from classes.functions import read_settings_json
 
 
 class Database:
@@ -26,12 +27,8 @@ class Database:
         self.PASSWORD = self._db_details["password"]
 
     def get_db_details(self):
-        data = False
-        try:
-            with open("src/settings/settings.json", "r") as file:
-                data = json.load(file)
-        except Exception as e:
-            print(e)
+
+        data = read_settings_json()
 
         if data:
             return data["database"]
