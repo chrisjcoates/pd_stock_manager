@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, Signal
 from database.database import Database
+from input_forms.add_prod_cat import AddProdCat
 
 
 class EditProduct(QWidget):
@@ -55,6 +56,14 @@ class EditProduct(QWidget):
         # Add values to combo box
         for cat_id, cat_name in categories:
             self.prod_cat.addItem(cat_name, userData=cat_id)
+
+        self.prod_add_btn = QPushButton("Add New")
+        self.prod_add_btn.clicked.connect(self.open_add_cat_form)
+
+        prod_widget = QWidget()
+        prod_layout = QHBoxLayout(prod_widget)
+        prod_layout.addWidget(self.prod_cat)
+        prod_layout.addWidget(self.prod_add_btn)
 
         self.qty_input = QSpinBox()
         self.qty_input.setMinimum(-9999)
@@ -111,7 +120,7 @@ class EditProduct(QWidget):
         self.page_layout.addRow("Product Name: ", self.name_input)
         self.page_layout.addRow("Description: ", self.desc_input)
         self.page_layout.addRow("Product Code: ", self.prod_code_input)
-        self.page_layout.addRow("Type: ", self.prod_cat)
+        self.page_layout.addRow("Type: ", prod_widget)
         self.page_layout.addRow("Qty: ", self.qty_input)
         self.page_layout.addRow("Re-Order Qty: ", self.re_order_input)
         self.page_layout.addRow("Supplier: ", self.sup_input)
@@ -212,3 +221,22 @@ class EditProduct(QWidget):
 
         # destroy the form object(close)
         self.close()
+
+    def open_add_cat_form(self):
+
+        def update_combo():
+            self.prod_cat.clear()
+            prod_cats = Database().get_prod_categories()
+            for cat_id, cat_name in prod_cats:
+                self.prod_cat.addItem(cat_name, userData=cat_id)
+            self.add_product_form.destroy()
+
+        """Opens the add product input form
+        and adds close event signal to update the table data
+        """
+        # Creates the product input form
+        self.add_product_form = AddProdCat()
+        # Create an on close signal event to refresh the table data
+        self.add_product_form.closed_signal.connect(update_combo)
+        # Open the input form
+        self.add_product_form.show()
