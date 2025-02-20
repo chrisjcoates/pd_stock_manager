@@ -97,7 +97,7 @@ class LockSetsTable(QWidget):
         # button binds
         add_button.clicked.connect(self.open_lock_set_form)
         edit_button.clicked.connect(self.open_edit_lock_set_form)
-        delete_button.clicked.connect(self.delete_location)
+        # delete_button.clicked.connect(self.delete_location)
         # export_btn.clicked.connect(self.export_to_excel)
 
         self.page_layout.addWidget(button_widget)
