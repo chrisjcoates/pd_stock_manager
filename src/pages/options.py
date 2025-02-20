@@ -75,7 +75,7 @@ class OptionsWindow(QWidget):
 
     def read_database_settings(self):
         # Read the json file
-        data = read_settings_json("src/settings/settings.json")
+        data = read_settings_json()
 
         # Set the database connection settings to the input fields
         self.host_input.setText(data["database"]["host"])
@@ -93,9 +93,7 @@ class OptionsWindow(QWidget):
         user = self.user_input.text()
         password = self.pass_input.text()
         # Write values to the json file
-        write_settings_json(
-            "src/settings/settings.json", host, port, db_name, user, password
-        )
+        write_settings_json(host, port, db_name, user, password)
 
     def drop_down_buttons(self):
 
