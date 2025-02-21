@@ -36,12 +36,12 @@ def run_app():
             splash.finish(window)
         else:
             connection_message = QMessageBox()
-        connection_message.setText(
-            "A connection to the database could not be established. Please check network connection. Contact Admin for help."
-        )
-        connection_message.windowTitle = "No Connecton"
-        connection_message.setStandardButtons(QMessageBox.Ok)
-        connection_message.exec()
+            connection_message.setText(
+                """A connection to the database could not be established. Please check network connection. Contact Admin for help."""
+            )
+            connection_message.windowTitle = "No Connecton"
+            connection_message.setStandardButtons(QMessageBox.Ok)
+            connection_message.exec()
 
     QTimer.singleShot(3000, show_main_window)
 
