@@ -82,6 +82,39 @@ def export_array_to_excel(array, filepath):
 
 
 def get_style_path():
-    filename = "src/styles/style.qss"
+    filename = FilePaths.get_style_sheet_path()
     with open(filename, "r") as file:
         return file.read()
+
+
+class FilePaths:
+
+    def get_style_sheet_path():
+        """Get the correct path for style.qss whether running as a script or as a packaged exe."""
+        if getattr(sys, "frozen", False):  # If running as a PyInstaller exe
+            base_path = os.path.join(sys._MEIPASS, "styles")
+        else:
+            base_path = os.path.abspath(
+                os.path.join(os.path.dirname(__file__), "..", "styles")
+            )
+        return os.path.join(base_path, "style.qss")
+
+    def get_icon_path():
+        """Get the correct path for CompanyIcon.ico whether running as a script or as a packaged exe."""
+        if getattr(sys, "frozen", False):  # If running as a PyInstaller exe
+            base_path = os.path.join(sys._MEIPASS, "icon")
+        else:
+            base_path = os.path.abspath(
+                os.path.join(os.path.dirname(__file__), "..", "icon")
+            )
+        return os.path.join(base_path, "CompanyIcon.ico")
+
+    def get_logo_path():
+        """Get the correct path for CompanyLogo.png whether running as a script or as a packaged exe."""
+        if getattr(sys, "frozen", False):  # If running as a PyInstaller exe
+            base_path = os.path.join(sys._MEIPASS, "logo")
+        else:
+            base_path = os.path.abspath(
+                os.path.join(os.path.dirname(__file__), "..", "logo")
+            )
+        return os.path.join(base_path, "CompanyLogo.png")
