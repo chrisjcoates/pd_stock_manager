@@ -3,6 +3,7 @@ from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtCore import Qt, QTimer, QSize
 from main_window import MainWindow
 from database.database import Database
+from classes.functions import FilePaths
 
 
 def run_app():
@@ -10,10 +11,10 @@ def run_app():
 
     app = QApplication([])
 
-    app.setWindowIcon(QIcon("src/icon/Pendle Icon.ico"))
+    app.setWindowIcon(QIcon(FilePaths.get_icon_path()))
 
     # Load the splash screen only when app starts
-    splash_image = QPixmap("src/logo/Pendle_Logo.png").scaled(
+    splash_image = QPixmap(FilePaths.get_logo_path()).scaled(
         QSize(400, 300), Qt.KeepAspectRatio, Qt.SmoothTransformation
     )
     splash = QSplashScreen(
