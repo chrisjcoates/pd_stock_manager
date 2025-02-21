@@ -1,0 +1,139 @@
+QPushButton {
+    background-color:rgb(61, 65, 64);
+    color: white;
+    border: 1px solid;
+    border-radius: 5px;
+    border-color: rgb(158, 158, 158);
+    padding: 5px 10px;
+    margin: 5px;
+}
+QPushButton:hover {
+    background-color: rgb(46, 48, 47);
+}
+
+QWidget {
+    background-color: rgb(46, 48, 47);
+}
+
+QMainWindow {
+    background-color: rgb(46, 48, 47);
+}
+
+QToolBar {
+    background-color: rgb(241, 18, 18);
+}
+QLabel {
+    color: rgb(249, 249, 249);
+}
+
+QLineEdit {
+    color: rgb(249, 249, 249);
+    border: 1px solid #444444;
+    height: 27px;
+}
+
+QTableWidget {
+    background-color: rgb(64, 65, 65);
+    color: rgb(249, 249, 249);
+    gridline-color: rgb(85, 85, 85);;
+}
+
+QHeaderView::section {
+    background-color: rgb(37, 37, 37);
+    color: rgb(249, 249, 249);
+    border: 1px solid rgb(60, 60, 60);
+}
+
+QScrollBar:vertical {
+    background: #222222;  
+    width: 20px;           
+    border-radius: 10px;
+}
+QScrollBar::handle:vertical {
+    background: #555555;  /* Handle color */
+    border-radius: 10px;
+    min-height: 100px;      /* Minimum height for the scrollbar handle */
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    border: none;
+    background: none;
+}
+QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {
+    background: none;
+}
+
+QScrollBar:horizontal {
+    background: #222222;
+    height: 20px;           
+    border-radius: 10px;
+}
+QScrollBar::handle:horizontal {
+    background: #555555;
+    border-radius: 10px;
+    min-width: 30px;        /* Minimum width for the scrollbar handle */
+}
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    border: none;
+    background: none;
+}
+QScrollBar::left-arrow:horizontal, QScrollBar::right-arrow:horizontal {
+    background: none;
+}
+
+/* Styling the QComboBox */
+QComboBox {
+    border: 1px solid #444444;  /* Border around the combo box */
+    height: 12px;
+    border-radius: 5px;  /* Rounded corners */
+    padding: 5px;  /* Padding inside the combo box */
+    background-color: #333333;  /* Background color */
+    color: #ffffff;  /* Text color */
+    font-size: 12px;  /* Font size */
+}
+
+/* Styling the list of items when the combo box is expanded */
+QComboBox QAbstractItemView {
+    border: 1px solid #444444;
+    background-color: #222222;
+    color: #ffffff;
+    selection-background-color: #444444;  /* Background color when an item is selected */
+}
+
+/* Styling the selected item */
+QComboBox QAbstractItemView::item:selected {
+    background-color: #666666;
+}
+
+/* Styling the QSpinBox */
+QSpinBox {
+    border: 1px solid #444444;  /* Border around the spin box */
+    border-radius: 5px;  /* Rounded corners */
+    padding: 5px;  /* Padding inside the spin box */
+    background-color: #333333;  /* Background color */
+    color: #ffffff;  /* Text color */
+    font-size: 12px;  /* Font size */
+    height: 27px;
+    width: 100px;
+}
+
+QDoubleSpinBox {
+    border: 1px solid #444444;  /* Border around the spin box */
+    border-radius: 5px;  /* Rounded corners */
+    padding: 5px;  /* Padding inside the spin box */
+    background-color: #333333;  /* Background color */
+    color: #ffffff;  /* Text color */
+    font-size: 12px;  /* Font size */
+    height: 27px;
+    width: 100px;
+}
+
+QDateEdit {
+    border: 1px solid #444444;  /* Border around the spin box */
+    border-radius: 5px;  /* Rounded corners */
+    padding: 5px;  /* Padding inside the spin box */
+    background-color: #333333;  /* Background color */
+    color: #ffffff;  /* Text color */
+    font-size: 12px;  /* Font size */
+    height: 27px;
+    width: 100px;
+}

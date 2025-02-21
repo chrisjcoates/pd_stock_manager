@@ -8,6 +8,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QMessageBox,
     QFileDialog,
+    QHeaderView,
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QBrush
@@ -19,11 +20,14 @@ from input_forms.add_order_items import Add_Items_Window
 from input_forms.edit_order_items import Edit_Order_Items
 import datetime
 import os
+from classes.functions import get_style_path
 
 
 class OrdersTable(QWidget):
     def __init__(self):
         super().__init__()
+
+        self.setStyleSheet(get_style_path())
 
         self.page_layout = QVBoxLayout(self)
 
@@ -165,6 +169,10 @@ class OrdersTable(QWidget):
         self.table_widget.setColumnWidth(4, 200)
         self.table_widget.setColumnWidth(5, 200)
         self.table_widget.setColumnWidth(6, 200)
+
+        self.table_widget.horizontalHeader().setSectionResizeMode(
+            6, QHeaderView.Stretch
+        )
 
     def refresh_table(self, filter=None):
         """refreshes the table data by querying the database to get the most upto data data"""

@@ -8,6 +8,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QMessageBox,
     QFileDialog,
+    QHeaderView,
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QBrush
@@ -16,11 +17,14 @@ from popup_boxes.delete_product import DeletePopup
 from classes.functions import export_array_to_excel
 from input_forms.add_customer import AddCustomer
 from input_forms.edit_customer import EditCustomer
+from classes.functions import get_style_path
 
 
 class CustomerTable(QWidget):
     def __init__(self):
         super().__init__()
+
+        self.setStyleSheet(get_style_path())
 
         self.page_layout = QVBoxLayout(self)
 

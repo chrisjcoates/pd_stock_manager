@@ -15,6 +15,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, QDate, Signal
 from database.database import Database
+from classes.functions import get_style_path
 
 
 class EditLockSet(QWidget):
@@ -22,6 +23,8 @@ class EditLockSet(QWidget):
 
     def __init__(self, record_id):
         super().__init__()
+
+        self.setStyleSheet(get_style_path())
 
         self.window_layout = QVBoxLayout(self)
 
@@ -85,6 +88,7 @@ class EditLockSet(QWidget):
             database.disconnect_from_db()
 
         self.lock_id = QComboBox()
+        self.lock_id.setPlaceholderText("Select lock")
         self.lock_id.setFixedWidth(175)
         for id, name in combo_data:
             self.lock_id.addItem(name, userData=id)
@@ -114,6 +118,7 @@ class EditLockSet(QWidget):
             database.disconnect_from_db()
 
         self.intumescent_id = QComboBox()
+        self.intumescent_id.setPlaceholderText("Select intumescent")
         self.intumescent_id.setFixedWidth(175)
         for id, name in combo_data:
             self.intumescent_id.addItem(name, userData=id)
@@ -143,6 +148,7 @@ class EditLockSet(QWidget):
             database.disconnect_from_db()
 
         self.handle_id = QComboBox()
+        self.handle_id.setPlaceholderText("Select handle")
         self.handle_id.setFixedWidth(175)
         for id, name in combo_data:
             self.handle_id.addItem(name, userData=id)
@@ -172,6 +178,7 @@ class EditLockSet(QWidget):
             database.disconnect_from_db()
 
         self.cylinder_id = QComboBox()
+        self.cylinder_id.setPlaceholderText("Select cylinder")
         self.cylinder_id.setFixedWidth(175)
         for id, name in combo_data:
             self.cylinder_id.addItem(name, userData=id)
@@ -201,6 +208,7 @@ class EditLockSet(QWidget):
             database.disconnect_from_db()
 
         self.escutcheon_id = QComboBox()
+        self.escutcheon_id.setPlaceholderText("Select escutcheon")
         self.escutcheon_id.setFixedWidth(175)
         for id, name in combo_data:
             self.escutcheon_id.addItem(name, userData=id)

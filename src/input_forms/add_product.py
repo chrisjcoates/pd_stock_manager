@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Signal
 from database.database import Database
 from input_forms.add_prod_cat import AddProdCat
+from classes.functions import get_style_path
 
 
 class AddProduct(QWidget):
@@ -23,6 +24,8 @@ class AddProduct(QWidget):
         super().__init__()
 
         self.setWindowTitle("Add New Product")
+
+        self.setStyleSheet(get_style_path())
 
         self.top_layout = QVBoxLayout(self)
         main_layout_widget = QWidget()
@@ -37,7 +40,7 @@ class AddProduct(QWidget):
         self.main_layout.addWidget(self.page_widget)
         self.top_layout.addWidget(main_layout_widget)
 
-        self.product_picture()
+        # self.product_picture()
 
     def closeEvent(self, event):
         self.closed_signal.emit()
@@ -76,6 +79,7 @@ class AddProduct(QWidget):
 
         # Create supplier combo box
         self.sup_input = QComboBox()
+        self.sup_input.setMinimumWidth(175)
         self.sup_input.setPlaceholderText("Select Supplier")
         # Get suppliers from database
         suppliers = Database().get_suppliers()
@@ -87,6 +91,7 @@ class AddProduct(QWidget):
 
         # Create location combo box
         self.loc_input = QComboBox()
+        self.loc_input.setMinimumWidth(175)
         self.loc_input.setPlaceholderText("Select location")
         # Get locations from database
         locations = Database().get_locations()
@@ -100,6 +105,7 @@ class AddProduct(QWidget):
 
         # Create bay combo box
         self.bay_input = QComboBox()
+        self.bay_input.setMinimumWidth(175)
         self.bay_input.setPlaceholderText("Select bay")
         self.update_bays_combo()
 

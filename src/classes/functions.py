@@ -79,3 +79,9 @@ def export_array_to_excel(array, filepath):
     export_path = os.path.join(filepath, file_name)
 
     df.to_excel(export_path, index=False)
+
+
+def get_style_path():
+    filename = "src/styles/style.qss"
+    with open(filename, "r") as file:
+        return file.read()

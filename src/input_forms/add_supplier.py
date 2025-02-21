@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, Signal
 from database.database import Database
+from classes.functions import get_style_path
 
 
 class AddSupplier(QWidget):
@@ -17,6 +18,8 @@ class AddSupplier(QWidget):
 
     def __init__(self):
         super().__init__()
+
+        self.setStyleSheet(get_style_path())
 
         self.setWindowTitle("Add New Supplier")
 
@@ -32,7 +35,6 @@ class AddSupplier(QWidget):
 
         self.main_layout.addWidget(self.page_widget)
         self.top_layout.addWidget(main_layout_widget)
-
 
     def closeEvent(self, event):
         self.closed_signal.emit()
@@ -67,7 +69,6 @@ class AddSupplier(QWidget):
         self.page_layout.addRow("Phone: ", self.phone_input)
         self.page_layout.addRow("Email: ", self.email_input)
         self.page_layout.addRow(submit_button)
-
 
     def create_product(self):
         """

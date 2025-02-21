@@ -15,6 +15,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, QDate, Signal
 from database.database import Database
+from classes.functions import get_style_path
 
 
 class AddPurchaseOrderWindow(QWidget):
@@ -22,6 +23,8 @@ class AddPurchaseOrderWindow(QWidget):
 
     def __init__(self):
         super().__init__()
+
+        self.setStyleSheet(get_style_path())
 
         self.window_layout = QVBoxLayout(self)
 

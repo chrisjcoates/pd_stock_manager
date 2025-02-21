@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Signal
 from database.database import Database
 from input_forms.add_prod_cat import AddProdCat
+from classes.functions import get_style_path
 
 
 class EditProduct(QWidget):
@@ -20,6 +21,8 @@ class EditProduct(QWidget):
 
     def __init__(self, record_id):
         super().__init__()
+
+        self.setStyleSheet(get_style_path())
 
         self.setWindowTitle("Edit Product")
 
@@ -35,7 +38,7 @@ class EditProduct(QWidget):
 
         self.main_layout.addWidget(self.page_widget)
 
-        self.product_picture()
+        # self.product_picture()
 
     def closeEvent(self, event):
         self.closed_signal.emit()
@@ -71,6 +74,7 @@ class EditProduct(QWidget):
 
         # Create supplier combo box
         self.sup_input = QComboBox()
+        self.sup_input.setMinimumWidth(175)
         # Get suppliers from database
         suppliers = Database().get_suppliers()
         # Only get the first 2 columns (id, name)
@@ -81,6 +85,7 @@ class EditProduct(QWidget):
 
         # Create location combo box
         self.loc_input = QComboBox()
+        self.loc_input.setMinimumWidth(175)
         # Get locations from database
         locations = Database().get_locations()
         # Only get the first 2 columns (id, name)
@@ -93,6 +98,7 @@ class EditProduct(QWidget):
 
         # Create bay combo box
         self.bay_input = QComboBox()
+        self.bay_input.setMinimumWidth(175)
         self.update_bays_combo()
 
         # Create spin boxes
@@ -110,6 +116,7 @@ class EditProduct(QWidget):
 
         # Create product status combo box
         self.prod_status_combo = QComboBox()
+        self.prod_status_combo.setFixedWidth(175)
         self.prod_status_combo.addItems(["active", "inactive"])
 
         # Create submit button

@@ -14,6 +14,7 @@ from database.database import Database
 from PySide6.QtCore import Qt, Signal, QDate
 from datetime import datetime
 from psycopg2 import errors
+from classes.functions import get_style_path
 
 
 class Edit_Location(QWidget):
@@ -21,6 +22,8 @@ class Edit_Location(QWidget):
 
     def __init__(self, record_id):
         super().__init__()
+
+        self.setStyleSheet(get_style_path())
 
         self.window_layout = QVBoxLayout(self)
 

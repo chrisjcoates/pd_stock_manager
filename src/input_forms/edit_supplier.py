@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, Signal
 from database.database import Database
+from classes.functions import get_style_path
 
 
 class EditSupplier(QWidget):
@@ -19,6 +20,8 @@ class EditSupplier(QWidget):
 
     def __init__(self, record_id):
         super().__init__()
+
+        self.setStyleSheet(get_style_path())
 
         self.setWindowTitle("Edit Supplier")
 
@@ -64,7 +67,6 @@ class EditSupplier(QWidget):
         self.page_layout.addRow("Phone: ", self.phone)
         self.page_layout.addRow("Email: ", self.email)
         self.page_layout.addRow(submit_button)
-
 
     def get_selected_record(self):
 
@@ -115,7 +117,8 @@ class EditSupplier(QWidget):
 
         try:
             database.cursor.execute(
-                update_customer_sql, (name, first_name, last_name,  phone, email, self.record_id)
+                update_customer_sql,
+                (name, first_name, last_name, phone, email, self.record_id),
             )
             database.conn.commit()
         except Exception as e:

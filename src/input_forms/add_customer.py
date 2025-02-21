@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, Signal
 from database.database import Database
+from classes.functions import get_style_path
 
 
 class AddCustomer(QWidget):
@@ -22,6 +23,8 @@ class AddCustomer(QWidget):
         super().__init__()
 
         self.setWindowTitle("Add New Customer")
+
+        self.setStyleSheet(get_style_path())
 
         self.top_layout = QVBoxLayout(self)
         main_layout_widget = QWidget()

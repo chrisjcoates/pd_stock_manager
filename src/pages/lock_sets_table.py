@@ -7,6 +7,7 @@ from PySide6.QtWidgets import (
     QTableWidgetItem,
     QHBoxLayout,
     QMessageBox,
+    QHeaderView,
 )
 from PySide6.QtCore import Qt
 from database.database import Database
@@ -14,11 +15,14 @@ from classes.functions import export_array_to_excel
 from input_forms.add_locksets import AddLockSets
 from input_forms.edit_locksets import EditLockSet
 from psycopg2 import errors
+from classes.functions import get_style_path
 
 
 class LockSetsTable(QWidget):
     def __init__(self):
         super().__init__()
+
+        self.setStyleSheet(get_style_path())
 
         self.page_layout = QVBoxLayout(self)
 

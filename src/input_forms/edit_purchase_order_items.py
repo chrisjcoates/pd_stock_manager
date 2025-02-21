@@ -16,6 +16,7 @@ from PySide6.QtWidgets import (
 from database.database import Database
 from PySide6.QtCore import Qt, Signal, QDate
 from datetime import datetime
+from classes.functions import get_style_path
 
 
 class EditPurchaseOrderItems(QWidget):
@@ -23,6 +24,8 @@ class EditPurchaseOrderItems(QWidget):
 
     def __init__(self, record_id):
         super().__init__()
+
+        self.setStyleSheet(get_style_path())
 
         self.window_layout = QVBoxLayout(self)
 

@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
     QFileDialog,
     QMessageBox,
     QCheckBox,
+    QHeaderView,
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QBrush
@@ -18,11 +19,14 @@ from input_forms.add_product import AddProduct
 from input_forms.edit_product import EditProduct
 from popup_boxes.delete_product import DeletePopup
 from classes.functions import export_array_to_excel
+from classes.functions import get_style_path
 
 
 class StockTable(QWidget):
     def __init__(self):
         super().__init__()
+
+        self.setStyleSheet(get_style_path())
 
         self.page_layout = QVBoxLayout(self)
 

@@ -5,6 +5,7 @@ from PySide6.QtWidgets import (
     QWidget,
     QPushButton,
     QToolBar,
+    QHBoxLayout,
 )
 from PySide6.QtCore import Qt
 from pages.home import Home
@@ -16,6 +17,7 @@ from pages.customers_table import CustomerTable
 from pages.supplier_table import SupplierTable
 from pages.locations_table import LocationsTable
 from pages.lock_sets_table import LockSetsTable
+from classes.functions import get_style_path
 
 
 class MainWindow(QMainWindow):
@@ -25,18 +27,23 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Stock Management System")
         self.resize(1300, 600)
 
+        self.setStyleSheet(get_style_path())
+
         # Create main widget and layout
         main_widget = QWidget()
         main_layout = QVBoxLayout(main_widget)
+        main_layout.setSpacing(0)
         self.setCentralWidget(main_widget)
 
         # Records last page
         self.last_page = None
 
         # Create nav bar
-        self.nav_bar = QToolBar("Navigation")
-        self.addToolBar(Qt.TopToolBarArea, self.nav_bar)
-        self.nav_bar.setMovable(False)
+        # self.nav_bar = QToolBar("Navigation")
+        # self.addToolBar(Qt.TopToolBarArea, self.nav_bar)
+        # self.nav_bar.setMovable(False)
+        self.nav_bar_widget = QWidget()
+        self.nav_bar = QHBoxLayout(self.nav_bar_widget)
 
         self.home_btn = QPushButton(text="Home")
         self.stock_btn = QPushButton(text="Stock")
@@ -70,6 +77,8 @@ class MainWindow(QMainWindow):
         self.nav_bar.addWidget(self.locksets_btn)
         self.nav_bar.addWidget(self.reports_btn)
         self.nav_bar.addWidget(self.options_btn)
+
+        main_layout.addWidget(self.nav_bar_widget)
 
         # Stacked widgets for pages
         self.pages = QStackedWidget()
