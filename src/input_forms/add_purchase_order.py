@@ -118,6 +118,8 @@ class AddPurchaseOrderWindow(QWidget):
         self.table.setColumnCount(5)
         self.table.setRowCount(0)
         self.table.setHorizontalHeaderLabels(headers)
+        self.table.setSelectionBehavior(QTableWidget.SelectRows)
+        self.table.setSelectionMode(QTableWidget.SingleSelection)
 
         self.table.setColumnWidth(0, 200)
         self.table.setColumnWidth(1, 250)
@@ -326,5 +328,6 @@ class AddPurchaseOrderWindow(QWidget):
     def lock_selected_cells(self):
         for row in range(self.table.rowCount()):
             for col in range(2):
-                self.table.item(row, col).setFlags(Qt.ItemFlag.NoItemFlags)
-                self.table.item(row, col).setFlags(Qt.ItemFlag.NoItemFlags)
+                self.table.item(row, col).setFlags(
+                    Qt.ItemIsSelectable | Qt.ItemIsEnabled
+                )

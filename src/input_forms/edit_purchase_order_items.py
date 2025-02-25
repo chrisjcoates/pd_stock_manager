@@ -140,6 +140,8 @@ class EditPurchaseOrderItems(QWidget):
         self.table.setColumnCount(7)
         self.table.setRowCount(0)
         self.table.setHorizontalHeaderLabels(headers)
+        self.table.setSelectionBehavior(QTableWidget.SelectRows)
+        self.table.setSelectionMode(QTableWidget.SingleSelection)
 
         self.table.setColumnWidth(0, 200)
         self.table.setColumnWidth(1, 220)
@@ -485,14 +487,16 @@ class EditPurchaseOrderItems(QWidget):
                     for column in range(self.table.columnCount()):
                         # lock the row
                         self.table.item(row, 2).setFlags(Qt.ItemFlag.NoItemFlags)
+                        self.table.item(row, 3).setFlags(Qt.ItemFlag.NoItemFlags)
                     # lock the combo box
                     combo_box_item.setEnabled(False)
 
     def lock_selected_cells(self):
         for row in range(self.table.rowCount()):
             for col in range(2):
-                self.table.item(row, col).setFlags(Qt.ItemFlag.NoItemFlags)
-                self.table.item(row, col).setFlags(Qt.ItemFlag.NoItemFlags)
+                self.table.item(row, col).setFlags(
+                    Qt.ItemIsSelectable | Qt.ItemIsEnabled
+                )
 
     def update_po_line_item_status(self):
 
