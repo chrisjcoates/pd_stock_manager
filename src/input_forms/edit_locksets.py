@@ -30,7 +30,7 @@ class EditLockSet(QWidget):
 
         self.record_id = record_id
 
-        self.setWindowTitle("Create a new lock set")
+        self.setWindowTitle("Edit a new lock set")
         self.setWindowModality(Qt.ApplicationModal)
 
         self.order_details_widget()
@@ -60,8 +60,8 @@ class EditLockSet(QWidget):
 
         # control widgets
         self.lockset_name = QLineEdit()
-        self.lockset_name.setFixedWidth(175)
-        self.lockset_name.setPlaceholderText("Enter location name")
+        self.lockset_name.setFixedWidth(400)
+        # self.lockset_name.setPlaceholderText("Enter lockset name")
 
         ######################
         # Lock drop down box #
@@ -70,7 +70,7 @@ class EditLockSet(QWidget):
         locks_sql = """
                         SELECT
                             product.productID,
-                            product.productName
+                            product.productName || ', ' || product.productCode
                         FROM product
                         WHERE product.prod_cat_ID = (
                             SELECT prod_cat_id from product_categories WHERE prod_CatName = 'Lock'
@@ -88,8 +88,8 @@ class EditLockSet(QWidget):
             database.disconnect_from_db()
 
         self.lock_id = QComboBox()
-        self.lock_id.setPlaceholderText("Select lock")
-        self.lock_id.setFixedWidth(175)
+        # self.lock_id.setPlaceholderText("Select lock")
+        self.lock_id.setFixedWidth(400)
         for id, name in combo_data:
             self.lock_id.addItem(name, userData=id)
 
@@ -100,7 +100,7 @@ class EditLockSet(QWidget):
         int_sql = """
                         SELECT
                             product.productID,
-                            product.productName
+                            product.productName || ', ' || product.productCode
                         FROM product
                         WHERE product.prod_cat_ID = (
                             SELECT prod_cat_id from product_categories WHERE prod_CatName = 'Intumescent'
@@ -118,8 +118,8 @@ class EditLockSet(QWidget):
             database.disconnect_from_db()
 
         self.intumescent_id = QComboBox()
-        self.intumescent_id.setPlaceholderText("Select intumescent")
-        self.intumescent_id.setFixedWidth(175)
+        # self.intumescent_id.setPlaceholderText("Select intumescent")
+        self.intumescent_id.setFixedWidth(400)
         for id, name in combo_data:
             self.intumescent_id.addItem(name, userData=id)
 
@@ -130,7 +130,7 @@ class EditLockSet(QWidget):
         handle_sql = """
                         SELECT
                             product.productID,
-                            product.productName
+                            product.productName || ', ' || product.productCode
                         FROM product
                         WHERE product.prod_cat_ID = (
                             SELECT prod_cat_id from product_categories WHERE prod_CatName = 'Handle'
@@ -148,8 +148,8 @@ class EditLockSet(QWidget):
             database.disconnect_from_db()
 
         self.handle_id = QComboBox()
-        self.handle_id.setPlaceholderText("Select handle")
-        self.handle_id.setFixedWidth(175)
+        # self.handle_id.setPlaceholderText("Select handle")
+        self.handle_id.setFixedWidth(400)
         for id, name in combo_data:
             self.handle_id.addItem(name, userData=id)
 
@@ -160,7 +160,7 @@ class EditLockSet(QWidget):
         cylinder_sql = """
                         SELECT
                             product.productID,
-                            product.productName
+                            product.productName || ', ' || product.productCode
                         FROM product
                         WHERE product.prod_cat_ID = (
                             SELECT prod_cat_id from product_categories WHERE prod_CatName = 'Cylinder'
@@ -178,8 +178,8 @@ class EditLockSet(QWidget):
             database.disconnect_from_db()
 
         self.cylinder_id = QComboBox()
-        self.cylinder_id.setPlaceholderText("Select cylinder")
-        self.cylinder_id.setFixedWidth(175)
+        # self.cylinder_id.setPlaceholderText("Select cylinder")
+        self.cylinder_id.setFixedWidth(400)
         for id, name in combo_data:
             self.cylinder_id.addItem(name, userData=id)
 
@@ -190,7 +190,7 @@ class EditLockSet(QWidget):
         escutcheon_sql = """
                         SELECT
                             product.productID,
-                            product.productName
+                            product.productName || ', ' || product.productCode
                         FROM product
                         WHERE product.prod_cat_ID = (
                             SELECT prod_cat_id from product_categories WHERE prod_CatName = 'Escutcheon'
@@ -208,8 +208,8 @@ class EditLockSet(QWidget):
             database.disconnect_from_db()
 
         self.escutcheon_id = QComboBox()
-        self.escutcheon_id.setPlaceholderText("Select escutcheon")
-        self.escutcheon_id.setFixedWidth(175)
+        # self.escutcheon_id.setPlaceholderText("Select escutcheon")
+        self.escutcheon_id.setFixedWidth(400)
         for id, name in combo_data:
             self.escutcheon_id.addItem(name, userData=id)
 
@@ -319,6 +319,7 @@ class EditLockSet(QWidget):
             print(f"get_lock_set(): {e}")
 
         if lock_set:
+            print(lock_set)
             self.lockset_name.setText(lock_set[1])
             self.lock_id.setCurrentText(lock_set[2])
             self.intumescent_id.setCurrentText(lock_set[3])
