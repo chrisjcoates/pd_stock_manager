@@ -57,7 +57,7 @@ class AddLockSets(QWidget):
 
         # control widgets
         self.lockset_name = QLineEdit()
-        self.lockset_name.setFixedWidth(175)
+        self.lockset_name.setFixedWidth(400)
         self.lockset_name.setPlaceholderText("Enter location name")
 
         ######################
@@ -67,7 +67,7 @@ class AddLockSets(QWidget):
         locks_sql = """
                         SELECT
                             product.productID,
-                            product.productName
+                            product.productName || ', ' || product.productCode
                         FROM product
                         WHERE product.prod_cat_ID = (
                             SELECT prod_cat_id from product_categories WHERE prod_CatName = 'Lock'
@@ -86,7 +86,7 @@ class AddLockSets(QWidget):
 
         self.lock_id = QComboBox()
         self.lock_id.setPlaceholderText("Select Lock")
-        self.lock_id.setFixedWidth(175)
+        self.lock_id.setFixedWidth(400)
         for id, name in combo_data:
             self.lock_id.addItem(name, userData=id)
 
@@ -97,7 +97,7 @@ class AddLockSets(QWidget):
         int_sql = """
                         SELECT
                             product.productID,
-                            product.productName
+                            product.productName || ', ' || product.productCode
                         FROM product
                         WHERE product.prod_cat_ID = (
                             SELECT prod_cat_id from product_categories WHERE prod_CatName = 'Intumescent'
@@ -116,7 +116,7 @@ class AddLockSets(QWidget):
 
         self.intumescent_id = QComboBox()
         self.intumescent_id.setPlaceholderText("Select intumescent")
-        self.intumescent_id.setFixedWidth(175)
+        self.intumescent_id.setFixedWidth(400)
         for id, name in combo_data:
             self.intumescent_id.addItem(name, userData=id)
 
@@ -127,7 +127,7 @@ class AddLockSets(QWidget):
         handle_sql = """
                         SELECT
                             product.productID,
-                            product.productName
+                            product.productName || ', ' || product.productCode
                         FROM product
                         WHERE product.prod_cat_ID = (
                             SELECT prod_cat_id from product_categories WHERE prod_CatName = 'Handle'
@@ -146,7 +146,7 @@ class AddLockSets(QWidget):
 
         self.handle_id = QComboBox()
         self.handle_id.setPlaceholderText("Select handle")
-        self.handle_id.setFixedWidth(175)
+        self.handle_id.setFixedWidth(400)
         for id, name in combo_data:
             self.handle_id.addItem(name, userData=id)
 
@@ -157,7 +157,7 @@ class AddLockSets(QWidget):
         cylinder_sql = """
                         SELECT
                             product.productID,
-                            product.productName
+                            product.productName || ', ' || product.productCode
                         FROM product
                         WHERE product.prod_cat_ID = (
                             SELECT prod_cat_id from product_categories WHERE prod_CatName = 'Cylinder'
@@ -176,7 +176,7 @@ class AddLockSets(QWidget):
 
         self.cylinder_id = QComboBox()
         self.cylinder_id.setPlaceholderText("Select cylinder")
-        self.cylinder_id.setFixedWidth(175)
+        self.cylinder_id.setFixedWidth(400)
         for id, name in combo_data:
             self.cylinder_id.addItem(name, userData=id)
 
@@ -187,7 +187,7 @@ class AddLockSets(QWidget):
         escutcheon_sql = """
                         SELECT
                             product.productID,
-                            product.productName
+                            product.productName || ', ' || product.productCode
                         FROM product
                         WHERE product.prod_cat_ID = (
                             SELECT prod_cat_id from product_categories WHERE prod_CatName = 'Escutcheon'
@@ -206,7 +206,7 @@ class AddLockSets(QWidget):
 
         self.escutcheon_id = QComboBox()
         self.escutcheon_id.setPlaceholderText("Select escutcheon")
-        self.escutcheon_id.setFixedWidth(175)
+        self.escutcheon_id.setFixedWidth(400)
         for id, name in combo_data:
             self.escutcheon_id.addItem(name, userData=id)
 
