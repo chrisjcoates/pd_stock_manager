@@ -47,7 +47,7 @@ class Edit_Location(QWidget):
 
         self.get_location(self.record_id)
         self.get_order_items(self.record_id)
-
+        self.lock_selected_cells()
         self.resize(760, 600)
 
     def closeEvent(self, event):
@@ -411,3 +411,9 @@ class Edit_Location(QWidget):
                 self.table.removeRow(selected_row)
             except Exception as e:
                 print(f"No items to remove: {e}")
+
+    def lock_selected_cells(self):
+        for row in range(self.table.rowCount()):
+            for col in range(2):
+                self.table.item(row, col).setFlags(Qt.ItemFlag.NoItemFlags)
+                self.table.item(row, col).setFlags(Qt.ItemFlag.NoItemFlags)

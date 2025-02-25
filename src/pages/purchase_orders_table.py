@@ -73,9 +73,9 @@ class PurchaseOrdersTable(QWidget):
         if self.data:
             for row_index, row_data in enumerate(self.data):
                 for col_index, col_data in enumerate(row_data):
-                    self.table_widget.setItem(
-                        row_index, col_index, QTableWidgetItem(str(col_data))
-                    )
+                    item = QTableWidgetItem(str(col_data))
+                    self.table_widget.setItem(row_index, col_index, item)
+                    item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
 
         self.format_cells()
 

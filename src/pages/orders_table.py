@@ -190,9 +190,9 @@ class OrdersTable(QWidget):
             # Loop though data and add data to table
             for row_index, row_data in enumerate(self.data):
                 for col_index, cell_data in enumerate(row_data):
-                    self.table_widget.setItem(
-                        row_index, col_index, QTableWidgetItem(str(cell_data))
-                    )
+                    item = QTableWidgetItem(str(cell_data))
+                    self.table_widget.setItem(row_index, col_index, item)
+                    item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
         except Exception as e:
             print(e)
 

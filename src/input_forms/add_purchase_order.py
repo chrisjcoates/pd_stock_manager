@@ -40,6 +40,7 @@ class AddPurchaseOrderWindow(QWidget):
         self.get_types()
         self.get_items(prod_cat_id=self.type_combo.currentData())
         self.get_suppliers()
+        self.lock_selected_cells()
 
     def closeEvent(self, event):
         self.closed_signal.emit()
@@ -321,3 +322,9 @@ class AddPurchaseOrderWindow(QWidget):
             self.table.removeRow(selected_row)
         except:
             print("No items to remove.")
+
+    def lock_selected_cells(self):
+        for row in range(self.table.rowCount()):
+            for col in range(2):
+                self.table.item(row, col).setFlags(Qt.ItemFlag.NoItemFlags)
+                self.table.item(row, col).setFlags(Qt.ItemFlag.NoItemFlags)

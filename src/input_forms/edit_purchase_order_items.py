@@ -53,6 +53,7 @@ class EditPurchaseOrderItems(QWidget):
         self.get_order(self.record_id)
         self.get_order_items(self.record_id)
         self.lock_complete_rows()
+        self.lock_selected_cells()
 
         self.resize(760, 600)
 
@@ -208,9 +209,8 @@ class EditPurchaseOrderItems(QWidget):
 
         for row_index, row_data in enumerate(self.items):
             for col_index, cell_data in enumerate(row_data):
-                self.table.setItem(
-                    row_index, col_index, QTableWidgetItem(str(cell_data))
-                )
+                item = QTableWidgetItem(str(cell_data))
+                self.table.setItem(row_index, col_index, item)
 
         combo_items = ["WIP", "Complete"]
 
@@ -487,6 +487,12 @@ class EditPurchaseOrderItems(QWidget):
                         self.table.item(row, 2).setFlags(Qt.ItemFlag.NoItemFlags)
                     # lock the combo box
                     combo_box_item.setEnabled(False)
+
+    def lock_selected_cells(self):
+        for row in range(self.table.rowCount()):
+            for col in range(2):
+                self.table.item(row, col).setFlags(Qt.ItemFlag.NoItemFlags)
+                self.table.item(row, col).setFlags(Qt.ItemFlag.NoItemFlags)
 
     def update_po_line_item_status(self):
 

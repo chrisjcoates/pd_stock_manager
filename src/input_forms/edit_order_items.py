@@ -46,13 +46,13 @@ class Edit_Order_Items(QWidget):
         self.order_details_widget()
         self.item_table_widget()
         self.save_btn_widget()
-
         self.get_customers()
         self.get_types()
         self.get_items(prod_cat_id=self.type_combo.currentData())
         self.get_order(self.record_id)
         self.get_order_items(self.record_id)
         self.lock_complete_rows()
+        self.lock_selected_cells()
 
         self.resize(760, 600)
 
@@ -732,3 +732,9 @@ class Edit_Order_Items(QWidget):
                 return items
             else:
                 return False
+
+    def lock_selected_cells(self):
+        for row in range(self.table.rowCount()):
+            for col in range(2):
+                self.table.item(row, col).setFlags(Qt.ItemFlag.NoItemFlags)
+                self.table.item(row, col).setFlags(Qt.ItemFlag.NoItemFlags)
